@@ -1,0 +1,27 @@
+= API 文档
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:numbered:
+
+
+== API
+[[1]]
+
+=== JWT 授权接口（/xxx/vx/xxx/）
+operation::auth--get-access_token[]
+operation::auth--get-refresh_token[]
+
+=== Actuator 授权接口（/xxx/vx/xxx/）
+operation::auth--get-endpoint-unauthorized[]
+operation::auth--get-endpoint-forbidden[]
+operation::auth--get-endpoint-ok[]
+
+=== REST Data 授权接口（/xxx/vx/xxx/）
+operation::auth--get-es-unauthorized[]
+operation::auth--get-es-forbidden[]
+operation::auth--get-es-ok[]
+
