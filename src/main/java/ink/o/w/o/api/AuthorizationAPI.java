@@ -1,10 +1,9 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.resource.sample.domain.Sample;
 import ink.o.w.o.server.constant.HttpConstant;
+import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.HttpResponseData;
 import ink.o.w.o.server.domain.HttpResponseDataFactory;
-import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.ServiceResult;
 import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,10 @@ public class AuthorizationAPI {
         @RequestParam String username,
         @RequestParam String password) throws AuthenticationException {
 
-        return HttpResponseDataFactory.generateFrom(authorizationService.authorize(username, password));
+        return HttpResponseDataFactory.success(
+            authorizationService.authorize(username, password)
+                .guard()
+        );
     }
 
     @PostMapping("/token")
@@ -36,7 +38,10 @@ public class AuthorizationAPI {
     public HttpResponseData refreshAuthenticationToken(
         @RequestParam String refreshToken) throws AuthenticationException, SignatureException {
 
-        return HttpResponseDataFactory.success(authorizationService.reauthorize(refreshToken));
+        return HttpResponseDataFactory.success(
+            authorizationService.reauthorize(refreshToken)
+                .guard()
+        );
     }
 
     @DeleteMapping(value = "/auth", produces = "application/json")
@@ -45,9 +50,7 @@ public class AuthorizationAPI {
         @RequestHeader(name = AuthorizedJwt.REQUEST_AUTHORIZATION_KEY) String jwt
     ) throws AuthenticationException {
 
-        ServiceResult<Boolean> result = authorizationService.revoke(jwt);
-
-        return result.guard()
+        return authorizationService.revoke(jwt).guard()
             ? HttpResponseDataFactory.success("注销成功")
             : HttpResponseDataFactory.error("注销失败");
     }

@@ -1,15 +1,19 @@
 package ink.o.w.o.server.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.server.domain.*;
 import ink.o.w.o.server.repository.AuthorizedJwtStoreRepository;
 import ink.o.w.o.server.service.AuthorizedJwtStoreService;
-import io.jsonwebtoken.Claims;
+import ink.o.w.o.util.JSONHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -17,20 +21,91 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
     @Autowired
     AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
 
+    @Autowired
+    JSONHelper jsonHelper;
+
     @Override
-    public ServiceResult<Boolean> register(AuthorizedJwts tokens, User user, String jti) {
+    public ServiceResult<AuthorizedJwts> register(User user) {
+        Date now = new Date();
+
+        AuthorizedJwt authorizedJwt = new AuthorizedJwt()
+            .setAud(user.getName())
+            .setRol(user.getRoles())
+            .setUid(user.getId())
+            .setCtime(now)
+            .setUtime(now);
+
+        AuthorizedJwts authorizedJwts = new AuthorizedJwts();
+
+        authorizedJwts
+            .setAccessToken(AuthorizedJwt.generateJwt(authorizedJwt.setExp(DateUtils.addMinutes(now, 15))))
+            .setRefreshToken(AuthorizedJwt.generateJwt(authorizedJwt.setExp(DateUtils.addDays(now, 15))));
+
+        try {
+            logger.info(" ->" + jsonHelper.toJSONString(authorizedJwts));
+        } catch (JsonProcessingException e) {
+            logger.error(e.getMessage());
+        }
+
         authorizedJwtStoreRepository.save(
             new AuthorizedJwtStore()
-                .setId(AuthorizedJwtStore.generateUuid(user.getName(), jti))
-                .setAuthorizedJwts(tokens)
+                .setId(AuthorizedJwtStore.generateUuid(authorizedJwt))
+                .setUserId(user.getId())
+                .setAuthorizedJwts(authorizedJwts)
         );
-        return ServiceResultFactory.success(true);
+
+        return ServiceResultFactory.success(authorizedJwts);
     }
 
     @Override
     public ServiceResult<Boolean> revoke(AuthorizedJwt jwt) {
-        authorizedJwtStoreRepository.deleteById(AuthorizedJwtStore.generateUuid(jwt.getAud(), jwt.getJti()));
+        authorizedJwtStoreRepository.deleteById(AuthorizedJwtStore.generateUuid(jwt));
         return ServiceResultFactory.success(true);
+    }
+
+    @Override
+    public ServiceResult<Boolean> revokeAll(Integer userId) {
+        authorizedJwtStoreRepository.deleteByUserId(userId);
+        return ServiceResultFactory.success(true);
+    }
+
+    @Override
+    public ServiceResult<Boolean> reset() {
+        authorizedJwtStoreRepository.deleteAll();
+        return ServiceResultFactory.success(true);
+    }
+
+    @Override
+    public ServiceResult<String> refresh(AuthorizedJwt jwt, String refreshToken) {
+        String id = AuthorizedJwtStore.generateUuid(jwt);
+        Optional<AuthorizedJwtStore> authorizedJwtStoreOptional = authorizedJwtStoreRepository.findById(id);
+
+        if (authorizedJwtStoreOptional.isEmpty()) {
+            return ServiceResultFactory.error("用户 refreshToken 无效，未查到有效 accessToken！" + id);
+        } else {
+            authorizedJwtStoreRepository.deleteById(id);
+        }
+
+        AuthorizedJwtStore authorizedJwtStore = authorizedJwtStoreOptional.get();
+
+        authorizedJwtStoreRepository.save(
+            authorizedJwtStore.setAuthorizedJwts(
+                authorizedJwtStore
+                    .getAuthorizedJwts()
+                    .setAccessToken(
+                        new AuthorizedJwt(authorizedJwtStore.getAuthorizedJwts().getAccessToken(), true)
+                            .setExp(DateUtils.addMinutes(new Date(), 15))
+                            .toJwt()
+                    )
+            )
+        );
+
+        return ServiceResultFactory.success(
+            authorizedJwtStoreRepository.findById(id)
+                .get()
+                .getAuthorizedJwts()
+                .getAccessToken()
+        );
     }
 
     @Override
@@ -75,16 +150,8 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
 
         logger.info("用户 TOKEN 检验……");
 
-        // 如果我们足够相信token中的数据，也就是我们足够相信签名token的secret的机制足够好
-        // 这种情况下，我们可以不用再查询数据库，而直接采用token中的数据
-        // 本例中，我们还是通过Spring Security的 @UserDetailsService 进行了数据查询
-        // 但简单验证的话，你可以采用直接验证token是否合法来避免昂贵的数据查询
-        Claims jwtClaims = authorizationPayload.getJwtClaims();
-        if (!authorizedJwtStoreRepository.existsById(
-            AuthorizedJwtStore.generateUuid(
-                jwtClaims.getAudience(),
-                jwtClaims.getId()
-            ))) {
+        AuthorizedJwt authorizedJwt = new AuthorizedJwt(authorizationPayload.getJwtClaims(), true);
+        if (!authorizedJwtStoreRepository.existsById(AuthorizedJwtStore.generateUuid(authorizedJwt))) {
             logger.info("用户 TOKEN 检验未通过，服务端存储异常！");
             return serviceResult.setMessage("用户 TOKEN 检验未通过，服务端存储异常！").setSuccess(false);
         }

@@ -78,10 +78,21 @@ public class AuthorizedJwt {
     }
 
     public AuthorizedJwt(String jwt) {
-        Claims claims = AuthorizedJwt.getClaimsFromJwt(jwt);
+        this(jwt, false);
+    }
+
+    public AuthorizedJwt(String jwt, boolean keepId) {
+        this(AuthorizedJwt.getClaimsFromJwt(jwt), keepId);
+    }
+
+    public AuthorizedJwt(Claims claims) {
+        this(claims, false);
+    }
+
+    public AuthorizedJwt(Claims claims, boolean keepId) {
         Date now = new Date();
 
-        this.setJti(UUID.randomUUID().toString())
+        this.setJti(keepId ? claims.getId() : UUID.randomUUID().toString())
             .setAud(claims.getAudience())
             .setExp(claims.getExpiration())
             .setUid(claims.get(ClaimKeys.uid, Integer.class))
@@ -136,6 +147,10 @@ public class AuthorizedJwt {
     public static String getUid(@org.jetbrains.annotations.NotNull Claims claims) {
         return claims
             .get(ClaimKeys.uid, String.class);
+    }
+
+    public static Boolean hasExpired(AuthorizedJwt jwt) {
+        return Calendar.getInstance().before(jwt.exp);
     }
 
     public static Boolean hasExpired(String jwt) {
