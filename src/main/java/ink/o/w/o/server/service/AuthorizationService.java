@@ -1,6 +1,7 @@
 package ink.o.w.o.server.service;
 
-import ink.o.w.o.server.domain.AuthorizedToken;
+import ink.o.w.o.server.domain.AuthorizedJwts;
+import ink.o.w.o.server.domain.ServiceResult;
 
 import java.security.SignatureException;
 
@@ -19,7 +20,7 @@ public interface AuthorizationService {
      * @param password 密码
      * @return AuthorizedToken tokens => {'refreshToken':refreshToken, 'accessToken': accessToken}
      */
-    AuthorizedToken authorize(String username, String password);
+    ServiceResult<AuthorizedJwts> authorize(String username, String password);
 
     /**
      * 通过 refreshToken 延长授权
@@ -27,7 +28,7 @@ public interface AuthorizationService {
      * @param refreshToken refreshToken
      * @return accessToken
      */
-    String reauthorize(String refreshToken) throws SignatureException;
+    ServiceResult<String> reauthorize(String refreshToken) throws SignatureException;
 
     /**
      * 注销用户
@@ -35,5 +36,5 @@ public interface AuthorizationService {
      * @param jwt accessToken
      * @return ''
      */
-    Boolean revoke(String jwt);
+    ServiceResult<Boolean> revoke(String jwt);
 }

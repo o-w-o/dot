@@ -47,24 +47,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Resource
     private AccessDeniedController accessDeniedController;
 
-    @Autowired
-    @Qualifier("authorizedUserServiceImpl")
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-            .userDetailsService(this.userDetailsService)
-            .passwordEncoder(passwordEncoder());
-    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthorityInjector authenticationTokenFilterBean() throws Exception {
+    public AuthorityInjector authenticationTokenFilterBean() {
         return new AuthorityInjector();
     }
 

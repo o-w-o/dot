@@ -1,16 +1,17 @@
 package ink.o.w.o.server.service.impl;
 
-import ink.o.w.o.resource.user.util.UserHelper;
-import ink.o.w.o.server.service.AuthorizationService;
-import ink.o.w.o.server.domain.AuthorizedJwt;
-import ink.o.w.o.server.domain.AuthorizedToken;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.repository.UserRepository;
+import ink.o.w.o.resource.user.util.UserHelper;
+import ink.o.w.o.server.domain.AuthorizedJwt;
+import ink.o.w.o.server.domain.AuthorizedJwts;
+import ink.o.w.o.server.domain.ServiceResult;
+import ink.o.w.o.server.domain.ServiceResultFactory;
+import ink.o.w.o.server.service.AuthorizationService;
+import ink.o.w.o.server.service.AuthorizedJwtStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +34,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private UserRepository userRepository;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private AuthorizedJwtStoreService authorizedJwtStoreService;
 
     @Override
-    public AuthorizedToken authorize(String username, String password) {
+    public ServiceResult<AuthorizedJwts> authorize(String username, String password) {
         User user = userRepository.findUserByName(username);
         if (UserHelper.isExist(user)) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -51,24 +52,24 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                     .setCtime(now)
                     .setUtime(now);
 
-                AuthorizedToken tokens = new AuthorizedToken();
+                AuthorizedJwts tokens = new AuthorizedJwts();
 
                 tokens
                     .setAccessToken(AuthorizedJwt.generateJwt(jwt.setExp(DateUtils.addMinutes(now, 15))))
                     .setRefreshToken(AuthorizedJwt.generateJwt(jwt.setExp(DateUtils.addDays(now, 15))));
 
-                return tokens;
+                authorizedJwtStoreService.register(tokens, user, jwt.getJti());
+
+                return ServiceResultFactory.success(tokens);
             }
-        } else {
-            logger.info("isExist ? " + UserHelper.isExist(user) + " " + user);
         }
 
-        return null;
-
+        logger.info("isExist ? " + UserHelper.isExist(user) + " " + user);
+        return ServiceResultFactory.error("用户 [ " + username + " ] 不存在！");
     }
 
     @Override
-    public String reauthorize(String refreshToken) throws SignatureException {
+    public ServiceResult<String> reauthorize(String refreshToken) throws SignatureException {
         if ("".equals(refreshToken)) {
             return null;
         }
@@ -76,15 +77,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         String accessToken = AuthorizedJwt.generateJwt(refreshToken, true)
             .setExp(DateUtils.addMinutes(new Date(), 15))
             .toJwt();
-        return accessToken;
+        return ServiceResultFactory.success(accessToken);
     }
 
     @Override
-    public Boolean revoke(String jwt) {
+    public ServiceResult<Boolean> revoke(String accessToken) {
+        return authorizedJwtStoreService.revoke(new AuthorizedJwt(accessToken)).guard()
+            ? ServiceResultFactory.success(true)
+            : ServiceResultFactory.success(false);
 
-        String name = AuthorizedJwt.getClaimsFromJwt(jwt).getAudience();
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-
-        return true;
     }
 }

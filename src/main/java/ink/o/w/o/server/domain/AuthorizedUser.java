@@ -49,7 +49,7 @@ public class AuthorizedUser extends User implements UserDetails {
     /**
      * 密码是否未过期
      *
-     * @return ture 密码未过期
+     * @return boolean 密码未过期
      */
     @JsonIgnore
     @Override
@@ -68,7 +68,7 @@ public class AuthorizedUser extends User implements UserDetails {
         return true;
     }
 
-    public static AuthorizedUser parse(User user) {
+public static AuthorizedUser parse(User user) {
         return new AuthorizedUser()
             .setId(user.getId())
             .setUsername(user.getName())

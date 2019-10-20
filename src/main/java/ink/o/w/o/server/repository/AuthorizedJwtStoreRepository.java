@@ -1,6 +1,6 @@
 package ink.o.w.o.server.repository;
 
-import ink.o.w.o.server.domain.AuthorizedUserJwt;
+import ink.o.w.o.server.domain.AuthorizedJwtStore;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface AuthorizedUserJwtRepository extends CrudRepository<AuthorizedUserJwt, Long> {
+public interface AuthorizedJwtStoreRepository extends CrudRepository<AuthorizedJwtStore, String> {
 }

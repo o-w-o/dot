@@ -2,7 +2,7 @@ package ink.o.w.o.api;
 
 import ink.o.w.o.server.constant.HttpConstant;
 import ink.o.w.o.server.domain.AuthorizedJwt;
-import ink.o.w.o.server.domain.AuthorizedToken;
+import ink.o.w.o.server.domain.AuthorizedJwts;
 import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class AuthorizationAPITest extends APITest {
 
     @Test
     void refreshToken() throws Exception {
-        AuthorizedToken token = authorizationService.authorize("demo", "233333");;
+        AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
         mockMvc.perform(MockMvcRequestBuilders
             .post(authorizationBaseUrl + "/token?refreshToken=" + token.getRefreshToken())
             .header("Authorization", AuthorizedJwt.AUTHORIZATION_PREFIX + token.getAccessToken())
@@ -67,7 +67,7 @@ class AuthorizationAPITest extends APITest {
 
     @Test
     void isRestDataForbidden() throws Exception {
-        AuthorizedToken token = authorizationService.authorize("demo", "233333");
+        AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(restDataBaseUrl + "/samples")
@@ -80,7 +80,7 @@ class AuthorizationAPITest extends APITest {
 
     @Test
     void isRestDataOk() throws Exception {
-        AuthorizedToken token = authorizationService.authorize("sample", "233333");
+        AuthorizedJwts token = authorizationService.authorize("sample", "233333").guard();
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(restDataBaseUrl + "/samples")
@@ -106,7 +106,7 @@ class AuthorizationAPITest extends APITest {
 
     @Test
     void isEndpointForbidden() throws Exception {
-        AuthorizedToken token = authorizationService.authorize("demo", "233333");
+        AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(endpointBaseUrl + "/env")
@@ -119,7 +119,7 @@ class AuthorizationAPITest extends APITest {
 
     @Test
     void isEndpointOk() throws Exception {
-        AuthorizedToken token = authorizationService.authorize("actuator", "233333");
+        AuthorizedJwts token = authorizationService.authorize("actuator", "233333").guard();
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(endpointBaseUrl + "/env")

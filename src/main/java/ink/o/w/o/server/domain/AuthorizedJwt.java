@@ -110,14 +110,14 @@ public class AuthorizedJwt {
     }
 
     public static class ClaimKeys {
-        static String jti = Claims.ID;
-        static String iss = Claims.ISSUER;
-        static String aud = Claims.AUDIENCE;
-        static String exp = Claims.EXPIRATION;
-        static String uid = "uid";
-        static String rol = "rol";
-        static String ctime = "ctime";
-        static String utime = "utime";
+        public static String jti = Claims.ID;
+        public static String iss = Claims.ISSUER;
+        public static String aud = Claims.AUDIENCE;
+        public static String exp = Claims.EXPIRATION;
+        public static String uid = "uid";
+        public static String rol = "rol";
+        public static String ctime = "ctime";
+        public static String utime = "utime";
     }
 
     public static Claims getClaimsFromJwt(String jwt) {
@@ -161,9 +161,8 @@ public class AuthorizedJwt {
         throw new SignatureException();
     }
 
-    public static Boolean valid(Claims claims, AuthorizedUser user) {
-        return claims.getAudience().equals(user.getUsername())
-            && !AuthorizedJwt.hasExpired(claims);
+    public static Boolean valid(Claims claims) {
+        return !AuthorizedJwt.hasExpired(claims);
     }
 
     public static Boolean valid(String jwt, AuthorizedUser user) {

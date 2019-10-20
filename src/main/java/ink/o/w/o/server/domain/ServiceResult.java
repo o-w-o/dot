@@ -1,5 +1,6 @@
 package ink.o.w.o.server.domain;
 
+import ink.o.w.o.server.exception.ServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,14 @@ public class ServiceResult<T> {
         }
         if (this.message == null) {
             this.message = this.success ? "OK" : "NO";
+        }
+    }
+
+    public T guard() {
+        if (this.getSuccess()) {
+            return this.payload;
+        } else {
+            throw new ServiceException(this);
         }
     }
 }

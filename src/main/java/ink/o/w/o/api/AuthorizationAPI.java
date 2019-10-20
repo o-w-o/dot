@@ -1,10 +1,13 @@
 package ink.o.w.o.api;
 
+import ink.o.w.o.resource.sample.domain.Sample;
 import ink.o.w.o.server.constant.HttpConstant;
 import ink.o.w.o.server.domain.HttpResponseData;
 import ink.o.w.o.server.domain.HttpResponseDataFactory;
 import ink.o.w.o.server.domain.AuthorizedJwt;
+import ink.o.w.o.server.domain.ServiceResult;
 import ink.o.w.o.server.service.AuthorizationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.SignatureException;
 
+@Slf4j
 @RestController
 @RequestMapping(HttpConstant.API_ENTRY + "/auth")
 public class AuthorizationAPI {
@@ -24,7 +28,7 @@ public class AuthorizationAPI {
         @RequestParam String username,
         @RequestParam String password) throws AuthenticationException {
 
-        return HttpResponseDataFactory.success(authorizationService.authorize(username, password));
+        return HttpResponseDataFactory.generateFrom(authorizationService.authorize(username, password));
     }
 
     @PostMapping("/token")
@@ -37,13 +41,13 @@ public class AuthorizationAPI {
 
     @DeleteMapping(value = "/auth", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public HttpResponseData refreshAndGetAuthenticationToken(
+    public HttpResponseData revokeAuthenticationToken(
         @RequestHeader(name = AuthorizedJwt.REQUEST_AUTHORIZATION_KEY) String jwt
     ) throws AuthenticationException {
 
-        boolean result = authorizationService.revoke(jwt);
+        ServiceResult<Boolean> result = authorizationService.revoke(jwt);
 
-        return result
+        return result.guard()
             ? HttpResponseDataFactory.success("注销成功")
             : HttpResponseDataFactory.error("注销失败");
     }

@@ -7,7 +7,7 @@ import lombok.Data;
  * @date: 2019/8/3 上午9:25
  */
 @Data
-public class AuthorizedToken {
+public class AuthorizedJwts {
     private String accessToken;
     private String refreshToken;
 }

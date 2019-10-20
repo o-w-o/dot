@@ -1,6 +1,6 @@
-package ink.o.w.o.resource.symbols.repository;
+package ink.o.w.o.resource.sample.repository;
 
-import ink.o.w.o.resource.symbols.domain.Sample;
+import ink.o.w.o.resource.sample.domain.Sample;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
