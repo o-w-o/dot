@@ -43,14 +43,15 @@ public class AuthorityInjector extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain chain) throws ServletException, IOException {
 
+        logger.info("Referer: [" + request.getHeader("Referer") + "]");
         logger.info("UA: [" + request.getHeader("User-Agent") + "] ; IP: " + getIpAddress(request));
 
         ServiceResult<AuthorizationPayload> authorizationPayloadServiceResult = authorizedJwtStoreService.validate(request);
         AuthorizationPayload authorizationPayload = authorizationPayloadServiceResult.getPayload();
 
         if (authorizationPayloadServiceResult.getSuccess()) {
-            String userName = authorizationPayload.getJwtClaims().getAudience();
-            String userRoles = authorizationPayload.getJwtClaims().get(AuthorizedJwt.ClaimKeys.rol).toString();
+            String userName = authorizationPayload.getJwt().getUid().toString();
+            String userRoles = authorizationPayload.getJwt().getRol();
             Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (userAuthentication == null || !userAuthentication.isAuthenticated()) {

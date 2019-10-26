@@ -2,11 +2,11 @@ package ink.o.w.o.server.service.impl;
 
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.repository.UserRepository;
-import ink.o.w.o.resource.user.util.UserHelper;
 import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.AuthorizedJwts;
 import ink.o.w.o.server.domain.ServiceResult;
 import ink.o.w.o.server.domain.ServiceResultFactory;
+import ink.o.w.o.server.exception.ServiceException;
 import ink.o.w.o.server.service.AuthorizationService;
 import ink.o.w.o.server.service.AuthorizedJwtStoreService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,19 +34,21 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public ServiceResult<AuthorizedJwts> authorize(String username, String password) {
-        User user = userRepository.findUserByName(username);
-        if (UserHelper.isExist(user)) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-            if (user.getPassword().equals(encoder.encode(user.getPassword())) || user.getPassword().equals(user.getPassword())) {
-                return ServiceResultFactory.success(
-                    authorizedJwtStoreService.register(user).guard()
-                );
-            }
+        if (userRepository.existsByName(username)) {
+            return ServiceResultFactory.error(String.format("用户[ %s ]不存在！", username));
         }
 
-        logger.info("isExist ? " + UserHelper.isExist(user) + " " + user);
-        return ServiceResultFactory.error("用户 [ " + username + " ] 不存在！");
+        User user = userRepository.findUserByName(username).orElseThrow(new ServiceException(""));
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (encoder.matches(password, user.getPassword())) {
+            return ServiceResultFactory.success(
+                authorizedJwtStoreService.register(user).guard()
+            );
+        }
+
+        logger.debug("isPasswordMatch ? {}, password -> {}, user -> {}", user.getPassword().equals(password), password, user);
+        return ServiceResultFactory.error("登录密码错误！");
     }
 
     @Override
@@ -55,9 +57,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             return ServiceResultFactory.error("用户 refreshToken 为空！");
         }
 
-        AuthorizedJwt authorizedJwt = new AuthorizedJwt(refreshToken, true);
+        AuthorizedJwt authorizedJwt = AuthorizedJwt.generateJwtFromJwtString(refreshToken, true);
 
-        if (AuthorizedJwt.hasExpired(authorizedJwt)) {
+        if (AuthorizedJwt.isExpired(authorizedJwt)) {
             return ServiceResultFactory.error("用户 refreshToken 已过期！");
         }
 
@@ -70,9 +72,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public ServiceResult<Boolean> revoke(String accessToken) {
-        return authorizedJwtStoreService.revoke(new AuthorizedJwt(accessToken)).guard()
-            ? ServiceResultFactory.success(true)
-            : ServiceResultFactory.success(false);
+        ServiceResult serviceResult = authorizedJwtStoreService.revoke(AuthorizedJwt.generateJwtFromJwtString(accessToken));
+        return ServiceResultFactory
+            .success(serviceResult.getSuccess(), serviceResult.getMessage());
 
     }
 }

@@ -45,7 +45,7 @@ class AuthorizationAPITest extends APITest {
         AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
         mockMvc.perform(MockMvcRequestBuilders
             .post(authorizationBaseUrl + "/token?refreshToken=" + token.getRefreshToken())
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_PREFIX + token.getAccessToken())
+            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
             .accept(MediaType.APPLICATION_JSON))
             .andDo(document("auth--get-refresh_token"))
             .andExpect(status().isOk())
@@ -71,7 +71,7 @@ class AuthorizationAPITest extends APITest {
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(restDataBaseUrl + "/samples")
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_PREFIX + token.getAccessToken())
+            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
             .accept(MediaType.APPLICATION_JSON))
             .andDo(document("auth--get-es-forbidden"))
             .andExpect(status().isForbidden())
@@ -84,7 +84,7 @@ class AuthorizationAPITest extends APITest {
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(restDataBaseUrl + "/samples")
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_PREFIX + token.getAccessToken())
+            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
             .accept(MediaType.APPLICATION_JSON))
             .andDo(document("auth--get-es-ok"))
             .andExpect(status().isOk())
@@ -110,7 +110,7 @@ class AuthorizationAPITest extends APITest {
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(endpointBaseUrl + "/env")
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_PREFIX + token.getAccessToken())
+            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
             .accept(MediaType.APPLICATION_JSON))
             .andDo(document("auth--get-endpoint-forbidden"))
             .andExpect(status().isForbidden())
@@ -123,7 +123,7 @@ class AuthorizationAPITest extends APITest {
 
         mockMvc.perform(MockMvcRequestBuilders
             .get(endpointBaseUrl + "/env")
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_PREFIX + token.getAccessToken())
+            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
             .accept(MediaType.APPLICATION_JSON))
             .andDo(document("auth--get-endpoint-ok"))
             .andExpect(status().isOk())

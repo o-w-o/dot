@@ -13,11 +13,6 @@ public class HttpHelper {
     }
 
     public static Function<String, String> formatResponseDataMessage (HttpServletRequest request) {
-        return new Function<String, String>() {
-            @Override
-            public String apply(String s) {
-                return  HttpHelper.formatResponseDataMessageByRequest(request, s);
-            }
-        };
+        return s -> HttpHelper.formatResponseDataMessageByRequest(request, s);
     }
 }

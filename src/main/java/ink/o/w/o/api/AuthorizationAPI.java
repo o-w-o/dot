@@ -4,7 +4,6 @@ import ink.o.w.o.server.constant.HttpConstant;
 import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.HttpResponseData;
 import ink.o.w.o.server.domain.HttpResponseDataFactory;
-import ink.o.w.o.server.domain.ServiceResult;
 import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class AuthorizationAPI {
     @DeleteMapping(value = "/auth", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_USER')")
     public HttpResponseData revokeAuthenticationToken(
-        @RequestHeader(name = AuthorizedJwt.REQUEST_AUTHORIZATION_KEY) String jwt
+        @RequestHeader(name = AuthorizedJwt.AUTHORIZATION_HEADER_KEY) String jwt
     ) throws AuthenticationException {
 
         return authorizationService.revoke(jwt).guard()

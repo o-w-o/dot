@@ -1,10 +1,12 @@
 package ink.o.w.o.resource.user.domain;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Optional;
 
 
 /**
@@ -23,6 +25,7 @@ public class User {
 
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String roles;
 
@@ -30,5 +33,16 @@ public class User {
     private Integer sex = 0;
 
     @Temporal(TemporalType.DATE)
-    private Date registerDate;
+    private Date cTime;
+
+    @Temporal(TemporalType.DATE)
+    private Date uTime;
+
+    @PrePersist
+    public void recordUpdateTime(){
+        if(Optional.ofNullable(cTime).isEmpty()) {
+            cTime = new Date();
+        }
+        uTime = new Date();
+    }
 }

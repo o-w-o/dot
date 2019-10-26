@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class AuthorizationPayload {
+    private AuthorizedJwt jwt;
     private Claims jwtClaims;
     private boolean jwtHeaderEmpty = false;
     private boolean jwtHeaderValid = false;

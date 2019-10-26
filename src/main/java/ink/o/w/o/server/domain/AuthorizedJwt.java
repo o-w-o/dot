@@ -3,10 +3,10 @@ package ink.o.w.o.server.domain;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 
 import java.security.Key;
-import java.security.SignatureException;
 import java.util.*;
 
 /**
@@ -55,134 +55,121 @@ import java.util.*;
 
 @Data
 public class AuthorizedJwt {
-    private static final Key SECRET_KEY = io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private static final Date NBF = new Date();
 
-    public static final String REQUEST_AUTHORIZATION_KEY = "Authorization";
-    public static final String AUTHORIZATION_PREFIX = "Chuancheng:";
+    public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
+    public static final String AUTHORIZATION_HEADER_VAL_PREFIX = "Bear ";
 
-    final String typ = "jwt";
-    final String alg = "HS512";
+    public static final String PRIVATE_CLAIM_KEY_UID = "uid";
+    public static final String PRIVATE_CLAIM_KEY_ROL = "rol";
 
-    final String iss = "o-w-o.ink";
-    String jti;
-    String aud;
-    Date exp;
+    private final Date nbf = NBF;
+    private Date iat;
+    private Date exp;
 
-    Integer uid;
-    String rol;
-    Date ctime;
-    Date utime;
+    final private String typ = "jwt";
+    final private String alg = "HS512";
+    final private String iss = "o-w-o.ink";
+
+    private String jti;
+    private String aud;
+    private String sub;
+
+    private Integer uid;
+    private String rol;
+
+    Map<String, Object> claims;
 
     public AuthorizedJwt() {
-        this.setJti(UUID.randomUUID().toString());
-    }
-
-    public AuthorizedJwt(String jwt) {
-        this(jwt, false);
-    }
-
-    public AuthorizedJwt(String jwt, boolean keepId) {
-        this(AuthorizedJwt.getClaimsFromJwt(jwt), keepId);
-    }
-
-    public AuthorizedJwt(Claims claims) {
-        this(claims, false);
-    }
-
-    public AuthorizedJwt(Claims claims, boolean keepId) {
         Date now = new Date();
-
-        this.setJti(keepId ? claims.getId() : UUID.randomUUID().toString())
-            .setAud(claims.getAudience())
-            .setExp(claims.getExpiration())
-            .setUid(claims.get(ClaimKeys.uid, Integer.class))
-            .setRol(claims.get(ClaimKeys.rol, String.class))
-            .setCtime(now)
-            .setUtime(now);
+        this
+            .setJti(UUID.randomUUID().toString())
+            .setAud("aud")
+            .setSub("*")
+            .setExp(now)
+            .setIat(now)
+            .setUid(0)
+            .setRol("");
     }
 
-    private Map<String, Object> getClaims() {
+    public AuthorizedJwt generateClaims() {
         Map<String, Object> claims = new HashMap<>(8);
 
-        claims.put(ClaimKeys.jti, this.getJti());
-        claims.put(ClaimKeys.iss, this.getIss());
-        claims.put(ClaimKeys.aud, this.getAud());
-        claims.put(ClaimKeys.exp, this.getExp());
-        claims.put(ClaimKeys.uid, this.getUid());
-        claims.put(ClaimKeys.rol, this.getRol());
-        claims.put(ClaimKeys.ctime, this.getCtime());
-        claims.put(ClaimKeys.utime, this.getUtime());
+        claims.put(Claims.ID, this.getJti());
+        claims.put(Claims.ISSUER, this.getIss());
+        claims.put(Claims.AUDIENCE, this.getAud());
+        claims.put(Claims.EXPIRATION, this.getExp());
+        claims.put(Claims.ISSUED_AT, this.getIat());
+        claims.put(Claims.NOT_BEFORE, this.getNbf());
 
-        return claims;
+        claims.put(PRIVATE_CLAIM_KEY_UID, this.getUid());
+        claims.put(PRIVATE_CLAIM_KEY_ROL, this.getRol());
+
+        this.claims = claims;
+
+        return this;
     }
 
-    public String toJwt() {
-        return AuthorizedJwt.generateJwt(this);
+    public Boolean isExpired() {
+        return Calendar.getInstance().before(this.getExp());
     }
 
-    public static class ClaimKeys {
-        public static String jti = Claims.ID;
-        public static String iss = Claims.ISSUER;
-        public static String aud = Claims.AUDIENCE;
-        public static String exp = Claims.EXPIRATION;
-        public static String uid = "uid";
-        public static String rol = "rol";
-        public static String ctime = "ctime";
-        public static String utime = "utime";
+    @Override
+    public String toString() {
+        return Jwts
+            .builder()
+            .setClaims(this.generateClaims().getClaims())
+            .signWith(SECRET_KEY)
+            .compact();
     }
 
-    public static Claims getClaimsFromJwt(String jwt) {
+    public static Claims parseClaimsFromJwtString(String jwt) {
         return Jwts
             .parser()
+            .setAllowedClockSkewSeconds(1)
             .setSigningKey(SECRET_KEY)
             .parseClaimsJws(jwt)
             .getBody();
     }
 
-    public static String getUid(String jwt) {
-        return AuthorizedJwt.getClaimsFromJwt(jwt)
-            .get(ClaimKeys.uid, String.class);
+    public static Claims parseClaimsFromJwt(AuthorizedJwt jwt) {
+        return parseClaimsFromJwtString(jwt.toString());
     }
 
-    public static String getUid(@org.jetbrains.annotations.NotNull Claims claims) {
-        return claims
-            .get(ClaimKeys.uid, String.class);
+    public static AuthorizedJwt generateJwtFromClaims(Claims claims, boolean keepId) {
+        Date now = new Date();
+
+        return new AuthorizedJwt()
+            .setJti(keepId ? claims.getId() : UUID.randomUUID().toString())
+            .setAud(claims.getAudience())
+            .setExp(claims.getExpiration())
+            .setUid(claims.get(PRIVATE_CLAIM_KEY_UID, Integer.class))
+            .setRol(claims.get(PRIVATE_CLAIM_KEY_ROL, String.class))
+            .setIat(now);
     }
 
-    public static Boolean hasExpired(AuthorizedJwt jwt) {
+    public static AuthorizedJwt generateJwtFromClaims(Claims claims) {
+        return generateJwtFromClaims(claims, false);
+    }
+
+    public static AuthorizedJwt generateJwtFromJwtString(String jwtString, boolean keepId) {
+        return generateJwtFromClaims(parseClaimsFromJwtString(jwtString), keepId);
+    }
+
+    public static AuthorizedJwt generateJwtFromJwtString(String jwtString) {
+        return generateJwtFromJwtString(jwtString, false);
+    }
+
+    public static Boolean isExpired(AuthorizedJwt jwt) {
         return Calendar.getInstance().before(jwt.exp);
     }
 
-    public static Boolean hasExpired(String jwt) {
-        return Calendar.getInstance().before(AuthorizedJwt.getClaimsFromJwt(jwt).get(ClaimKeys.exp, Date.class));
-    }
-
-    public static Boolean hasExpired(Claims claims) {
-        return Calendar.getInstance().before(claims.get(ClaimKeys.exp, Date.class));
-    }
-
-    public static String generateJwt(AuthorizedJwt jwt) {
-        return Jwts.builder()
-            .setClaims(jwt.getClaims())
-            .signWith(SECRET_KEY)
-            .compact();
-    }
-
-    public static AuthorizedJwt generateJwt(String jwt, Boolean onlyHasNoExpired) throws SignatureException {
-        if (onlyHasNoExpired && !AuthorizedJwt.hasExpired(jwt)) {
-            return new AuthorizedJwt(jwt);
-        }
-
-        throw new SignatureException();
+    public static Boolean isExpired(Claims claims) {
+        return Calendar.getInstance().before(claims.get(Claims.EXPIRATION, Date.class));
     }
 
     public static Boolean valid(Claims claims) {
-        return !AuthorizedJwt.hasExpired(claims);
-    }
-
-    public static Boolean valid(String jwt, AuthorizedUser user) {
-        Claims claims = AuthorizedJwt.getClaimsFromJwt(jwt);
-        return claims.getAudience().equals(user.getUsername())
-            && !AuthorizedJwt.hasExpired(claims);
+        return !isExpired(claims);
     }
 }
