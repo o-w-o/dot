@@ -18,4 +18,4 @@
 
 ================================================================================
 
-: Spring Boot :        ${application.title}::${spring-boot.version}
+: Spring Boot ${spring-boot.version} :

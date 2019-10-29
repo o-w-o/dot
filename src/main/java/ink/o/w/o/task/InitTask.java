@@ -28,7 +28,7 @@ public class InitTask {
 
     private final static String masterRandomPassword = UUID.randomUUID().toString();
     private final static String masterName = "master";
-    private final static String masterRoleName = "MASTER:USER";
+    private final static String masterRoleName = "USER:MASTER";
 
     // 3. 添加定时任务 corn 或 其他
     @Scheduled(fixedRate = 1000 * 60 * 60)
@@ -61,6 +61,9 @@ public class InitTask {
     @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
     private void initUsersForDevelopmentEnv() {
         if(env.equals("development")) {
+            userService.register(new User().setName("demo").setRoles("USER").setPassword("233333"));
+            userService.register(new User().setName("sample").setRoles("USER:RESOURCES").setPassword("233333"));
+            userService.register(new User().setName("actuator").setRoles("USER:ENDPOINT").setPassword("233333"));
             userService.register(new User().setName("李小狼").setRoles("USER").setPassword("121lxl"));
             userService.register(new User().setName("金闪闪").setRoles("USER").setPassword("121jss"));
             userService.register(new User().setName("二二娘").setRoles("USER").setPassword("121een"));
