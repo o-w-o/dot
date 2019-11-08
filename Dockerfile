@@ -16,5 +16,5 @@ ENTRYPOINT java \
     -Djava.security.egd=file:/dev/./urandom \
     -jar /opt/app.jar
 
-# 使用端口 80
+# 使用端口 8080
 EXPOSE 8080
