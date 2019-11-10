@@ -240,21 +240,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--Docker 支持-->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.12</version>
-                <configuration>
-                    <repository>${docker.registry}/${docker.image.namespace}/${project.artifactId}</repository>  <!--配置 docker 库的名称为 o-w-o/api-->
-                    <contextDirectory>./</contextDirectory>
-                    <tag>${project.version}</tag> <!--配置 docker 的 tag 为项目的版本号-->
-                    <buildArgs> <!--配置 docker 的 ARG-->
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
