@@ -17,7 +17,7 @@ pipeline {
 
         echo '1.2 获取 项目 pom.xml 中的应用信息'
         script {
-          IMG_BUILD_TAG = sh(returnStdout: true, script:"mvn -q -N -Dexec.executable='echo' -Dexec.args='\${projects.version}' exec:exec").trim()
+          IMG_BUILD_TAG = sh(returnStdout: true, script:"mvn -q -N -Dexec.executable='echo' -Dexec.args='\${projects.version}' exec:exec").trim().toLowerCase()
           JAR_FILENAME  = sh(returnStdout: true, script:"mvn -q -N -Dexec.executable='echo' -Dexec.args='\${project.build.finalName}' exec:exec").trim()
           JAR_PATH      = "target/${JAR_FILENAME}.jar"
 
@@ -57,7 +57,7 @@ pipeline {
             sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword} registry.cn-beijing.aliyuncs.com"
 
             echo "4.2 构建 Image"
-            sh "docker build --build-arg JAR_PATH=${JAR_PATH} -t ${IMG_BUILD_TAG} registry.cn-beijing.aliyuncs.com/o-w-o/api-daemon ."
+            sh "docker build --build-arg JAR_PATH=${JAR_PATH} --tag registry.cn-beijing.aliyuncs.com/o-w-o/api:${IMG_BUILD_TAG} ."
 
             echo "4.3 发布 Image"
             sh "docker push registry.cn-beijing.aliyuncs.com/o-w-o/api:${IMG_BUILD_TAG}"
