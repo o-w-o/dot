@@ -17,8 +17,8 @@ pipeline {
 
         echo '1.2 获取 项目 pom.xml 中的应用信息'
         script {
-          IMG_BUILD_TAG = sh(returnStdout: true, script:"mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version").trim()
-          JAR_FILENAME  = sh(returnStdout: true, script:"mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.build.finalName").trim()
+          IMG_BUILD_TAG = sh(returnStdout: true, script:"mvn -q -N -Dexec.executable='echo' -Dexec.args='${projects.version}' exec:exec").trim()
+          JAR_FILENAME  = sh(returnStdout: true, script:"mvn -q -N -Dexec.executable='echo' -Dexec.args='${project.build.finalName}' exec:exec").trim()
           JAR_PATH      = 'target/${JAR_FILENAME}.jar'
 
           println IMG_BUILD_TAG
