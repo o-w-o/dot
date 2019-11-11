@@ -109,10 +109,18 @@ pipeline {
               sshCommand remote: remote, command: "docker stop api"
               sshCommand remote: remote, command: "docker rm api"
             } catch (e) {
+              ERROR_MESSAGE = e.message
               echo "部署预处理异常 -> ${e.message}"
+            } finally {
+              echo "部署预处理 finally"
             }
 
-            sshCommand remote: remote, command: "docker run -i --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
+            warnError('部署预处理出现异常') {
+              input("部署预处理出现异常，确认继续执行 【TAGGED_DOCKER_IMG】 部署行为？")
+              sshCommand remote: remote, command: "docker run -i --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
+
+            }
+
           }
         }
       }
