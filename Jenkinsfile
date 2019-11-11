@@ -95,14 +95,14 @@ pipeline {
         echo "5. Deploy Stage"
         input "确认要部署线上环境吗？"
 
-        withCredentials([sshUserPrivateKey(credentialsId: 'sshKey', keyFileVariable: 'sshKey', passphraseVariable: 'password', usernameVariable: 'username')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: 'sshKey', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'username')]) {
           script {
             def remote = [:]
             remote.name = "o-w-o"
             remote.host = "o-w-o.ink"
             remote.allowAnyHosts = true
             remote.user = username
-            remote.password = password
+            remote.identityFile = identity
 
 
             try {
