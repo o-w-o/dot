@@ -112,7 +112,7 @@ pipeline {
               echo "部署预处理异常 -> ${e.message}"
             }
 
-            sshCommand remote: remote, command: "docker run -it --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
+            sshCommand remote: remote, command: "docker run -i --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
           }
         }
       }
