@@ -3,10 +3,11 @@ pipeline {
 
   environment {
     DOCKER_REGISTRY_NAMESPACE = 'registry.cn-beijing.aliyuncs.com/o-w-o'
+    TAGGED_DOCKER_IMG = "${env.DOCKER_REGISTRY_NAMESPACE}/api:latest"
   }
 
   parameters {
-    string(name: 'TAGGED_DOCKER_IMG', defaultValue: "${env.DOCKER_REGISTRY_NAMESPACE}/api:latest", description: '已经 build 并 push 成功的项目镜像名')
+    booleanParam(name: 'ENABLE_DEBUG', defaultValue: true, description: '开启 DEBUG 模式')
   }
 
   stages {
@@ -29,16 +30,24 @@ pipeline {
           JAR_FILENAME = sh(returnStdout: true, script: "mvn -q -N -Dexec.executable='echo' -Dexec.args='\${project.build.finalName}' exec:exec").trim()
           JAR_PATH = "target/${JAR_FILENAME}.jar"
 
-          println "【 IMG_BUILD_TAG 】-> ${IMG_BUILD_TAG}"
-          println "【 JAR_FILENAME 】-> ${JAR_FILENAME}"
-          println "【 JAR_PATH 】-> ${JAR_PATH}"
+          TAGGED_DOCKER_IMG = "${env.DOCKER_REGISTRY_NAMESPACE}/api:${IMG_BUILD_TAG}"
         }
-
-        input('构建版本号为【' + IMG_BUILD_TAG + '】, 确定吗？')
-
-        script {
-          params.TAGGED_DOCKER_IMG = "${env.DOCKER_REGISTRY_NAMESPACE}/api:${IMG_BUILD_TAG}"
-        }
+      }
+    }
+    stage('Prepare:Result') {
+      steps {
+        println "【 IMG_BUILD_TAG 】-> ${IMG_BUILD_TAG}"
+        println "【 JAR_FILENAME 】-> ${JAR_FILENAME}"
+        println "【 JAR_PATH 】-> ${JAR_PATH}"
+        println "【 TAGGED_DOCKER_IMG 】-> ${TAGGED_DOCKER_IMG}"
+      }
+    }
+    stage('Prepare:Debug') {
+      when {
+        expression { return params.ENABLE_DEBUG }
+      }
+      steps {
+        input("构建版本号为【 ${IMG_BUILD_TAG} 】, 镜像为【 ${TAGGED_DOCKER_IMG} 】确定吗？")
       }
     }
     stage('Build') {
@@ -72,20 +81,21 @@ pipeline {
           sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword} registry.cn-beijing.aliyuncs.com"
 
           echo "4.2 构建 Image"
-          sh "docker build --build-arg JAR_PATH=${JAR_PATH} --tag ${params.TAGGED_DOCKER_IMG} ."
+          sh "docker build --build-arg JAR_PATH=${JAR_PATH} --tag ${TAGGED_DOCKER_IMG} ."
 
           echo "4.3 发布 Image"
-          sh "docker push ${params.TAGGED_DOCKER_IMG}"
+          sh "docker push ${TAGGED_DOCKER_IMG}"
         }
       }
     }
     stage('Deploy') {
+      agent none
+
       steps {
         echo "5. Deploy Stage"
         input "确认要部署线上环境吗？"
 
-        withCredentials([usernamePassword(credentialsId: 'sshKey', passwordVariable: 'username', usernameVariable: 'password')]) {
-
+        withCredentials([sshUserPrivateKey(credentialsId: 'sshKey', keyFileVariable: 'sshKey', passphraseVariable: 'password', usernameVariable: 'username')]) {
           script {
             def remote = [:]
             remote.name = "o-w-o"
@@ -102,7 +112,7 @@ pipeline {
               echo "部署预处理异常 -> ${e.message}"
             }
 
-            sshCommand remote: remote, command: "docker run -it --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${params.TAGGED_DOCKER_IMG}"
+            sshCommand remote: remote, command: "docker run -it --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
           }
         }
       }
