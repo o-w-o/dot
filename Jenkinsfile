@@ -2,6 +2,7 @@ pipeline {
   agent any
 
   environment {
+    BUILD_TARGET = 'target'
     DOCKER_REGISTRY_NAMESPACE = 'registry.cn-beijing.aliyuncs.com/o-w-o'
     TAGGED_DOCKER_IMG = "${env.DOCKER_REGISTRY_NAMESPACE}/api:latest"
   }
@@ -28,7 +29,7 @@ pipeline {
         script {
           IMG_BUILD_TAG = sh(returnStdout: true, script: "mvn -q -N -Dexec.executable='echo' -Dexec.args='\${projects.version}' exec:exec").trim().toLowerCase()
           JAR_FILENAME = sh(returnStdout: true, script: "mvn -q -N -Dexec.executable='echo' -Dexec.args='\${project.build.finalName}' exec:exec").trim()
-          JAR_PATH = "target/${JAR_FILENAME}.jar"
+          JAR_FILE = "${env.JENKINS_HOME}/jobs/${env.JOB_NAME}/branches/${env.BRANCH_NAME}/builds/${env.BUILD_NO}/${env.BUILD_TARGET}/${JAR_FILENAME}.jar"
 
           TAGGED_DOCKER_IMG = "${env.DOCKER_REGISTRY_NAMESPACE}/api:${IMG_BUILD_TAG}"
         }
@@ -38,8 +39,26 @@ pipeline {
       steps {
         println "【 IMG_BUILD_TAG 】-> ${IMG_BUILD_TAG}"
         println "【 JAR_FILENAME 】-> ${JAR_FILENAME}"
-        println "【 JAR_PATH 】-> ${JAR_PATH}"
+        println "【 JAR_FILE 】-> ${JAR_FILE}"
         println "【 TAGGED_DOCKER_IMG 】-> ${TAGGED_DOCKER_IMG}"
+
+        println "env.JENKINS_HOME -> ${env.JENKINS_HOME}"
+        println "env.WORKSPACE -> ${env.WORKSPACE}"
+        println "env.JOB_NAME -> ${env.JOB_NAME}"
+        println "env.JOB_BASE_NAME -> ${env.JOB_BASE_NAME}"
+        println "env.BRANCH_NAME -> ${env.BRANCH_NAME}"
+        println "env.BUILD_NUMBER -> ${env.BUILD_NUMBER}"
+        println "env.BUILD_ID -> ${env.BUILD_ID}"
+        println "env.EXECUTOR_NUMBER -> ${env.EXECUTOR_NUMBER}"
+        println "env.NODE_NAME -> ${env.NODE_NAME}"
+        println "env.NODE_LABELS -> ${env.NODE_LABELS}"
+        println "pipeline -> ${pipeline}"
+        println "currentBuild.number -> ${currentBuild.number}"
+        println "currentBuild.fullProjectName -> ${currentBuild.fullProjectName}"
+        println "currentBuild.absoluteUrl -> ${currentBuild.absoluteUrl}"
+        println "currentBuild.description -> ${currentBuild.description}"
+        println "currentBuild.displayName -> ${currentBuild.displayName}"
+        println "currentBuild.result -> ${currentBuild.result}"
       }
     }
     stage('Prepare:Debug') {
@@ -81,7 +100,7 @@ pipeline {
           sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword} registry.cn-beijing.aliyuncs.com"
 
           echo "4.2 构建 Image"
-          sh "docker build --build-arg JAR_PATH=${JAR_PATH} --tag ${TAGGED_DOCKER_IMG} ."
+          sh "docker build --build-arg JAR_FILE=${JAR_FILE} --tag ${TAGGED_DOCKER_IMG} ."
 
           echo "4.3 发布 Image"
           sh "docker push ${TAGGED_DOCKER_IMG}"
@@ -89,8 +108,6 @@ pipeline {
       }
     }
     stage('Deploy') {
-      agent none
-
       steps {
         echo "5. Deploy Stage"
         input "确认要部署线上环境吗？"
@@ -112,13 +129,21 @@ pipeline {
               ERROR_MESSAGE = e.message
               echo "部署预处理异常 -> ${e.message}"
             } finally {
-              echo "部署预处理 finally"
+              echo "${TAGGED_DOCKER_IMG}"
             }
 
             warnError('部署预处理出现异常') {
-              input("部署预处理出现异常，确认继续执行 【TAGGED_DOCKER_IMG】 部署行为？")
-              sshCommand remote: remote, command: "docker run -i --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
+              input("部署预处理出现异常，确认继续执行 【${TAGGED_DOCKER_IMG}】 部署行为？")
+            }
 
+            try {
+              sshCommand remote: remote, command: "docker run -i --rm --net=host --name=api -e JAVA_OPTS='-Xms128m -Xmx256m' ${TAGGED_DOCKER_IMG}"
+            } catch (e) {
+              ERROR_MESSAGE = e.message
+              echo "部署异常 -> ${e.message}"
+            } finally {
+              echo "部署检测"
+              sshCommand remote: remote, command: "docker ps"
             }
 
           }
