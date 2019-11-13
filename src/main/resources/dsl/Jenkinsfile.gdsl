@@ -1,3 +1,4 @@
+package dsl
 //The global script scope
 def ctx = context(scope: scriptScope())
 contributor(ctx) {
@@ -23,12 +24,12 @@ contributor(ctx) {
   method(name: 'library', type: 'Object', namedParams: [parameter(name: 'identifier', type: 'java.lang.String'), parameter(name: 'changelog', type: 'java.lang.Boolean'), parameter(name: 'retriever', type: 'Map'),], doc: 'Load a shared library on the fly')
   method(name: 'libraryResource', type: 'Object', params: [resource: 'java.lang.String'], doc: 'Load a resource file from a shared library')
   method(name: 'libraryResource', type: 'Object', namedParams: [parameter(name: 'resource', type: 'java.lang.String'), parameter(name: 'encoding', type: 'java.lang.String'),], doc: 'Load a resource file from a shared library')
-  method(name: 'lock', type: 'Object', params: [resource: java.lang.String, body: 'Closure'], doc: 'Lock shared resource')
+  method(name: 'lock', type: 'Object', params: [resource: String, body: 'Closure'], doc: 'Lock shared resource')
   method(name: 'lock', type: 'Object', params: [body: Closure], namedParams: [parameter(name: 'resource', type: 'java.lang.String'), parameter(name: 'extra', type: 'java.util.List'), parameter(name: 'inversePrecedence', type: 'boolean'), parameter(name: 'label', type: 'java.lang.String'), parameter(name: 'quantity', type: 'int'), parameter(name: 'variable', type: 'java.lang.String'),], doc: 'Lock shared resource')
   method(name: 'mail', type: 'Object', namedParams: [parameter(name: 'subject', type: 'java.lang.String'), parameter(name: 'body', type: 'java.lang.String'), parameter(name: 'bcc', type: 'java.lang.String'), parameter(name: 'cc', type: 'java.lang.String'), parameter(name: 'charset', type: 'java.lang.String'), parameter(name: 'from', type: 'java.lang.String'), parameter(name: 'mimeType', type: 'java.lang.String'), parameter(name: 'replyTo', type: 'java.lang.String'), parameter(name: 'to', type: 'java.lang.String'),], doc: 'Mail')
   method(name: 'milestone', type: 'Object', params: [ordinal: 'java.lang.Integer'], doc: 'The milestone step forces all builds to go through in order')
   method(name: 'milestone', type: 'Object', namedParams: [parameter(name: 'ordinal', type: 'java.lang.Integer'), parameter(name: 'label', type: 'java.lang.String'),], doc: 'The milestone step forces all builds to go through in order')
-  method(name: 'node', type: 'Object', params: [label: java.lang.String, body: 'Closure'], doc: 'Allocate node')
+  method(name: 'node', type: 'Object', params: [label: String, body: 'Closure'], doc: 'Allocate node')
   method(name: 'properties', type: 'Object', params: [properties: 'java.util.List'], doc: 'Set job properties')
   method(name: 'readTrusted', type: 'Object', params: [path: 'java.lang.String'], doc: 'Read trusted file from SCM')
   method(name: 'resolveScm', type: 'Object', namedParams: [parameter(name: 'source', type: 'Map'), parameter(name: 'targets', type: 'java.util.List'), parameter(name: 'ignoreErrors', type: 'boolean'),], doc: 'Resolves an SCM from an SCM Source and a list of candidate target branch names')
@@ -36,7 +37,7 @@ contributor(ctx) {
   method(name: 'script', type: 'Object', params: [body: 'Closure'], doc: 'Run arbitrary Pipeline script')
   method(name: 'sleep', type: 'Object', params: [time: 'int'], doc: 'Sleep')
   method(name: 'sleep', type: 'Object', namedParams: [parameter(name: 'time', type: 'int'), parameter(name: 'unit', type: 'java.util.concurrent.TimeUnit'),], doc: 'Sleep')
-  method(name: 'stage', type: 'Object', params: [name: java.lang.String, body: 'Closure'], doc: 'Stage')
+  method(name: 'stage', type: 'Object', params: [name: String, body: 'Closure'], doc: 'Stage')
   method(name: 'stage', type: 'Object', params: [body: Closure], namedParams: [parameter(name: 'name', type: 'java.lang.String'), parameter(name: 'concurrency', type: 'java.lang.Integer'),], doc: 'Stage')
   method(name: 'timeout', type: 'Object', params: [time: int, body: 'Closure'], doc: 'Enforce time limit')
   method(name: 'timeout', type: 'Object', params: [body: Closure], namedParams: [parameter(name: 'time', type: 'int'), parameter(name: 'activity', type: 'boolean'), parameter(name: 'unit', type: 'java.util.concurrent.TimeUnit'),], doc: 'Enforce time limit')
@@ -45,7 +46,7 @@ contributor(ctx) {
   method(name: 'tool', type: 'Object', namedParams: [parameter(name: 'name', type: 'java.lang.String'), parameter(name: 'type', type: 'java.lang.String'),], doc: 'Use a tool from a predefined Tool Installation')
   method(name: 'unstable', type: 'Object', params: [message: 'java.lang.String'], doc: 'Set stage result to unstable')
   method(name: 'waitUntil', type: 'Object', params: [body: 'Closure'], doc: 'Wait for condition')
-  method(name: 'warnError', type: 'Object', params: [message: java.lang.String, body: 'Closure'], doc: 'Catch error and set build and stage result to unstable')
+  method(name: 'warnError', type: 'Object', params: [message: String, body: 'Closure'], doc: 'Catch error and set build and stage result to unstable')
   method(name: 'warnError', type: 'Object', params: [body: Closure], namedParams: [parameter(name: 'message', type: 'java.lang.String'), parameter(name: 'catchInterruptions', type: 'boolean'),], doc: 'Catch error and set build and stage result to unstable')
   method(name: 'withCredentials', type: 'Object', params: [bindings: java.util.List, body: 'Closure'], doc: 'Bind credentials to variables')
   method(name: 'withEnv', type: 'Object', params: [overrides: java.util.List, body: 'Closure'], doc: 'Set environment variables')
