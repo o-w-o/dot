@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RepositoryRestResource
-@PreAuthorize("hasAnyRole('RESOURCES','RESOURCE_SAMPLE')")
+@PreAuthorize("(hasRole('RESOURCES:SAMPLE') and hasRole('RESOURCES')) or hasRole('MASTER')")
 public interface SampleRepositoryRestResource extends JpaRepository<Sample, String> {
 }

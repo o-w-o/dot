@@ -1,12 +1,16 @@
 package ink.o.w.o.resource.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ink.o.w.o.resource.role.domain.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -17,7 +21,7 @@ import java.util.Optional;
 
 @Data
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,22 +31,34 @@ public class User {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    private String roles;
+
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinTable(name = "t_user_role",
+        joinColumns = @JoinColumn(name="user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     private String nickName;
     private Integer sex = 0;
 
-    @Temporal(TemporalType.DATE)
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private Date cTime;
 
-    @Temporal(TemporalType.DATE)
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private Date uTime;
 
     @PrePersist
-    public void recordUpdateTime(){
-        if(Optional.ofNullable(cTime).isEmpty()) {
+    public void recordCreateTime() {
+        if (Optional.ofNullable(cTime).isEmpty()) {
             cTime = new Date();
+            uTime = new Date();
         }
+    }
+
+    @PreUpdate
+    public void recordUpdateTime() {
         uTime = new Date();
     }
 }

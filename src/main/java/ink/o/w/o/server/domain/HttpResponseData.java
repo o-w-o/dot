@@ -3,8 +3,10 @@ package ink.o.w.o.server.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -18,6 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HttpResponseData {
+
     public final static Integer OK_RESULT_CODE = 200;
     public final static String UNAUTHORIZED_DEFAULT_MESSAGE = "未授权的访问！";
     public final static String FORBIDDEN_DEFAULT_MESSAGE = "授权不足！";

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.querydsl.binding.SingleValueBinding;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -40,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, QuerydslPr
             .first(StringExpression::contains);
 
         bindings.bind(String.class)
-            .first((StringPath path, String value) -> path.containsIgnoreCase(value));
+            .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
 
         bindings.excluding(user.password);
     }

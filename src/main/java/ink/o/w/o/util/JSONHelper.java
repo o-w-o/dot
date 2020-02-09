@@ -1,13 +1,11 @@
 package ink.o.w.o.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -30,6 +28,8 @@ public class JSONHelper {
 
     private void init() {
         this.objectMapper = new ObjectMapper();
+
+        objectMapper.registerModule(new Hibernate5Module());
 
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
@@ -65,7 +65,7 @@ public class JSONHelper {
      * json string convert to map with javaBean
      */
     public  <T> Map<String, T> toMap(String jsonStr, Class<T> clazz) throws IOException {
-        Map<String, Map<String, Object>> map = this.getObjectMapper().readValue(jsonStr, new TypeReference() {
+        Map<String, Map<String, Object>> map = this.getObjectMapper().readValue(jsonStr, new TypeReference<Map<String, Map<String, Object>>>() {
         });
         Map<String, T> result = new HashMap<>();
         for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) {
@@ -78,7 +78,7 @@ public class JSONHelper {
      * json array string convert to list with javaBean
      */
     public  <T> List<T> toList(String jsonArrayStr, Class<T> clazz) throws IOException {
-        List<Map<String, Object>> list = this.getObjectMapper().readValue(jsonArrayStr, new TypeReference<List<T>>() {
+        List<Map<String, Object>> list = this.getObjectMapper().readValue(jsonArrayStr, new TypeReference<List>() {
         });
         List<T> result = new ArrayList<>();
         for (Map<String, Object> map : list) {

@@ -1,11 +1,13 @@
 package ink.o.w.o.resource.user.util;
 
+import ink.o.w.o.resource.role.domain.Role;
 import ink.o.w.o.resource.user.constant.UserConstant;
 import ink.o.w.o.resource.user.domain.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author symbols@dingtalk.com
@@ -14,16 +16,14 @@ import java.util.List;
 public class UserHelper {
 
     public static List<String> getRoles(User u) {
-        List<String> list = new ArrayList<>();
-        if (u.getRoles() == null) {
-            list.add("USER");
-        } else if (u.getRoles().indexOf(UserConstant.USER_ROLE_SEPARATOR) > 0) {
-            list.addAll(Arrays.asList(u.getRoles().split(UserConstant.USER_ROLE_SEPARATOR)));
-        } else {
-            list.add(u.getRoles());
+        if (u == null || u.getRoles() == null) {
+            return new ArrayList<>();
         }
 
-        return list;
+        return List.of(u.getRoles().stream().map(Role::getName).map(s -> {
+            System.out.println("ROLE_" + s);
+            return "ROLE_" + s;
+        }).toArray(String[]::new));
     }
 
     public static Boolean isExist(User u) {

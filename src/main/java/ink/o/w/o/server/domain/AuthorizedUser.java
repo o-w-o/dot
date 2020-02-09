@@ -1,5 +1,6 @@
 package ink.o.w.o.server.domain;
 
+import ink.o.w.o.resource.role.constant.Roles;
 import ink.o.w.o.resource.user.util.UserHelper;
 import ink.o.w.o.resource.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -73,16 +74,6 @@ public static AuthorizedUser parse(User user) {
             .setId(user.getId())
             .setUsername(user.getName())
             .setPassword(user.getPassword())
-            .setAuthorities(mapToGrantedAuthorities(UserHelper.getRoles(user)));
-    }
-
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<String> authorities) {
-        List<GrantedAuthority> list = new ArrayList<>();
-
-        authorities.forEach((authority) -> {
-            list.add(new SimpleGrantedAuthority("ROLE_" + authority));
-        });
-
-        return list;
+            .setAuthorities(Roles.toAuthorities(user.getRoles()));
     }
 }

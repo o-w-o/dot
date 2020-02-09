@@ -1,10 +1,12 @@
 package ink.o.w.o.server.filter;
 
+import ink.o.w.o.resource.role.constant.Roles;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.server.domain.*;
 import ink.o.w.o.server.service.AuthorizedJwtStoreService;
 import ink.o.w.o.util.HttpHelper;
 import ink.o.w.o.util.JSONHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import java.io.PrintWriter;
  * @version 1.0
  * @date 2019/8/2 下午11:17
  */
+@Slf4j
 @Filter(name = "AuthorityInjector")
 public class AuthorityInjector extends OncePerRequestFilter {
 
@@ -55,11 +58,11 @@ public class AuthorityInjector extends OncePerRequestFilter {
             Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (userAuthentication == null || !userAuthentication.isAuthenticated()) {
-                logger.info("用户未授权,尝试注入权限……");
+                logger.info("用户未授权,尝试注入权限[rol -> {}]……", userRoles);
                 AuthorizedUser authorizedUser = AuthorizedUser.parse(
                     new User()
                         .setName(userName)
-                        .setRoles(userRoles)
+                        .setRoles(Roles.fromRolesString(userRoles))
                 );
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authorizedUser, null, authorizedUser.getAuthorities());

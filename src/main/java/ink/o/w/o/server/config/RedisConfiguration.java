@@ -1,13 +1,13 @@
 package ink.o.w.o.server.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -19,38 +19,42 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableRedisRepositories
 public class RedisConfiguration {
-    @Bean
-    @SuppressWarnings("all")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
-        template.setConnectionFactory(factory);
 
-        ObjectMapper mapper = new ObjectMapper()
-                .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
-                .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+  @Autowired
+  ObjectMapper objectMapper;
 
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+  @Bean
+  @SuppressWarnings("all")
+  public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+    var template = new RedisTemplate<String, Object>();
 
-        jackson2JsonRedisSerializer
-                .setObjectMapper(mapper);
+    template.setConnectionFactory(factory);
 
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+    var jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+    jackson2JsonRedisSerializer
+        .setObjectMapper(objectMapper);
 
-        // key采用String的序列化方式
-        template.setKeySerializer(stringRedisSerializer);
+    var stringRedisSerializer = new StringRedisSerializer();
 
-        // hash的key也采用String的序列化方式
-        template.setHashKeySerializer(stringRedisSerializer);
+    var genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
-        // value序列化方式采用jackson
-        template.setValueSerializer(jackson2JsonRedisSerializer);
+    // key 采用 String 的序列化方式
+    template.setKeySerializer(stringRedisSerializer);
 
-        // hash的value序列化方式采用jackson
-        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+    // hash 的 key 也采用 String 的序列化方式
+    template.setHashKeySerializer(stringRedisSerializer);
 
-        template.afterPropertiesSet();
+    // value 序列化方式采用 jackson
+    template.setValueSerializer(jackson2JsonRedisSerializer);
 
-        return template;
-    }
+    // hash 的 value 序列化方式采用 jackson
+    template.setHashValueSerializer(jackson2JsonRedisSerializer);
+
+    template.setDefaultSerializer(genericJackson2JsonRedisSerializer);
+
+    template.afterPropertiesSet();
+
+    return template;
+  }
 
 }

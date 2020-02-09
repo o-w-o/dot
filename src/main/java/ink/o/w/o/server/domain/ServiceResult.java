@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @author symbols@dingtalk.com
  * @date 2019/8/5 上午9:12
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceResult<T> {
+public class ServiceResult<T> implements Serializable {
     public final static Integer OK_RESULT_CODE = 0;
     public final static Integer NO_RESULT_CODE = 400;
 

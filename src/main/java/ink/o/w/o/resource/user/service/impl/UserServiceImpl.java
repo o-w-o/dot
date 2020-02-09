@@ -1,6 +1,7 @@
 package ink.o.w.o.resource.user.service.impl;
 
 import com.querydsl.core.types.Predicate;
+import ink.o.w.o.resource.role.domain.Role;
 import ink.o.w.o.resource.user.constant.UserConstant;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.repository.UserRepository;
@@ -11,18 +12,21 @@ import ink.o.w.o.server.exception.ServiceException;
 import ink.o.w.o.util.PasswordEncoderHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+
 @Slf4j
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    @Autowired
+    @Resource
     UserRepository userRepository;
 
     @Override
@@ -39,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = "getUserById")
     public ServiceResult<User> getUserById(Integer id) {
         if (userRepository.existsById(id)) {
             return ServiceResultFactory.success(
@@ -76,8 +81,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult<Boolean> changeRole(Integer id, String oldRole, String newRole) {
-        return ServiceResultFactory.success(false);
+    public ServiceResult<Boolean> addRole(Integer id, Role role) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<Boolean> removeRole(Integer id, Role role) {
+        return null;
     }
 
     @Override

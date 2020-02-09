@@ -1,6 +1,9 @@
 package ink.o.w.o.task;
 
+import ink.o.w.o.resource.role.constant.Roles;
+import ink.o.w.o.resource.role.service.RoleService;
 import ink.o.w.o.resource.user.domain.User;
+import ink.o.w.o.resource.user.domain.UserPassword;
 import ink.o.w.o.resource.user.service.UserService;
 import ink.o.w.o.server.domain.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
@@ -15,32 +18,43 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * 初始化任务
+ *
+ * @author symbols@dingtalk.com
+ * @version 1.0
+ * @date 2019/11/28 11:21
+ */
+
 @Slf4j
 @Component
-@Configuration      // 1. 主要用于标记配置类，兼备 Component 的效果。
-@EnableScheduling   // 2. 开启定时任务
+@Configuration
+@EnableScheduling
 public class InitTask {
     @Value("${spring.profiles.active}")
     private String env;
 
+
+    private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
+
     @Autowired
     UserService userService;
+    private final static String MASTER_NAME = "master";
+    @Value("${custom.env}")
+    String customEnv;
+    @Autowired
+    RoleService roleService;
 
-    private final static String masterRandomPassword = UUID.randomUUID().toString();
-    private final static String masterName = "master";
-    private final static String masterRoleName = "USER:MASTER";
-
-    // 3. 添加定时任务 corn 或 其他
-    @Scheduled(fixedRate = 1000 * 60 * 60)
     private void initAndCheckMasterUser() {
-        logger.info("InitTask: initPassword -> {}, account -> {}", masterRandomPassword, masterName);
+        logger.info("InitTask: customEnv -> {}, env -> {}", customEnv, env);
+        logger.info("InitTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
 
-        ServiceResult<User> userServiceResult = userService.getUserByUsername(masterName);
+        ServiceResult<User> userServiceResult = userService.getUserByUsername(MASTER_NAME);
         if (userServiceResult.getSuccess()) {
             User u = userServiceResult.getPayload();
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            if (encoder.matches(masterRandomPassword, u.getPassword()) || u.getCTime().equals(u.getUTime())) {
+            if (encoder.matches(MASTER_RANDOM_PASSWORD, u.getPassword()) || u.getCTime().equals(u.getUTime())) {
                 logger.warn("请尽快修改管理员密码！cTime -> {}", u.getCTime());
                 return;
             }
@@ -51,23 +65,16 @@ public class InitTask {
 
         userService.register(
             new User()
-                .setName(masterName)
-                .setPassword(masterRandomPassword)
-                .setRoles(masterRoleName)
+                .setName(MASTER_NAME)
+                .setPassword(MASTER_RANDOM_PASSWORD)
+                .setRoles(Roles.toRoles(Roles.MASTER, Roles.USER))
         );
         System.err.println("执行静态定时任务 [ InitTask ] 时间: " + LocalDateTime.now());
+
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
-    private void initUsersForDevelopmentEnv() {
-        if(env.equals("development")) {
-            userService.register(new User().setName("demo").setRoles("USER").setPassword("233333"));
-            userService.register(new User().setName("sample").setRoles("USER:RESOURCES").setPassword("233333"));
-            userService.register(new User().setName("actuator").setRoles("USER:ENDPOINT").setPassword("233333"));
-            userService.register(new User().setName("李小狼").setRoles("USER").setPassword("121lxl"));
-            userService.register(new User().setName("金闪闪").setRoles("USER").setPassword("121jss"));
-            userService.register(new User().setName("二二娘").setRoles("USER").setPassword("121een"));
-            userService.register(new User().setName("三三娘").setRoles("USER").setPassword("121ssn"));
-        }
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    private void initAndCheckMasterUserTask() {
+        initAndCheckMasterUser();
     }
 }

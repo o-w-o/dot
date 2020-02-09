@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -59,7 +60,7 @@ public class AuthorizedJwt {
     private static final Date NBF = new Date();
 
     public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
-    public static final String AUTHORIZATION_HEADER_VAL_PREFIX = "Bear ";
+    public static final String AUTHORIZATION_HEADER_VAL_PREFIX = "Bearer ";
 
     public static final String PRIVATE_CLAIM_KEY_UID = "uid";
     public static final String PRIVATE_CLAIM_KEY_ROL = "rol";
@@ -127,7 +128,7 @@ public class AuthorizedJwt {
     public static Claims parseClaimsFromJwtString(String jwt) {
         return Jwts
             .parser()
-            .setAllowedClockSkewSeconds(1)
+            .setAllowedClockSkewSeconds(Duration.ofDays(1L).getSeconds())
             .setSigningKey(SECRET_KEY)
             .parseClaimsJws(jwt)
             .getBody();

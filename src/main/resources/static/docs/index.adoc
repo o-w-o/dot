@@ -1,27 +1,20 @@
-= API 文档
+= 接口文档
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 4
+:toclevels: 3
 :sectlinks:
 :numbered:
 
+[[introduction]]
+== 介绍
 
-== API
-[[1]]
+这里是一段介绍示例。
 
-=== JWT 授权接口（/xxx/vx/xxx/）
-operation::auth--get-access_token[]
-operation::auth--get-refresh_token[]
+NOTE: 以下示例仅用于测试。
 
-=== Actuator 授权接口（/xxx/vx/xxx/）
-operation::auth--get-endpoint-unauthorized[]
-operation::auth--get-endpoint-forbidden[]
-operation::auth--get-endpoint-ok[]
 
-=== REST Data 授权接口（/xxx/vx/xxx/）
-operation::auth--get-es-unauthorized[]
-operation::auth--get-es-forbidden[]
-operation::auth--get-es-ok[]
+include::authorization.adoc[]
 
+include::user.adoc[]

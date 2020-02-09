@@ -1,10 +1,12 @@
 package ink.o.w.o.resource.user.service;
 
 import com.querydsl.core.types.Predicate;
+import ink.o.w.o.resource.role.domain.Role;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.server.domain.ServiceResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * @author LongY
@@ -30,7 +32,11 @@ public interface UserService {
      */
      ServiceResult<Boolean> unregister(Integer id);
 
-     ServiceResult<Boolean> changeRole(Integer id, String oldRole, String newRole);
+    @PreAuthorize("principal.username.equals(#id)")
+     ServiceResult<Boolean> addRole(Integer id, Role role);
+
+    @PreAuthorize("principal.username.equals(#id)")
+     ServiceResult<Boolean> removeRole(Integer id, Role role);
 
     /**
      * 重置用户密码

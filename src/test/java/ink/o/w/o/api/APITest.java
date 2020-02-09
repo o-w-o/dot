@@ -1,33 +1,33 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.Application;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
+import ink.o.w.o.api.config.RestDocumentTestConfiguration;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.annotation.Import;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * @author symbols@dingtalk.com
  * @date 2019/8/8 上午8:59
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {Application.class})
+
+@Slf4j
+@SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Ignore
+@AutoConfigureRestDocs(uriHost = "api.o-w-o.ink", uriScheme = "https", uriPort = 443)
+@Import(RestDocumentTestConfiguration.class)
 public class APITest {
+  @Autowired
+  public MockMvc mockMvc;
 
-    @Autowired
-    protected MockMvc mockMvc;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+  @Autowired
+  public RestDocumentationResultHandler restDocumentationResultHandler;
 }
