@@ -2,8 +2,8 @@ package ink.o.w.o.task;
 
 import ink.o.w.o.resource.role.constant.Roles;
 import ink.o.w.o.resource.role.service.RoleService;
+import ink.o.w.o.resource.role.util.RoleHelper;
 import ink.o.w.o.resource.user.domain.User;
-import ink.o.w.o.resource.user.domain.UserPassword;
 import ink.o.w.o.resource.user.service.UserService;
 import ink.o.w.o.server.domain.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
@@ -31,50 +31,48 @@ import java.util.UUID;
 @Configuration
 @EnableScheduling
 public class InitTask {
-    @Value("${spring.profiles.active}")
-    private String env;
+  private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
+  private final static String MASTER_NAME = "master";
+  @Autowired
+  RoleService roleService;
 
+  @Autowired
+  UserService userService;
+  @Value("${custom.env}")
+  String customEnv;
+  @Value("${spring.profiles.active}")
+  private String env;
 
-    private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
+  private void initAndCheckMasterUser() {
+    logger.info("InitTask: customEnv -> {}, env -> {}", customEnv, env);
+    logger.info("InitTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
 
-    @Autowired
-    UserService userService;
-    private final static String MASTER_NAME = "master";
-    @Value("${custom.env}")
-    String customEnv;
-    @Autowired
-    RoleService roleService;
+    ServiceResult<User> userServiceResult = userService.getUserByUsername(MASTER_NAME);
+    if (userServiceResult.getSuccess()) {
+      User u = userServiceResult.getPayload();
 
-    private void initAndCheckMasterUser() {
-        logger.info("InitTask: customEnv -> {}, env -> {}", customEnv, env);
-        logger.info("InitTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
+      BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+      if (encoder.matches(MASTER_RANDOM_PASSWORD, u.getPassword()) || u.getCTime().equals(u.getUTime())) {
+        logger.warn("请尽快修改管理员密码！cTime -> {}", u.getCTime());
+        return;
+      }
 
-        ServiceResult<User> userServiceResult = userService.getUserByUsername(MASTER_NAME);
-        if (userServiceResult.getSuccess()) {
-            User u = userServiceResult.getPayload();
-
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            if (encoder.matches(MASTER_RANDOM_PASSWORD, u.getPassword()) || u.getCTime().equals(u.getUTime())) {
-                logger.warn("请尽快修改管理员密码！cTime -> {}", u.getCTime());
-                return;
-            }
-
-            logger.warn("检测到管理员密码已修改！cTime -> {}, uTime -> {}, isEqual ? {}", u.getCTime(), u.getCTime(), u.getCTime().equals(u.getUTime()));
-            return;
-        }
-
-        userService.register(
-            new User()
-                .setName(MASTER_NAME)
-                .setPassword(MASTER_RANDOM_PASSWORD)
-                .setRoles(Roles.toRoles(Roles.MASTER, Roles.USER))
-        );
-        System.err.println("执行静态定时任务 [ InitTask ] 时间: " + LocalDateTime.now());
-
+      logger.warn("检测到管理员密码已修改！cTime -> {}, uTime -> {}, isEqual ? {}", u.getCTime(), u.getCTime(), u.getCTime().equals(u.getUTime()));
+      return;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60)
-    private void initAndCheckMasterUserTask() {
-        initAndCheckMasterUser();
-    }
+    userService.register(
+        new User()
+            .setName(MASTER_NAME)
+            .setPassword(MASTER_RANDOM_PASSWORD)
+            .setRoles(RoleHelper.toRoles(Roles.MASTER, Roles.USER))
+    );
+    System.err.println("执行静态定时任务 [ InitTask ] 时间: " + LocalDateTime.now());
+
+  }
+
+  @Scheduled(fixedRate = 1000 * 60 * 60)
+  private void initAndCheckMasterUserTask() {
+    initAndCheckMasterUser();
+  }
 }

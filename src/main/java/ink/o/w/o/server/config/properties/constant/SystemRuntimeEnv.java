@@ -8,21 +8,14 @@ import lombok.Getter;
  * @version  1.0
  * @date 2020/1/20 11:06
  */
-public enum SystemRuntimeEnvEnum {
+public class SystemRuntimeEnv {
 
     /**
      * 开发环境
      */
-    DEVELOPMENT("development"),
+    public static final String DEVELOPMENT = "development";
     /**
      * 正式环境
      */
-    PRODUCTION("production");
-
-    @Getter
-    private String env;
-
-    SystemRuntimeEnvEnum(String env) {
-        this.env = env;
-    }
+   public static final String  PRODUCTION = "production";
 }

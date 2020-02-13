@@ -1,6 +1,6 @@
 package ink.o.w.o.server.config.properties;
 
-import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnvEnum;
+import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +18,5 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "custom")
 @PropertySource(value = "classpath:/custom.properties")
 public class CustomProperties {
-    public SystemRuntimeEnvEnum env = SystemRuntimeEnvEnum.DEVELOPMENT;
+    public String env = SystemRuntimeEnv.DEVELOPMENT;
 }

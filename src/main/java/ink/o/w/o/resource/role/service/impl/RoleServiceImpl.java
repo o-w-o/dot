@@ -1,8 +1,8 @@
 package ink.o.w.o.resource.role.service.impl;
 
-import ink.o.w.o.resource.role.constant.Roles;
 import ink.o.w.o.resource.role.repository.RoleRepository;
 import ink.o.w.o.resource.role.service.RoleService;
+import ink.o.w.o.resource.role.util.RoleHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void initRoles() {
         if (roleRepository.count() == 0) {
-            roleRepository.saveAll(new HashSet<>(Roles.ROLES_MAP.values()));
+            roleRepository.saveAll(new HashSet<>(RoleHelper.ROLES_MAP.values()));
         } else {
             logger.warn("skip [initRoles:{}] step !", roleRepository.count());
         }

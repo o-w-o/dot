@@ -33,13 +33,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @ExposesResourceFor(UserAPI.class)
 @RequestMapping(HttpConstant.API_ENTRY + "/users")
 public class UserAPI {
-  private final EntityLinks entityLinks;
+  @Autowired
+  private EntityLinks entityLinks;
+
   @Autowired
   private UserService userService;
-
-  UserAPI(EntityLinks entityLinks) {
-    this.entityLinks = entityLinks;
-  }
 
   @GetMapping
   @PreAuthorize("hasRole('ROLE_MASTER')")

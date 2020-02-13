@@ -11,7 +11,6 @@ import ink.o.w.o.server.domain.ServiceResultFactory;
 import ink.o.w.o.server.exception.ServiceException;
 import ink.o.w.o.util.PasswordEncoderHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -137,7 +136,7 @@ public class UserServiceImpl implements UserService {
             return ServiceResultFactory.error("用户名已存在！");
         }
 
-        if (userRepository.modifyUserProfile(user.getName(), user.getNickName(), user.getSex(), id) > 0) {
+        if (userRepository.modifyUserProfile(user.getName(), user.getNickName(), user.getGender().getValue(), id) > 0) {
             return ServiceResultFactory.success(
                 userRepository.getOne(id)
             );

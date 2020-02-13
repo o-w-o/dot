@@ -1,20 +1,16 @@
 package ink.o.w.o.server.domain;
 
-import ink.o.w.o.resource.role.constant.Roles;
-import ink.o.w.o.resource.user.util.UserHelper;
+import ink.o.w.o.resource.role.util.RoleHelper;
 import ink.o.w.o.resource.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -74,6 +70,6 @@ public static AuthorizedUser parse(User user) {
             .setId(user.getId())
             .setUsername(user.getName())
             .setPassword(user.getPassword())
-            .setAuthorities(Roles.toAuthorities(user.getRoles()));
+            .setAuthorities(RoleHelper.toAuthorities(user.getRoles()));
     }
 }

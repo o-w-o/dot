@@ -1,7 +1,7 @@
 package ink.o.w.o.server.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import ink.o.w.o.resource.role.constant.Roles;
+import ink.o.w.o.resource.role.util.RoleHelper;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.server.domain.*;
 import ink.o.w.o.server.exception.ServiceException;
@@ -33,7 +33,7 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
 
         AuthorizedJwt authorizedJwt = new AuthorizedJwt()
             .setAud(user.getName())
-            .setRol(Roles.toRolesString(user.getRoles()))
+            .setRol(RoleHelper.toRolesString(user.getRoles()))
             .setUid(user.getId())
             .setIat(now);
 

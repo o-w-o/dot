@@ -13,6 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "t_dot")
 
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class Dot {
   //    inverseJoinColumns = @JoinColumn(name = "payload_id"))
   private DotPayload payload;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.LAZY)
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "dot", fetch = FetchType.LAZY)
   // 级联保存、更新、删除、刷新;延迟加载。当删除用户，会级联删除该用户的所有文章
   // 拥有 mappedBy 注解的实体类为关系被维护端
   // mappedBy="author"中的 author 是 Article 中的 author 属性

@@ -1,5 +1,6 @@
 package ink.o.w.o.server.config;
 
+import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
 import ink.o.w.o.server.controller.AccessDeniedController;
 import ink.o.w.o.server.controller.UnAuthorizedAccessController;
 import ink.o.w.o.server.filter.AuthorityInjector;
@@ -31,76 +32,81 @@ import javax.annotation.Resource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Value("${management.endpoints.web.base-path}")
-    private String endpointBaseUrl;
+  @Value("${management.endpoints.web.base-path}")
+  private String endpointBaseUrl;
 
-    @Value("${spring.data.rest.base-path}")
-    private String resourceBaseUrl;
+  @Value("${spring.data.rest.base-path}")
+  private String resourceBaseUrl;
 
-    @Resource
-    private UnAuthorizedAccessController unAuthorizedAccessController;
+  @Value("${spring.profiles.active}")
+  private String env;
 
-    @Resource
-    private AccessDeniedController accessDeniedController;
+  @Resource
+  private UnAuthorizedAccessController unAuthorizedAccessController;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+  @Resource
+  private AccessDeniedController accessDeniedController;
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthorityInjector authenticationTokenFilterBean() {
+    return new AuthorityInjector();
+  }
+
+  @Override
+  protected void configure(HttpSecurity httpSecurity) throws Exception {
+    httpSecurity
+
+        // 由于使用的是JWT，我们这里不需要csrf
+        .csrf().disable()
+
+        // 基于token，所以不需要session
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+    // 配置 actuator
+    httpSecurity
+        .requestMatcher(EndpointRequest.toAnyEndpoint()).authorizeRequests(
+        (requests) -> requests
+            .antMatchers("*", endpointBaseUrl + "/**")
+            .hasRole("ENDPOINT")
+    );
+
+    if (!SystemRuntimeEnv.DEVELOPMENT.equals(env)) {
+      // 配置 rest data resource
+      httpSecurity.authorizeRequests(
+          (requests) -> requests
+              .antMatchers("*", resourceBaseUrl + "/**")
+              .hasRole("RESOURCE")
+      );
     }
 
-    @Bean
-    public AuthorityInjector authenticationTokenFilterBean() {
-        return new AuthorityInjector();
-    }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
+    httpSecurity.authorizeRequests()
 
-            // 由于使用的是JWT，我们这里不需要csrf
-            .csrf().disable()
+        // 对于获取 token 的 rest api 要允许匿名访问
+        .antMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
 
-            // 基于token，所以不需要session
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // 允许对于网站静态资源的无授权访问
+        .antMatchers(HttpMethod.GET, "/static/resources/**").permitAll()
 
-        // 配置 actuator
-        httpSecurity
-            .requestMatcher(EndpointRequest.toAnyEndpoint()).authorizeRequests(
-            (requests) -> requests
-                .antMatchers("*", endpointBaseUrl + "/**")
-                .hasRole("ENDPOINT")
-        );
-
-        // 配置 rest data resource
-        httpSecurity.authorizeRequests(
-            (requests) -> requests
-                .antMatchers("*", resourceBaseUrl + "/**")
-                .hasRole("RESOURCE")
-        );
+        // 除上面外的所有请求全部需要鉴权认证
+        .anyRequest().authenticated();
 
 
-        httpSecurity.authorizeRequests()
+    httpSecurity
+        .exceptionHandling()
+        .authenticationEntryPoint(unAuthorizedAccessController)
+        .accessDeniedHandler(accessDeniedController);
 
-            // 对于获取 token 的 rest api 要允许匿名访问
-            .antMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
+    // 添加 JWT filter
+    httpSecurity
+        .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
-            // 允许对于网站静态资源的无授权访问
-            .antMatchers(HttpMethod.GET, "/static/resources/**").permitAll()
-
-            // 除上面外的所有请求全部需要鉴权认证
-            .anyRequest().authenticated();
-
-
-        httpSecurity
-            .exceptionHandling()
-            .authenticationEntryPoint(unAuthorizedAccessController)
-            .accessDeniedHandler(accessDeniedController);
-
-        // 添加 JWT filter
-        httpSecurity
-            .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
-
-        // 禁用缓存
-        httpSecurity.headers().cacheControl();
-    }
+    // 禁用缓存
+    httpSecurity.headers().cacheControl();
+  }
 }

@@ -2,6 +2,7 @@ package ink.o.w.o.resource.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ink.o.w.o.resource.role.domain.Role;
+import ink.o.w.o.resource.user.constant.UserGender;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -39,7 +40,9 @@ public class User implements Serializable {
     private Set<Role> roles;
 
     private String nickName;
-    private Integer sex = 0;
+
+    @Convert(converter = UserGender.Converter.class)
+    private UserGender gender = UserGender.UNKNOWN;
 
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)

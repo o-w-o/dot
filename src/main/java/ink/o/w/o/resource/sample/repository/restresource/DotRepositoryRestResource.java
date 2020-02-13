@@ -1,6 +1,6 @@
-package ink.o.w.o.resource.sample.repository;
+package ink.o.w.o.resource.sample.repository.restresource;
 
-import ink.o.w.o.resource.sample.domain.Sample;
+import ink.o.w.o.resource.sample.domain.Dot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,5 +16,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource
 @PreAuthorize("(hasRole('RESOURCES:SAMPLE') and hasRole('RESOURCES')) or hasRole('MASTER')")
-public interface SampleRepositoryRestResource extends JpaRepository<Sample, String> {
+public interface DotRepositoryRestResource extends JpaRepository<Dot, String> {
 }

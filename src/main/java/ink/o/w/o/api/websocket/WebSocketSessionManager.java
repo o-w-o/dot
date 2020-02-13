@@ -1,4 +1,4 @@
-package ink.o.w.o.api;
+package ink.o.w.o.api.websocket;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 12
+ * -
  *
  * @author symbols@dingtalk.com
  * @version 1.0
