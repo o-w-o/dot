@@ -1,7 +1,7 @@
 package ink.o.w.o.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ink.o.w.o.server.domain.HttpResponseData;
+import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
 import ink.o.w.o.server.domain.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -126,6 +126,6 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
   @Bean
   public CacheManager cacheManagerForHttpResponseData() {
-    return createCacheManagerX(HttpResponseData.class);
+    return createCacheManagerX(ResponseEntityExceptionBody.class);
   }
 }

@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 public class AuthorizationAPITest extends APITest {
 
-  private final String authorizationBaseUrl = HttpConstant.API_ENTRY + "/auth";
+  private final String authorizationBaseUrl = HttpConstant.API_BASE_URL + "/auth";
   @Autowired
   private AuthorizationService authorizationService;
   @Value("${spring.data.rest.base-path}")

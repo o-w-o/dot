@@ -72,7 +72,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public ServiceResult<Boolean> revoke(String accessToken) {
-        ServiceResult serviceResult = authorizedJwtStoreService.revoke(AuthorizedJwt.generateJwtFromJwtString(accessToken));
+        var serviceResult = authorizedJwtStoreService.revoke(AuthorizedJwt.generateJwtFromJwtString(accessToken));
         return ServiceResultFactory
             .success(serviceResult.getSuccess(), serviceResult.getMessage());
 

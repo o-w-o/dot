@@ -40,11 +40,7 @@ public class JSONHelper {
     return objectMapper.writeValueAsString(obj);
   }
 
-  /**
-   * json string convert to map
-   *
-   * @return
-   */
+
   public <T> Map toMap(String jsonStr) throws IOException {
     return this.getObjectMapper().readValue(jsonStr, Map.class);
   }

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 public class UserAPITest extends APITest {
 
-  private final String userBaseUrl = HttpConstant.API_ENTRY + "/users";
+  private final String userBaseUrl = HttpConstant.API_BASE_URL + "/users";
   @Autowired
   AuthorizationService authorizationService;
   private String accessToken;

@@ -29,7 +29,7 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
     private String env;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         logger.info("ApplicationRunner:run ……");
 
         logger.info("ApplicationRunner:run 初始化 roles");

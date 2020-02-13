@@ -2,7 +2,10 @@ package ink.o.w.o.server.filter;
 
 import ink.o.w.o.resource.role.util.RoleHelper;
 import ink.o.w.o.resource.user.domain.User;
-import ink.o.w.o.server.domain.*;
+import ink.o.w.o.server.domain.AuthorizationPayload;
+import ink.o.w.o.server.domain.AuthorizedUser;
+import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
+import ink.o.w.o.server.domain.ServiceResult;
 import ink.o.w.o.server.service.AuthorizedJwtStoreService;
 import ink.o.w.o.util.HttpHelper;
 import ink.o.w.o.util.JSONHelper;
@@ -10,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 
 /**
  * 每次请求前的权限注入过滤器
@@ -86,15 +92,15 @@ public class AuthorityInjector extends OncePerRequestFilter {
   }
 
   private void handlerJwtAuthenticationException(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setCharacterEncoding(UTF_8);
     response.setStatus(HttpStatus.FORBIDDEN.value());
 
     try (PrintWriter writer = response.getWriter()) {
       writer.write(jsonHelper.toJSONString(
-          HttpResponseDataFactory.error(HttpHelper.formatResponseDataMessage(request).apply("用户授权信息解析异常，授权终止！"))
+          ResponseEntityExceptionBody.error(HttpHelper.formatResponseDataMessage(request).apply("用户授权信息解析异常，授权终止！"))
               .setPath(request.getRequestURI())
-              .setResultCode(12333)
+              .setCode(12333)
       ));
       writer.flush();
     }

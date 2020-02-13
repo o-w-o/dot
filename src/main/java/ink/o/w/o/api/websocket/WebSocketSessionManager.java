@@ -20,7 +20,7 @@ public class WebSocketSessionManager {
     /**
      * concurrent 包的线程安全 Set，用来存放每个客户端对应的 MyWebSocket 对象。
      */
-    private ConcurrentHashMap<String, WebSocketSession> webSocketSessionManager = new ConcurrentHashMap<String, WebSocketSession>();
+    private ConcurrentHashMap<String, WebSocketSession> webSocketSessionManager = new ConcurrentHashMap<>();
 
     public static WebSocketSessionManager getWebSocketSessionManager() {
         if (WebSocketSessionManager.wsManger == null) {

@@ -28,7 +28,7 @@ import static org.springframework.hateoas.mediatype.alps.Alps.doc;
 @Slf4j
 @RestController
 @ExposesResourceFor(ProfileAPI.class)
-@RequestMapping("profile")
+@RequestMapping(HttpConstant.API_BASE_URL)
 public class ProfileAPI {
   @GetMapping(produces = ALPS_JSON_VALUE)
   Alps profile() {

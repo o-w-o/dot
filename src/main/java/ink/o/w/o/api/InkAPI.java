@@ -4,11 +4,13 @@ import ink.o.w.o.resource.ink.constant.InkType;
 import ink.o.w.o.resource.ink.domain.ex.ArticleInk;
 import ink.o.w.o.resource.ink.service.InkService;
 import ink.o.w.o.server.constant.HttpConstant;
-import ink.o.w.o.server.domain.HttpResponseData;
-import ink.o.w.o.server.domain.HttpResponseDataFactory;
+import ink.o.w.o.server.domain.ResponseEntityBody;
+import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
+import ink.o.w.o.server.domain.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.ExposesResourceFor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @ExposesResourceFor(UserAPI.class)
-@RequestMapping(HttpConstant.API_ENTRY + "/inks")
+@RequestMapping(HttpConstant.API_BASE_URL + "/inks")
 public class InkAPI {
   private final InkService inkService;
 
@@ -27,8 +29,8 @@ public class InkAPI {
   }
 
   @GetMapping
-  HttpResponseData test() {
-    return HttpResponseDataFactory.success(
+  ResponseEntity<ResponseEntityBody<String>> test() {
+    return ResponseEntityFactory.success(
         inkService.test(new ArticleInk().setId(12L).setType(InkType.ARTICLE))
     );
   }

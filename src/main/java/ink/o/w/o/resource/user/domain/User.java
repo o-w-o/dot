@@ -6,6 +6,7 @@ import ink.o.w.o.resource.user.constant.UserGender;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,7 +23,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class User implements Serializable {
+public class User extends RepresentationModel<User> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
