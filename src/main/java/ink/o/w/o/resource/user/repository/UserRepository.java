@@ -27,9 +27,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, QuerydslPr
 
     Optional<User> findUserByName(String name);
 
-    @Modifying(clearAutomatically = true)
-    @Query(value = "update User u set u." + "name=?1,u.nickName=?2,u.gender=?3 where u.id=?4")
-    int modifyUserProfile(String name, String nickName, Integer sex, Integer id);
+    Optional<User> findUserById(Integer id);
+
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update User u set u.password=?1 where u.id=?2")

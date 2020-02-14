@@ -1,11 +1,15 @@
 package ink.o.w.o.server.domain;
 
+import ink.o.w.o.server.constant.HttpExceptionStatus;
+import ink.o.w.o.util.HttpHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -19,15 +23,16 @@ import java.util.Date;
 @AllArgsConstructor
 public class ResponseEntityExceptionBody<T> {
 
-  public final static String UNAUTHORIZED_DEFAULT_MESSAGE = "未授权的访问！";
-  public final static String FORBIDDEN_DEFAULT_MESSAGE = "授权不足！";
-
   @Getter
   private Integer code;
 
   @Getter
   @Setter
   private String message = "";
+
+  @Getter
+  @Setter
+  private String method = "";
 
   @Getter
   @Setter
@@ -40,6 +45,14 @@ public class ResponseEntityExceptionBody<T> {
   @Getter
   @Setter
   private Date timestamp;
+
+  public static String ofExceptionCodeMessage(Integer code) {
+    return Arrays.stream(HttpExceptionStatus.values())
+        .filter(httpExceptionStatus -> httpExceptionStatus.getCode().equals(code))
+        .findFirst()
+        .map(HttpExceptionStatus::getMessage)
+        .orElse("");
+  }
 
   public static <T> ResponseEntityExceptionBody<T> error(String message) {
     return error(message, HttpStatus.BAD_REQUEST);
@@ -58,19 +71,61 @@ public class ResponseEntityExceptionBody<T> {
   }
 
   public static <T> ResponseEntityExceptionBody<T> unauthorized(String message) {
-    return error(ResponseEntityExceptionBody.UNAUTHORIZED_DEFAULT_MESSAGE, HttpStatus.UNAUTHORIZED);
+    return error(message, HttpStatus.UNAUTHORIZED);
   }
 
   public static <T> ResponseEntityExceptionBody<T> unauthorized() {
-    return unauthorized(ResponseEntityExceptionBody.UNAUTHORIZED_DEFAULT_MESSAGE);
+    return unauthorized(HttpExceptionStatus.unauthorized.getMessage());
   }
 
   public static <T> ResponseEntityExceptionBody<T> forbidden(String message) {
-    return error(ResponseEntityExceptionBody.FORBIDDEN_DEFAULT_MESSAGE, HttpStatus.FORBIDDEN);
+    return error(HttpExceptionStatus.forbidden.getMessage(), HttpStatus.FORBIDDEN);
   }
 
   public static <T> ResponseEntityExceptionBody<T> forbidden() {
-    return forbidden(ResponseEntityExceptionBody.FORBIDDEN_DEFAULT_MESSAGE);
+    return forbidden(HttpExceptionStatus.forbidden.getMessage());
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, String message, Integer code) {
+    return new ResponseEntityExceptionBody<T>()
+        .setPath(request.getRequestURI())
+        .setMethod(request.getMethod().toUpperCase())
+        .setCode(code)
+        .setMessage(
+            HttpHelper.formatResponseDataMessage(request).apply(message)
+        );
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, HttpStatus status) {
+    return of(
+        request,
+        status.getReasonPhrase(),
+        status.value()
+    );
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, HttpExceptionStatus status) {
+    return of(
+        request,
+        status.getMessage(),
+        status.getCode()
+    );
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, Integer code) {
+    return of(request, ofExceptionCodeMessage(code), code);
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, String message) {
+    return of(request, message, HttpExceptionStatus.badRequest.getCode());
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request) {
+    return of(
+        request,
+        HttpExceptionStatus.badRequest.getMessage(),
+        HttpExceptionStatus.badRequest.getCode()
+    );
   }
 
   public ResponseEntityExceptionBody<T> setCode(int code) {

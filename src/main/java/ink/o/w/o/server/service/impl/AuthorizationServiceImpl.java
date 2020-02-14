@@ -35,7 +35,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public ServiceResult<AuthorizedJwts> authorize(String username, String password) {
         if (!userRepository.existsByName(username)) {
-            return ServiceResultFactory.error(String.format("用户[ %s ]不存在！", username));
+            return ServiceResultFactory.error(String.format("用户 [ %s ] 不存在！", username));
         }
 
         User user = userRepository.findUserByName(username).orElseThrow(new ServiceException(""));

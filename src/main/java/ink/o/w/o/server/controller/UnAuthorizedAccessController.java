@@ -1,6 +1,7 @@
 package ink.o.w.o.server.controller;
 
 import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
+import ink.o.w.o.server.constant.HttpExceptionStatus;
 import ink.o.w.o.util.HttpHelper;
 import ink.o.w.o.util.JSONHelper;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class UnAuthorizedAccessController implements AuthenticationEntryPoint, S
       writer.write(jsonHelper.toJSONString(
           ResponseEntityExceptionBody.unauthorized()
               .setPath(request.getRequestURI())
-              .setMessage(HttpHelper.formatResponseDataMessage(request).apply(ResponseEntityExceptionBody.UNAUTHORIZED_DEFAULT_MESSAGE))
+              .setMessage(HttpHelper.formatResponseDataMessage(request).apply(HttpExceptionStatus.forbidden.getMessage()))
       ));
       writer.flush();
     }

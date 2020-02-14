@@ -3,12 +3,10 @@ package ink.o.w.o.server.config;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -22,13 +20,6 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
-
-  private final HttpExceptionConfiguration handlerExceptionResolver;
-
-  @Autowired
-  WebMvcConfiguration(HttpExceptionConfiguration handlerExceptionResolver) {
-    this.handlerExceptionResolver = handlerExceptionResolver;
-  }
 
   /**
    * @param configurer -
@@ -59,17 +50,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         logger.info("未设置 converters 的类：" + converter.getClass().getName());
       }
     }
-  }
-
-
-  /**
-   * 统一异常处理
-   *
-   * @param exceptionResolvers -
-   */
-  @Override
-  public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-    exceptionResolvers.add(handlerExceptionResolver);
   }
 
   @Override

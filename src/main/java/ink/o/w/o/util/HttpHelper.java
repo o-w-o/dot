@@ -9,7 +9,7 @@ import java.util.function.Function;
  */
 public class HttpHelper {
     public static String formatResponseDataMessageByRequest(HttpServletRequest request, String supplementation) {
-        return "接口 [" + request.getRequestURI() + "] " + supplementation;
+        return "接口 [ " + request.getRequestURI() + " ] " + supplementation;
     }
 
     public static Function<String, String> formatResponseDataMessage (HttpServletRequest request) {

@@ -32,7 +32,7 @@ public class ResponseEntityFactory {
 
   public static <T extends RepresentationModel<T>> ResponseEntity<?> ok(Page<T> data) {
     return ResponseEntity.ok().body(
-        new PagedModel<T>(
+        new PagedModel<>(
             data.getContent(),
             new PagedModel.PageMetadata(
                 data.getSize(), data.getNumber(), data.getTotalElements(), data.getTotalPages()
@@ -45,7 +45,7 @@ public class ResponseEntityFactory {
   }
 
   public static <T extends PagedModel<T>> ResponseEntity<?> ok(T data) {
-    return ResponseEntity.ok().body(new PagedModel<T>(data.getContent(), data.getMetadata(), data.getLinks()));
+    return ResponseEntity.ok().body(new PagedModel<>(data.getContent(), data.getMetadata(), data.getLinks()));
   }
 
   public static ResponseEntity<ResponseEntityBody<Object>> success() {
@@ -150,7 +150,7 @@ public class ResponseEntityFactory {
         .status(status)
         .body(
             new EntityModel<ResponseEntityExceptionBody<?>>(
-                ResponseEntityExceptionBody.error(body.getMessage(), status)
+                body
             )
         );
   }
@@ -165,9 +165,7 @@ public class ResponseEntityFactory {
       return ResponseEntity
           .status(body.getCode())
           .body(
-              new EntityModel<ResponseEntityExceptionBody<?>>(
-                  ResponseEntityExceptionBody.error(body.getMessage(), body.getCode())
-              )
+              body
           );
     }
   }

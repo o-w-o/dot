@@ -32,8 +32,12 @@ import java.util.function.Function;
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 
 /**
+ * 全局异常处理，已使用 ExceptionsController 替代。
+ *
  * @author symbols@dingtalk.com
  * @date 2019/8/4 下午2:10
+ * @see ink.o.w.o.server.controller.ExceptionsController
+ * @deprecated
  */
 
 @Slf4j
@@ -113,7 +117,7 @@ public class HttpExceptionConfiguration implements HandlerExceptionResolver {
   }
 
 
-  private void formatsResponseResult(HttpServletResponse response, ResponseEntityExceptionBody responseEntityExceptionBody) {
+  private void formatsResponseResult(HttpServletResponse response, ResponseEntityExceptionBody<?> responseEntityExceptionBody) {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setCharacterEncoding(UTF_8);
     response.setStatus(responseEntityExceptionBody.getCode());

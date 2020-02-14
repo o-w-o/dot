@@ -1,6 +1,7 @@
 package ink.o.w.o.util;
 
 
+import ink.o.w.o.server.exception.HelperException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;

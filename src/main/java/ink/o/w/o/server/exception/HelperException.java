@@ -1,4 +1,4 @@
-package ink.o.w.o.util;
+package ink.o.w.o.server.exception;
 
 import lombok.Getter;
 import lombok.Setter;

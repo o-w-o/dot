@@ -17,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 /**
  * 用户相关 API
  *
@@ -53,7 +50,6 @@ public class UserAPI {
 
   @PostMapping
   @PreAuthorize("hasRole('ROLE_MASTER')")
-  @Cacheable(cacheNames = "users", cacheManager = "cacheManagerForHttpResponseData")
   public ResponseEntity<?> register(@RequestBody User u) {
     return ResponseEntityFactory.ok(
         userService.register(u)
@@ -63,23 +59,18 @@ public class UserAPI {
 
   @GetMapping("{id}")
   @PreAuthorize("hasRole('ROLE_MASTER') or (hasRole('ROLE_USER') and principal.username.equals(#id.toString()))")
+  @Cacheable(cacheNames = "getOneUserProfile")
   public ResponseEntity<?> getOneUserProfile(@PathVariable Integer id) {
     var u = userService.getUserById(id)
         .guard();
     Link link = entityLinks
-        .linkForItemResource(User.class, id).withSelfRel()
-        .andAffordance(
-            afford(methodOn(getClass()).listUsers(null, null))
-        )
-        .andAffordance(
-            afford(methodOn(getClass()).register(u))
-        );
+        .linkForItemResource(User.class, id).withSelfRel();
     return ResponseEntityFactory.ok(
         new EntityModel<>(u, link)
     );
   }
 
-  @PostMapping("{id}")
+  @PatchMapping("{id}")
   @PreAuthorize("hasRole('ROLE_MASTER') or (hasRole('ROLE_USER') and principal.username.equals(#id.toString()))")
   public ResponseEntity<?> modifyOneUserProfile(@PathVariable Integer id, @RequestBody User u) {
     return ResponseEntityFactory.success(
