@@ -15,10 +15,10 @@ import javax.persistence.Id;
 @RedisHash("authorizedJwtStore")
 public class AuthorizedJwtStore {
     @Id
-    String id;
+    private String id;
 
-    Integer userId;
-    AuthorizedJwts authorizedJwts;
+    private Integer userId;
+    private AuthorizedJwts authorizedJwts;
 
     public static String generateUuid(AuthorizedJwt jwt) {
         return jwt.getUid() + "::" + jwt.getJti();

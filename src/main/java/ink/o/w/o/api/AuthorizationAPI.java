@@ -1,6 +1,5 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.constant.HttpConstant;
 import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.AuthorizedJwts;
 import ink.o.w.o.server.service.AuthorizationService;
@@ -15,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.security.SignatureException;
 
 
@@ -28,13 +28,16 @@ import java.security.SignatureException;
 @Slf4j
 @RestController
 @ExposesResourceFor(AuthorizationAPI.class)
-@RequestMapping(HttpConstant.API_BASE_URL + "/authorization")
+@RequestMapping(value = "authorization")
 public class AuthorizationAPI {
-  @Autowired
-  private EntityLinks entityLinks;
+  private final EntityLinks entityLinks;
+  @Resource
+  private AuthorizationService authorizationService;
 
   @Autowired
-  private AuthorizationService authorizationService;
+  AuthorizationAPI(EntityLinks entityLinks) {
+    this.entityLinks = entityLinks;
+  }
 
   @PostMapping
   public ResponseEntity<?> createAuthenticationToken(

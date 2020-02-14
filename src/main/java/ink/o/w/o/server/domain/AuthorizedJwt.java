@@ -80,7 +80,7 @@ public class AuthorizedJwt {
     private Integer uid;
     private String rol;
 
-    Map<String, Object> claims;
+    private Map<String, Object> claims;
 
     public AuthorizedJwt() {
         Date now = new Date();

@@ -15,18 +15,29 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * @author symbols
  * Spring MVC 配置
+ *
+ * @author symbols@dingtalk.com
  */
 @Slf4j
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-  @Autowired
-  private HttpExceptionConfiguration handlerExceptionResolver;
+  private final HttpExceptionConfiguration handlerExceptionResolver;
 
+  @Autowired
+  WebMvcConfiguration(HttpExceptionConfiguration handlerExceptionResolver) {
+    this.handlerExceptionResolver = handlerExceptionResolver;
+  }
+
+  /**
+   * @param configurer -
+   * @apiNote 参考 https://blog.csdn.net/turbo_zone/article/details/84401890
+   */
   @Override
-  public void configurePathMatch(PathMatchConfigurer configurer) {}
+  public void configurePathMatch(PathMatchConfigurer configurer) {
+    configurer.setUseSuffixPatternMatch(false);
+  }
 
   /**
    * 配置 JSON MessageConverter
@@ -68,19 +79,19 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addViewController("/login").setViewName("login");
+    registry.addViewController("/error").setViewName("error");
   }
 
   /**
    * 解决跨域问题 参考: http://www.cnblogs.com/520playboy/p/7306008.html
-   * <br>注: 更细致的控制,可以使用@CrossOrigin注解在controller类中使用
+   * <br>注: 更细致的控制,可以使用 @CrossOrigin 注解在 controller 类中使用
    *
    * @param registry -
    */
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/api/**")
-        .allowedOrigins("*")
+    registry.addMapping("/**")
+        .allowedOrigins("https://o-w-o.ink")
         .allowedMethods("GET", "POST", "DELETE", "PATCH", "OPTIONS")
         .allowCredentials(true)
         .allowedHeaders("*");

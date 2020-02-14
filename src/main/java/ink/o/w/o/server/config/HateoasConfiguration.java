@@ -8,4 +8,5 @@ import org.springframework.hateoas.support.WebStack;
 @Configuration
 @EnableHypermediaSupport(type = HypermediaType.HAL_FORMS, stacks = WebStack.WEBMVC)
 public class HateoasConfiguration {
+
 }

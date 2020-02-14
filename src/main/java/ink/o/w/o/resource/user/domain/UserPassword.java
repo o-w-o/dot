@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserPassword {
   @Id
-  Integer id;
+  private Integer id;
 
   @NotNull
-  String password;
+  private String password;
 }

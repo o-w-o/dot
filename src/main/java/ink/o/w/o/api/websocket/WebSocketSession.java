@@ -2,9 +2,10 @@ package ink.o.w.o.api.websocket;
 
 import ink.o.w.o.util.JSONHelper;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -22,9 +23,10 @@ import java.util.Map;
  */
 @Log4j2
 @Component
+@PreAuthorize("hasRole('ROLE_USER')")
 @ServerEndpoint("/websocket/{sid}")
 public class WebSocketSession {
-  @Autowired
+  @Resource
   private JSONHelper jsonHelper;
 
   private WebSocketSessionManager webSocketSessionManager = WebSocketSessionManager.getWebSocketSessionManager();

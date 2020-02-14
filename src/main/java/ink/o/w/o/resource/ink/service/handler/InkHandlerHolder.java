@@ -31,11 +31,11 @@ public class InkHandlerHolder implements ApplicationContextAware {
     inkHandlers.forEach((beanName, orderHandler) -> {
       InkTypeSelector inkTypeSelector = orderHandler.getClass().getAnnotation(InkTypeSelector.class);
       if (inkTypeSelector == null) {
-        throw new RuntimeException("未知的 InkType");
+        logger.error("未知的 InkType -> beanName[{}], orderHandler.class[{}]", beanName, orderHandler.getClass());
       } else {
         logger.info("InkHandlerHolder register handler -> @[{}]", inkTypeSelector.value());
+        this.container.put(inkTypeSelector.value(), orderHandler);
       }
-      this.container.put(inkTypeSelector.value(), orderHandler);
     });
     logger.info("InkHandlerHolder register handler -> END");
   }

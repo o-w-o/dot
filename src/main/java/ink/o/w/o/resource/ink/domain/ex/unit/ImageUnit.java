@@ -1,5 +1,8 @@
 package ink.o.w.o.resource.ink.domain.ex.unit;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -10,6 +13,8 @@ import javax.persistence.Table;
  * @date 2020/02/12 16:48
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Entity
 @Table(name = "t_ink_unit__image")
 public class ImageUnit extends AbstractInkUnit {

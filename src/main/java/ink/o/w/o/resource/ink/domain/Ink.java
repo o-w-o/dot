@@ -1,6 +1,7 @@
 package ink.o.w.o.resource.ink.domain;
 
 import ink.o.w.o.resource.ink.constant.InkType;
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import javax.persistence.*;
  * @date 2020/02/12 12:36
  * @since 1.0.0
  */
+@Data
 @Entity
 @Table(name = "t_ink")
 public class Ink {

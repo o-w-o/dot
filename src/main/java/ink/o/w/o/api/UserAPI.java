@@ -3,7 +3,6 @@ package ink.o.w.o.api;
 import com.querydsl.core.types.Predicate;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.service.UserService;
-import ink.o.w.o.server.constant.HttpConstant;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +30,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Slf4j
 @RestController
 @ExposesResourceFor(UserAPI.class)
-@RequestMapping(HttpConstant.API_BASE_URL + "/users")
+@RequestMapping("users")
 public class UserAPI {
-  @Autowired
-  private EntityLinks entityLinks;
+
+  private final EntityLinks entityLinks;
+  private final UserService userService;
 
   @Autowired
-  private UserService userService;
+  public UserAPI(EntityLinks entityLinks, UserService userService) {
+    this.entityLinks = entityLinks;
+    this.userService = userService;
+  }
 
   @GetMapping
   @PreAuthorize("hasRole('ROLE_MASTER')")

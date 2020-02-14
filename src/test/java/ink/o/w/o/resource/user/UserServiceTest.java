@@ -7,12 +7,11 @@ import ink.o.w.o.util.JSONHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.autoconfigure.data.redis.AutoConfigureDataRedis;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import javax.annotation.Resource;
 
 @Slf4j
 @AutoConfigureCache
@@ -20,10 +19,10 @@ import javax.annotation.Resource;
 @AutoConfigureDataJpa
 @SpringBootTest
 public class UserServiceTest {
-  @Resource
+  @Autowired
   private UserService userService;
 
-  @Resource
+  @Autowired
   private JSONHelper jsonHelper;
 
   @Test
