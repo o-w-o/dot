@@ -18,11 +18,11 @@ import javax.persistence.*;
 @Table(name = "t_ink_ref")
 public class InkRef {
   @Id
-  Long id;
+  private Long id;
 
   @ManyToOne
-  Ink ink;
+  private Ink ink;
 
   @Enumerated(value = EnumType.STRING)
-  InkRefMode mode;
+  private InkRefMode mode;
 }

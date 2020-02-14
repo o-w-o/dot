@@ -20,11 +20,11 @@ import javax.annotation.Resource;
 @Component
 public class ApplicationRunnerConfiguration implements ApplicationRunner {
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    RoleService roleService;
+    private RoleService roleService;
     @Resource
-    AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
+    private AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
     @Value("${spring.profiles.active}")
     private String env;
 

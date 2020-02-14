@@ -25,7 +25,7 @@ import java.util.Map;
 @ServerEndpoint("/websocket/{sid}")
 public class WebSocketSession {
   @Autowired
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   private WebSocketSessionManager webSocketSessionManager = WebSocketSessionManager.getWebSocketSessionManager();
 

@@ -1,15 +1,10 @@
 package ink.o.w.o.server.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import ink.o.w.o.util.JSONHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.mediatype.collectionjson.Jackson2CollectionJsonModule;
-import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -28,7 +23,7 @@ import java.util.List;
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
   @Autowired
-  HttpExceptionConfiguration handlerExceptionResolver;
+  private HttpExceptionConfiguration handlerExceptionResolver;
 
   @Override
   public void configurePathMatch(PathMatchConfigurer configurer) {}

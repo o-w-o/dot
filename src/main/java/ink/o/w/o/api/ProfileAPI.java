@@ -4,13 +4,15 @@ package ink.o.w.o.api;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.server.constant.HttpConstant;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.hateoas.mediatype.alps.*;
+import org.springframework.hateoas.mediatype.alps.Alps;
+import org.springframework.hateoas.mediatype.alps.Descriptor;
+import org.springframework.hateoas.mediatype.alps.Format;
+import org.springframework.hateoas.mediatype.alps.Type;
 import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.MediaTypes.ALPS_JSON_VALUE;

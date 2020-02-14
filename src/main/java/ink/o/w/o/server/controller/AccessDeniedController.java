@@ -25,7 +25,7 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class AccessDeniedController implements AccessDeniedHandler {
 
   @Resource
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   @Override
   public void handle(HttpServletRequest request, HttpServletResponse response,

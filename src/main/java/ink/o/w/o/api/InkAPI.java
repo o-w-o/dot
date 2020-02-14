@@ -5,7 +5,6 @@ import ink.o.w.o.resource.ink.domain.ex.ArticleInk;
 import ink.o.w.o.resource.ink.service.InkService;
 import ink.o.w.o.server.constant.HttpConstant;
 import ink.o.w.o.server.domain.ResponseEntityBody;
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

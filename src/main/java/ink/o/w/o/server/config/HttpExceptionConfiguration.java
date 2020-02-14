@@ -41,7 +41,7 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class HttpExceptionConfiguration implements HandlerExceptionResolver {
 
   @Resource
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   @Override
   public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e) {

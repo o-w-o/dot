@@ -20,17 +20,17 @@ import java.util.Set;
 @Table(name = "t_ink_participants")
 public class InkParticipants {
   @Id
-  Long id;
+  private Long id;
 
   @OneToOne
-  User owner;
+  private User owner;
 
   @OneToMany
-  Set<User> writers;
+  private Set<User> writers;
 
   @OneToMany
-  Set<User> readers;
+  private Set<User> readers;
 
   @Enumerated(value = EnumType.STRING)
-  InkParticipantsVisibility visibility;
+  private InkParticipantsVisibility visibility;
 }

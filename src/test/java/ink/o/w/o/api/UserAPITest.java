@@ -17,7 +17,7 @@ public class UserAPITest extends APITest {
 
   private final String userBaseUrl = HttpConstant.API_BASE_URL + "/users";
   @Autowired
-  AuthorizationService authorizationService;
+  private AuthorizationService authorizationService;
   private String accessToken;
 
   @BeforeEach

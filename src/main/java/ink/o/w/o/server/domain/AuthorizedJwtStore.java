@@ -1,6 +1,5 @@
 package ink.o.w.o.server.domain;
 
-import ink.o.w.o.resource.user.domain.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;

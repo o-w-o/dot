@@ -19,12 +19,12 @@ public class ImageUnit extends AbstractInkUnit {
    * @date 2020/02/12 16:48
    * @since 1.0.0
    */
-  String url;
+  private String url;
   /**
    * 大小
    *
    * @date 2020/02/12 16:48
    * @since 1.0.0
    */
-  String size;
+  private String size;
 }

@@ -31,7 +31,7 @@ import java.security.SignatureException;
 @RequestMapping(HttpConstant.API_BASE_URL + "/authorization")
 public class AuthorizationAPI {
   @Autowired
-  EntityLinks entityLinks;
+  private EntityLinks entityLinks;
 
   @Autowired
   private AuthorizationService authorizationService;

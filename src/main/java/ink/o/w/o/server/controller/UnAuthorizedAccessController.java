@@ -31,7 +31,7 @@ public class UnAuthorizedAccessController implements AuthenticationEntryPoint, S
   private static final long serialVersionUID = -8970718410437077606L;
 
   @Resource
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   @Override
   public void commence(

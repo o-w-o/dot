@@ -25,7 +25,7 @@ public class Ink {
   @Id
   @GeneratedValue(generator = "system-uuid")
   @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
-  Long id;
+  private Long id;
 
   /**
    * 类型
@@ -34,8 +34,8 @@ public class Ink {
    * @since 1.0.0
    */
   @Enumerated(value = EnumType.STRING)
-  InkType type;
+  private InkType type;
 
   @Lob
-  String content;
+  private String content;
 }

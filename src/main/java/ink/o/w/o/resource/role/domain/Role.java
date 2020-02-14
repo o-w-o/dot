@@ -21,8 +21,8 @@ import java.io.Serializable;
 @Data
 public class Role implements Serializable {
   @Id
-  Integer id;
+  private Integer id;
 
   @NotNull
-  String name;
+  private String name;
 }

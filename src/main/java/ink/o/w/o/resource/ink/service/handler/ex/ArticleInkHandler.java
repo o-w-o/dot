@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 @InkTypeSelector(value = InkType.ARTICLE)
 public class ArticleInkHandler extends AbstractInkHandler {
   @Resource
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   @Override
   public String handle(AbstractInk ink) {

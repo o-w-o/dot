@@ -2,7 +2,6 @@ package ink.o.w.o.server.config;
 
 import ink.o.w.o.server.config.properties.constant.SystemOsNameEnum;
 import ink.o.w.o.server.config.properties.constant.SystemPropertiesDotPathConstant;
-import ink.o.w.o.server.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;

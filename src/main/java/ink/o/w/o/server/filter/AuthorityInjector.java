@@ -41,10 +41,10 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class AuthorityInjector extends OncePerRequestFilter {
 
   @Autowired
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   @Autowired
-  AuthorizedJwtStoreService authorizedJwtStoreService;
+  private AuthorizedJwtStoreService authorizedJwtStoreService;
 
   @Override
   protected void doFilterInternal(

@@ -1,13 +1,10 @@
 package ink.o.w.o.resource.user.util;
 
 import ink.o.w.o.resource.role.domain.Role;
-import ink.o.w.o.resource.user.constant.UserConstant;
 import ink.o.w.o.resource.user.domain.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author symbols@dingtalk.com

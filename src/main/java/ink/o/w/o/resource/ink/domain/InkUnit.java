@@ -14,8 +14,8 @@ public class InkUnit {
   @Id
   @GeneratedValue(generator = "system-uuid")
   @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
-  Long id;
+  private Long id;
 
   @Enumerated(value = EnumType.STRING)
-  InkUnitType type;
+  private InkUnitType type;
 }

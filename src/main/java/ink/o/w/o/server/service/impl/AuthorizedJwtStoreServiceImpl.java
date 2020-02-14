@@ -22,10 +22,10 @@ import java.util.Optional;
 @Service
 public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService {
     @Autowired
-    AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
+    private AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
 
     @Autowired
-    JSONHelper jsonHelper;
+    private JSONHelper jsonHelper;
 
     @Override
     public ServiceResult<AuthorizedJwts> register(User user) {

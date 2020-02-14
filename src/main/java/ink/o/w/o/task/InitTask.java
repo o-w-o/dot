@@ -1,13 +1,11 @@
 package ink.o.w.o.task;
 
 import ink.o.w.o.resource.role.constant.Roles;
-import ink.o.w.o.resource.role.service.RoleService;
 import ink.o.w.o.resource.role.util.RoleHelper;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.service.UserService;
 import ink.o.w.o.server.domain.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -33,13 +32,12 @@ import java.util.UUID;
 public class InitTask {
   private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
   private final static String MASTER_NAME = "master";
-  @Autowired
-  RoleService roleService;
 
-  @Autowired
-  UserService userService;
+  @Resource
+  private UserService userService;
+
   @Value("${custom.env}")
-  String customEnv;
+  private String customEnv;
   @Value("${spring.profiles.active}")
   private String env;
 

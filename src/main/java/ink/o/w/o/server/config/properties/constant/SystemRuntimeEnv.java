@@ -1,7 +1,5 @@
 package ink.o.w.o.server.config.properties.constant;
 
-import lombok.Getter;
-
 /**
  * 运行时的环境
  * @author symbols@dingtalk.com

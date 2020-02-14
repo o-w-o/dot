@@ -24,19 +24,19 @@ import java.util.Set;
 @AutoConfigureDataJpa
 public class SampleTest {
   @Autowired
-  DotRepository dotRepository;
+  private DotRepository dotRepository;
 
   @Autowired
-  DotPayloadRepository dotPayloadRepository;
+  private DotPayloadRepository dotPayloadRepository;
 
   @Autowired
-  DotPointIRepository dotPointIRepository;
+  private DotPointIRepository dotPointIRepository;
 
   @Autowired
-  DotPointXRepository dotPointXRepository;
+  private DotPointXRepository dotPointXRepository;
 
   @Autowired
-  JSONHelper jsonHelper;
+  private JSONHelper jsonHelper;
 
   public void printDot() throws JsonProcessingException {
     logger.info("dot[12] -> {}", jsonHelper.toJSONString(dotRepository.findById(12L).get()));

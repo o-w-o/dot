@@ -12,5 +12,5 @@ import javax.persistence.Table;
 @Table(name = "t_ink_mark")
 public class InkMark {
   @Id
-  Long id;
+  private Long id;
 }

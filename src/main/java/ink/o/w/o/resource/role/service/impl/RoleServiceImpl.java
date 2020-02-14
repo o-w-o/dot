@@ -15,7 +15,7 @@ import java.util.HashSet;
 @Transactional
 public class RoleServiceImpl implements RoleService {
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Override
     public void initRoles() {

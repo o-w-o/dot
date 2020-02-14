@@ -2,7 +2,6 @@ package ink.o.w.o.resource.user.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
