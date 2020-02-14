@@ -61,15 +61,12 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
   @Bean
   public RedisCacheConfiguration redisCacheConfiguration() {
-    RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
-
-    // 有效时间
-    cacheConfiguration = cacheConfiguration.entryTtl(Duration.ofMinutes(1));
-
     // 修复热部署时的缓存异常
-    JdkSerializationRedisSerializer redisSerializer = new JdkSerializationRedisSerializer(getClass().getClassLoader());
+    JdkSerializationRedisSerializer jdkSerializationRedisSerializer = new JdkSerializationRedisSerializer(getClass().getClassLoader());
 
-    return cacheConfiguration.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer));
+    return RedisCacheConfiguration.defaultCacheConfig()
+        .entryTtl(Duration.ofMinutes(1))
+        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jdkSerializationRedisSerializer));
   }
 
   @Bean
@@ -99,7 +96,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
   }
 
   private CacheManager createCacheManagerX(Class<?> clazz) {
-   return createCacheManagerX(clazz, Duration.ofMinutes(1L));
+    return createCacheManagerX(clazz, Duration.ofMinutes(1L));
   }
 
   private CacheManager createCacheManagerX(Class<?> clazz, Duration duration) {

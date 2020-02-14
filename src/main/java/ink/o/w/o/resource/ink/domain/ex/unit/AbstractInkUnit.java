@@ -24,8 +24,8 @@ public abstract class AbstractInkUnit {
   @Id
   @GeneratedValue(generator = "system-uuid")
   @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
-  private Long id;
+  protected Long id;
 
   @Enumerated(value = EnumType.STRING)
-  private InkUnitType type;
+  protected InkUnitType type;
 }
