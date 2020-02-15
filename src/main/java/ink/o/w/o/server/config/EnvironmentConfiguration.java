@@ -1,6 +1,6 @@
 package ink.o.w.o.server.config;
 
-import ink.o.w.o.server.config.properties.constant.SystemOsNameEnum;
+import ink.o.w.o.server.config.properties.constant.SystemOsName;
 import ink.o.w.o.server.config.properties.constant.SystemPropertiesDotPathConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -55,7 +55,7 @@ public class EnvironmentConfiguration implements EnvironmentPostProcessor {
             }
         }
 
-        if (osName.contains(SystemOsNameEnum.Linux.getOsName())) {
+        if (osName.contains(SystemOsName.Linux.getOsName())) {
             this.getRuntimePropertiesPropertySource().ifPresent(propertiesPropertySource -> environment
                 .getPropertySources()
                 .addLast(

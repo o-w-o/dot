@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public ServiceResult<User> register(User user) {
     if (userRepository.existsByName(user.getName())) {
-      return ServiceResultFactory.error(String.format("[ %d ] 用户已存在!", user.getId()));
+      return ServiceResultFactory.error(String.format("[ %s ] 用户已存在!", user.getName()));
     }
 
     if (user.getPassword() == null) {

@@ -1,6 +1,5 @@
 package ink.o.w.o.api.config;
 
-import ink.o.w.o.server.domain.AuthorizedJwt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -9,7 +8,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
 /**
@@ -33,7 +32,7 @@ public class RestDocumentTestConfiguration {
           .withPort(443);
 
       // 中文处理时需指定编码为 GBK，否则 asciidoctor 处理会报异常！
-      configurer.snippets().withEncoding("GBK");
+      configurer.snippets().withEncoding(UTF_8);
     }
   }
 
@@ -47,13 +46,7 @@ public class RestDocumentTestConfiguration {
       return MockMvcRestDocumentation.document(
           "{ClassName}--{method-name}",
           preprocessRequest(prettyPrint()),
-          preprocessResponse(prettyPrint()),
-          requestHeaders(
-              headerWithName(AuthorizedJwt.AUTHORIZATION_HEADER_KEY).description(String.format("认证字段，格式： `%s + jwt`", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX)).optional()
-          ),
-          responseHeaders(
-              headerWithName("Content-Type").description("载荷格式, e.g. `application/hal+json`")
-          )
+          preprocessResponse(prettyPrint())
       );
     }
   }

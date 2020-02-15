@@ -25,44 +25,46 @@ import java.util.Set;
 @NoArgsConstructor
 public class User extends RepresentationModel<User> implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+  private static final long serialVersionUID = 1452277172712371166L;
 
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Integer id;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
+  private String name;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinTable(name = "t_user_role",
-        joinColumns = @JoinColumn(name="user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  private String password;
 
-    private String nickName;
+  @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+  @JoinTable(name = "t_user_role",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Role> roles;
 
-    @Convert(converter = UserGender.Converter.class)
-    private UserGender gender = UserGender.UNKNOWN;
+  private String nickName;
 
-    @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date cTime;
+  @Convert(converter = UserGender.Converter.class)
+  private UserGender gender = UserGender.UNKNOWN;
 
-    @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date uTime;
+  @CreatedDate
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date cTime;
 
-    @PrePersist
-    public void recordCreateTime() {
-        if (Optional.ofNullable(cTime).isEmpty()) {
-            cTime = new Date();
-            uTime = new Date();
-        }
+  @CreatedDate
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date uTime;
+
+  @PrePersist
+  public void recordCreateTime() {
+    if (Optional.ofNullable(cTime).isEmpty()) {
+      cTime = new Date();
+      uTime = new Date();
     }
+  }
 
-    @PreUpdate
-    public void recordUpdateTime() {
-        uTime = new Date();
-    }
+  @PreUpdate
+  public void recordUpdateTime() {
+    uTime = new Date();
+  }
 }

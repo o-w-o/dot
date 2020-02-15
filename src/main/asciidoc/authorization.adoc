@@ -1,0 +1,44 @@
+=== 授权接口
+
+基于 JWT 的接口认证。
+
+=== 获取 TOKEN
+
+==== 示例
+
+operation::AuthorizationAPITest--is-token-created[snippets="http-request,http-response"]
+
+==== 参数说明
+
+operation::AuthorizationAPITest--is-token-created[snippets="request-parameters,response-fields"]
+
+==== 异常
+
+|===
+|Exception | Status Code
+
+|用户不存在
+|400
+
+|密码错误
+|400
+
+|缺少参数
+|400
+|===
+
+=== 刷新 TOKEN
+
+==== 示例
+
+operation::AuthorizationAPITest--is-token-refreshed[snippets="http-request,http-response"]
+
+==== 参数说明
+
+operation::AuthorizationAPITest--is-token-refreshed[snippets="request-parameters,response-fields"]
+
+=== 注销 TOKEN
+
+==== 示例
+
+operation::AuthorizationAPITest--is-token-revoked[snippets="http-request,http-response"]

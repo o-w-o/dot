@@ -1,21 +1,26 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.constant.HttpConstant;
-import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
+import org.springframework.boot.test.autoconfigure.data.redis.AutoConfigureDataRedis;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureCache
+@AutoConfigureDataRedis
+@AutoConfigureDataJpa
 @Slf4j
 public class UserAPITest extends APITest {
 
-  private final String userBaseUrl = HttpConstant.API_BASE_URL + "/users";
+  private final String userBaseUrl = "/users";
   @Autowired
   private AuthorizationService authorizationService;
   private String accessToken;
@@ -28,10 +33,11 @@ public class UserAPITest extends APITest {
   @Test
   public void isUserGetOk() throws Exception {
     mockMvc.perform(
-        MockMvcRequestBuilders
+        RestDocumentationRequestBuilders
             .get(String.format("%s/%s", userBaseUrl, 1))
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + accessToken)
-            .accept(MediaTypes.HAL_JSON)
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(accessToken))
+            .characterEncoding(UTF_8)
+            .accept(MediaType.APPLICATION_JSON)
     )
         .andExpect(status().isOk());
   }

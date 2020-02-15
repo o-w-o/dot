@@ -22,6 +22,14 @@ public class ResponseEntityFactory {
     return ResponseEntity.ok().body(new EntityModel<>(data));
   }
 
+  public static <T extends RepresentationModel<T>> ResponseEntity<?> ok(String message) {
+    return ResponseEntity.ok().body(
+        new EntityModel<>(
+            ResponseEntityBody.of(message)
+        )
+    );
+  }
+
   public static <T extends RepresentationModel<T>> ResponseEntity<?> ok(T data) {
     return ResponseEntity.ok().body(
         new EntityModel<>(

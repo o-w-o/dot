@@ -44,9 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ExceptionsController {
 
   private void recordException(Exception e) {
-    for (StackTraceElement element : e.getStackTrace()) {
-      logger.error("类 [{}].[{}] 类的第 [{}] 行发生异常 -> {}", element.getClassName(), element.getMethodName(), element.getLineNumber(), e.toString());
-    }
+    e.printStackTrace();
   }
 
   /**
@@ -265,8 +263,9 @@ public class ExceptionsController {
     return ResponseEntityFactory.generateFrom(
         ResponseEntityExceptionBody.of(
             request,
-            String.format("异常 , %s", e.getResult().getMessage()),
-            e.getResult().getCode()
+            String.format("服务异常，%s", e.getResult().getMessage()),
+            e.getResult().getCode(),
+            false
         ),
         HttpStatus.BAD_REQUEST
     );

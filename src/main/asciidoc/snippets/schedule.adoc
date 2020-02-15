@@ -1,0 +1,17 @@
+[source,java]
+----
+@Slf4j
+@Component
+@Configuration // <1>
+@EnableScheduling // <2>
+public class InitTask {
+
+    @Scheduled(fixedRate = 1000 * 60 * 60) // <3>
+    private void initAndCheckMasterUser() {
+
+    }
+}
+----
+<1> 主要用于标记配置类，兼备 Component 的效果。
+<2> 开启定时任务。
+<3> 添加定时任务 corn 或 其他。

@@ -6,7 +6,6 @@ import ink.o.w.o.resource.user.service.UserService;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.EntityModel;
@@ -59,7 +58,6 @@ public class UserAPI {
 
   @GetMapping("{id}")
   @PreAuthorize("hasRole('ROLE_MASTER') or (hasRole('ROLE_USER') and principal.username.equals(#id.toString()))")
-  @Cacheable(cacheNames = "getOneUserProfile")
   public ResponseEntity<?> getOneUserProfile(@PathVariable Integer id) {
     var u = userService.getUserById(id)
         .guard();

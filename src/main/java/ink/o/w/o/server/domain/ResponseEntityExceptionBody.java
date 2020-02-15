@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -21,7 +22,9 @@ import java.util.Date;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseEntityExceptionBody<T> {
+public class ResponseEntityExceptionBody<T> implements Serializable {
+
+  private static final long serialVersionUID = 6157452706128963295L;
 
   @Getter
   private Integer code;
@@ -84,6 +87,16 @@ public class ResponseEntityExceptionBody<T> {
 
   public static <T> ResponseEntityExceptionBody<T> forbidden() {
     return forbidden(HttpExceptionStatus.forbidden.getMessage());
+  }
+
+  public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, String message, Integer code, Boolean appendApiPath) {
+    return new ResponseEntityExceptionBody<T>()
+        .setPath(request.getRequestURI())
+        .setMethod(request.getMethod().toUpperCase())
+        .setCode(code)
+        .setMessage(
+            appendApiPath ? HttpHelper.formatResponseDataMessage(request).apply(message) : message
+        );
   }
 
   public static <T> ResponseEntityExceptionBody<T> of(HttpServletRequest request, String message, Integer code) {

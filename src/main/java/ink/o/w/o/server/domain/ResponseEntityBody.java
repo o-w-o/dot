@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serializable;
+
 /**
  * API 结果
  *
@@ -17,7 +19,20 @@ import org.springframework.hateoas.RepresentationModel;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseEntityBody<T> extends RepresentationModel<ResponseEntityBody<T>> {
-    private T payload;
-    private String message = "";
+public class ResponseEntityBody<T> extends RepresentationModel<ResponseEntityBody<T>> implements Serializable {
+
+  private static final long serialVersionUID = 1580635028746898160L;
+
+  private String message = "";
+  private T payload;
+
+  static public <T> ResponseEntityBody<T> of(String message, T payload) {
+    return new ResponseEntityBody<T>()
+        .setPayload(payload)
+        .setMessage(message);
+  }
+
+  static public ResponseEntityBody<?> of(String message) {
+    return of(message, new Object());
+  }
 }

@@ -1,21 +1,18 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.constant.HttpConstant;
-import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.AuthorizedJwts;
-import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -26,22 +23,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 public class AuthorizationAPITest extends APITest {
 
-  private final String authorizationBaseUrl = HttpConstant.API_BASE_URL + "/auth";
-  @Autowired
-  private AuthorizationService authorizationService;
-  @Value("${spring.data.rest.base-path}")
-  private String restDataBaseUrl;
-  @Value("${management.endpoints.web.base-path}")
-  private String endpointBaseUrl;
-
   @Test
   public void isTokenCreated() throws Exception {
-    String url = authorizationBaseUrl + "/token?username=demo&password=233333";
+    String url = authorizationBaseUrl + "?username=demo&password=233333";
 
     mockMvc
-        .perform(RestDocumentationRequestBuilders.get(url)
+        .perform(RestDocumentationRequestBuilders
+            .post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("_links.refresh", is(notNullValue())))
+        .andExpect(jsonPath("_links.revoke", is(notNullValue())))
         .andDo(
             this.restDocumentationResultHandler.document(
                 requestParameters(
@@ -50,150 +43,104 @@ public class AuthorizationAPITest extends APITest {
                     parameterWithName("optional").description("可选参数 - 测试使用").optional()
                 ),
                 responseFields(
-                    fieldWithPath("data.accessToken").description("访问令牌"),
-                    fieldWithPath("data.refreshToken").description("刷新令牌"),
-                    fieldWithPath("statusCode").description("响应状态码"),
-                    fieldWithPath("resultCode").description("服务状态码"),
-                    fieldWithPath("result").description("服务是否正常"),
-                    fieldWithPath("message").description("-").optional(),
-                    fieldWithPath("path").description("-").optional(),
-                    fieldWithPath("timestamp").description("-")
+                    fieldWithPath("accessToken").description("访问令牌"),
+                    fieldWithPath("refreshToken").description("刷新令牌"),
+                    fieldWithPath("_links.refresh").description("刷新令牌的连接"),
+                    fieldWithPath("_links.revoke").description("注销令牌的连接"),
+                    subsectionWithPath("_links").ignored()
                 )
             )
-        )
-        .andExpect(status().isOk())
-        .andReturn().getResponse();
+        );
   }
 
   @Test
   public void isTokenCreatedErrorParameter() throws Exception {
-    String url = authorizationBaseUrl + "/token?username=demo";
+    String url = authorizationBaseUrl + "?username=demo";
 
     mockMvc
-        .perform(RestDocumentationRequestBuilders.get(url)
+        .perform(RestDocumentationRequestBuilders.post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
-        .andExpect(status().is4xxClientError())
-        .andReturn().getResponse();
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
   public void isTokenCreatedErrorPassword() throws Exception {
-    String url = authorizationBaseUrl + "/token?username=demo&password=122222";
+    String url = authorizationBaseUrl + "?username=demo&password=122222";
 
     mockMvc
-        .perform(RestDocumentationRequestBuilders.get(url)
+        .perform(RestDocumentationRequestBuilders.post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
-        .andExpect(status().is4xxClientError())
-        .andReturn().getResponse();
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
   public void isTokenCreatedErrorUsername() throws Exception {
-    String url = authorizationBaseUrl + "/token?username=unknown&password=233333";
+    String url = authorizationBaseUrl + "?username=unknown&password=233333";
 
     mockMvc
-        .perform(RestDocumentationRequestBuilders.get(url)
+        .perform(RestDocumentationRequestBuilders.post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
-        .andExpect(status().is4xxClientError())
-        .andReturn().getResponse();
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
   public void isTokenRefreshed() throws Exception {
-    AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
+    AuthorizedJwts token = getAuthorization("demo", "233333");
     mockMvc.perform(
-        MockMvcRequestBuilders
-            .post(String.format("%s/token?refreshToken=%s", authorizationBaseUrl, token.getRefreshToken()))
-            .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
+        RestDocumentationRequestBuilders
+            .post(String.format("%s/refresh?refreshToken=%s", authorizationBaseUrl, token.getRefreshToken()))
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
             .accept(MediaType.APPLICATION_JSON)
     )
+        .andExpect(jsonPath("_links.revoke", is(notNullValue())))
         .andDo(
             this.restDocumentationResultHandler.document(
                 requestParameters(
                     parameterWithName("refreshToken").description("刷新令牌")
                 ),
                 responseFields(
-                    fieldWithPath("data").description("新的 accessToken 访问令牌"),
-                    fieldWithPath("statusCode").description("响应状态码"),
-                    fieldWithPath("resultCode").description("服务状态码"),
-                    fieldWithPath("result").description("服务是否正常"),
-                    fieldWithPath("message").description("-").optional(),
-                    fieldWithPath("path").description("-").optional(),
-                    fieldWithPath("timestamp").description("-")
+                    fieldWithPath("accessToken").description("访问令牌"),
+                    fieldWithPath("refreshToken").description("刷新令牌"),
+                    fieldWithPath("_links.revoke").description("注销令牌的连接"),
+                    subsectionWithPath("_links").ignored()
                 )
             )
         )
-        .andExpect(status().isOk())
-        .andReturn()
-        .getResponse();
+        .andExpect(status().isOk());
   }
 
   @Test
-  public void isRestDataUnauthorized() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders
-        .get(restDataBaseUrl + "/samples")
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isUnauthorized())
-        .andReturn();
+  public void isTokenRevoked() throws Exception {
+    AuthorizedJwts token = getAuthorization("demo", "233333");
+    mockMvc.perform(
+        RestDocumentationRequestBuilders
+            .delete(String.format("%s/revoke", authorizationBaseUrl))
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
+            .accept(MediaType.APPLICATION_JSON)
+    )
+        .andExpect(status().isOk());
   }
 
   @Test
-  public void isRestDataForbidden() throws Exception {
-    AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
+  public void isTokenRevokedConfirm() throws Exception {
+    AuthorizedJwts token = getAuthorization("demo", "233333");
+    mockMvc.perform(
+        MockMvcRequestBuilders
+            .delete(String.format("%s/revoke", authorizationBaseUrl))
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
+            .accept(MediaType.APPLICATION_JSON)
+    )
+        .andExpect(status().isOk());
 
-    mockMvc.perform(MockMvcRequestBuilders
-        .get(restDataBaseUrl + "/samples")
-        .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
-        .andReturn();
-  }
-
-  @Test
-  public void isRestDataOk() throws Exception {
-    AuthorizedJwts token = authorizationService.authorize("sample", "233333").guard();
-
-    mockMvc.perform(MockMvcRequestBuilders
-        .get(restDataBaseUrl + "/samples")
-        .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn();
-  }
-
-  @Test
-  public void isEndpointUnauthorized() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders
-        .get(endpointBaseUrl + "/health")
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isUnauthorized())
-        .andReturn();
-  }
-
-  @Test
-  public void isEndpointForbidden() throws Exception {
-    AuthorizedJwts token = authorizationService.authorize("demo", "233333").guard();
-
-    mockMvc.perform(MockMvcRequestBuilders
-        .get(endpointBaseUrl + "/health")
-        .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
-        .andReturn();
-  }
-
-  @Test
-  public void isEndpointOk() throws Exception {
-    AuthorizedJwts token = authorizationService.authorize("actuator", "233333").guard();
-
-    mockMvc.perform(MockMvcRequestBuilders
-        .get(endpointBaseUrl + "/health")
-        .header("Authorization", AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + token.getAccessToken())
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn();
+    mockMvc.perform(
+        MockMvcRequestBuilders
+            .delete(String.format("%s/revoke", authorizationBaseUrl))
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
+            .accept(MediaType.APPLICATION_JSON)
+    )
+        .andExpect(status().isUnauthorized());
   }
 }

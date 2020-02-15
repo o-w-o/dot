@@ -1,0 +1,87 @@
+[[overview-http-verbs]]
+=== HTTP 动词
+
+API 会尽量遵循标准的 HTTP 和 REST 约定使用 *HTTP 动词* 。
+
+|===
+| Verb | 说明
+
+| `GET`
+| 获取
+
+| `POST`
+| 创建
+
+| `PATCH`
+| 更新(部分或全部)
+
+| `DELETE`
+| 删除
+|===
+
+[[overview-http-status-codes]]
+=== HTTP 状态码
+
+API 会尝试尽可能地遵守标准 HTTP 和 REST 约定的 *HTTP 状态代码* 。
+
+|===
+| Status code | 说明
+
+| `200 OK`
+| 客户端请求完成
+
+| `400 Bad Request`
+| 客户端请求异常
+
+| `401 Unauthorized`
+| 未授权
+
+| `403 Forbidden`
+| 授权不足
+
+| `404 Not Found`
+| 不存在
+
+| `500 Internal Server Error`
+| 服务端异常
+|===
+
+[[overview-headers]]
+=== HTTP 请求头
+
+API 中每个需授权的接口都需要以下请求头:
+
+include::{snippets}/SampleAPITest--sample-authentication-header/request-headers.adoc[]
+
+==== 示例
+
+NOTE: 以获取个人信息接口为例
+
+===== 示例 1. 授权正常
+
+operation::SampleAPITest--sample-authentication-header[snippets="http-request,http-response"]
+
+===== 示例 2. 授权异常
+
+operation::SampleAPITest--sample-authentication-header401[snippets="http-request,http-response"]
+
+[[overview-errors]]
+=== 异常
+
+每当 API 返回错误响应（状态代码 >= 400）时，Response 都会包含描述问题的 JSON 对象，其结构如下：
+
+include::{snippets}/SampleAPITest--sample-authentication-header403/response-fields.adoc[]
+
+==== 示例
+
+NOTE: 以获取个人信息接口为例
+
+===== 示例 1. 授权不足异常
+
+operation::SampleAPITest--sample-authentication-header403[snippets="http-request,http-response"]
+
+[[overview-hypermedia]]
+=== REST Hypermedia
+
+API 服务使用 hypermedia 和 resource 的概念在响应中包括指向其他​​资源的链接。 响应结果遵循 https://github.com/mikekelly/hal_specification[Hypertext
+Application Language (HAL)] 的格式。 链接可以在 ``_links`` 键下面找到。 API 的用户可以不用自己创建 URI，而使用上述链接在资源之间导航。

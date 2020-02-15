@@ -2,6 +2,7 @@ package ink.o.w.o.api;
 
 import ink.o.w.o.server.domain.AuthorizedJwt;
 import ink.o.w.o.server.domain.AuthorizedJwts;
+import ink.o.w.o.server.domain.ResponseEntityFactory;
 import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,12 +91,14 @@ public class AuthorizationAPI {
     );
   }
 
-  @PostMapping(value = "/revoke", produces = "application/json")
+  @DeleteMapping(value = "/revoke", produces = "application/json")
   @PreAuthorize("hasRole('ROLE_USER')")
   public ResponseEntity<?> revokeAuthenticationToken(
       @RequestHeader(name = AuthorizedJwt.AUTHORIZATION_HEADER_KEY) String jwt
   ) throws AuthenticationException {
-
-    return ResponseEntity.ok(authorizationService.revoke(jwt).guard() ? "注销成功" : "-");
+    var result = authorizationService.revoke(jwt.substring(AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX.length()));
+    return result.guard()
+        ? ResponseEntityFactory.ok("注销成功")
+        : ResponseEntityFactory.generateFrom(result);
   }
 }

@@ -8,7 +8,7 @@ import lombok.Getter;
  * @version  1.0
  * @date 2020/1/20 11:06
  */
-public enum SystemOsNameEnum {
+public enum SystemOsName {
 
     /**
      * 开发环境
@@ -22,7 +22,7 @@ public enum SystemOsNameEnum {
     @Getter
     private String osName;
 
-    SystemOsNameEnum(String osName) {
+    SystemOsName(String osName) {
         this.osName = osName;
     }
 }

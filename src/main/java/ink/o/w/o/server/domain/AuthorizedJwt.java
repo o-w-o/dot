@@ -154,6 +154,12 @@ public class AuthorizedJwt {
         return generateJwtFromClaims(claims, false);
     }
 
+    /**
+     * TODO refactor 重命名方法 dehydration / hydration
+     * @param jwtString  -
+     * @param keepId 是否保持 jti 一致（即复制，而不是重新生成）
+     * @return AuthorizedJwt
+     */
     public static AuthorizedJwt generateJwtFromJwtString(String jwtString, boolean keepId) {
         return generateJwtFromClaims(parseClaimsFromJwtString(jwtString), keepId);
     }

@@ -3,6 +3,7 @@ package ink.o.w.o.server.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import javax.persistence.Id;
 
@@ -17,6 +18,7 @@ public class AuthorizedJwtStore {
     @Id
     private String id;
 
+    @Indexed
     private Integer userId;
     private AuthorizedJwts authorizedJwts;
 
