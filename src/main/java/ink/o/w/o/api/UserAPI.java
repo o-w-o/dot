@@ -79,15 +79,15 @@ public class UserAPI {
 
   @PatchMapping("{id}/password")
   @PreAuthorize("hasRole('ROLE_USER') and principal.username.equals(#id.toString())")
-  public ResponseEntity<?> modifyOneUserPassword(@PathVariable Integer id, String prevPassword, String password) {
+  public ResponseEntity<?> modifyOneUserPassword(@PathVariable Integer id, @RequestParam String prevPassword, @RequestParam String password) {
     return ResponseEntityFactory.success(
         userService.modifyPassword(id, password, prevPassword)
             .guard()
     );
   }
 
-  @PatchMapping("{id}/password/reset")
-  @PreAuthorize("hasRole('ROLE_USER')")
+  @PostMapping("{id}/password/reset")
+  @PreAuthorize("hasRole('ROLE_MASTER')")
   public ResponseEntity<?> resetOneUserPassword(@PathVariable Integer id) {
     return ResponseEntityFactory.success(
         userService.resetPassword(id)

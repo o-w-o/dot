@@ -119,8 +119,10 @@ public class UserServiceImpl implements UserService {
 
     userRepository.findById(id).ifPresentOrElse(
         (u) -> {
-          logger.info("prevPassword -> {}, password -> {}", u.getPassword(), encoder.matches(u.getPassword(), prevPassword));
-          if (!encoder.matches(u.getPassword(), prevPassword)) {
+          logger.info("prevPassword -> {}, password -> {}", u.getPassword(), encoder.matches(prevPassword, u.getPassword()));
+          if (encoder.matches(prevPassword, u.getPassword())) {
+            userRepository.save(u.setPassword(password));
+          } else {
             throw new ServiceException("旧密码错误！");
           }
         },
