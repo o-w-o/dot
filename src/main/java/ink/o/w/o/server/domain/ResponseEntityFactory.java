@@ -1,5 +1,6 @@
 package ink.o.w.o.server.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -15,11 +16,12 @@ import org.springframework.http.ResponseEntity;
  * @version 1.0
  * @date 2019/8/4 上午10:16
  */
+@Slf4j
 public class ResponseEntityFactory {
   public static final Object DEFAULT_EMPTY_DATA = new Object();
 
   public static <T extends EntityModel<T>> ResponseEntity<?> ok(T data) {
-    return ResponseEntity.ok().body(new EntityModel<>(data));
+    return ResponseEntity.ok().body(data);
   }
 
   public static <T extends RepresentationModel<T>> ResponseEntity<?> ok(String message) {
@@ -31,6 +33,14 @@ public class ResponseEntityFactory {
   }
 
   public static <T extends RepresentationModel<T>> ResponseEntity<?> ok(T data) {
+    if (data instanceof EntityModel) {
+      logger.info("ok [ EntityModel ] instance !");
+      return ResponseEntity.ok()
+          .body(
+              data
+          );
+    }
+
     return ResponseEntity.ok().body(
         new EntityModel<>(
             data

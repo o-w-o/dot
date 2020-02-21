@@ -2,7 +2,6 @@ package ink.o.w.o.resource.ink.domain;
 
 import ink.o.w.o.resource.ink.constant.InkType;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -25,9 +24,7 @@ public class Ink {
    * @since 1.0.0
    */
   @Id
-  @GeneratedValue(generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
-  private Long id;
+  private String id;
 
   /**
    * 类型

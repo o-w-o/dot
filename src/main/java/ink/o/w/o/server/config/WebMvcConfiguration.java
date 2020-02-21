@@ -1,7 +1,6 @@
 package ink.o.w.o.server.config;
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -41,8 +40,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
       if (converter instanceof MappingJackson2HttpMessageConverter) {
         MappingJackson2HttpMessageConverter c = ((MappingJackson2HttpMessageConverter) converter);
         c.getObjectMapper()
-            .registerModule(new Hibernate5Module())
-            .registerModule(new Jdk8Module());
+            .registerModule(
+                new Hibernate5Module()
+            );
       } else if (converter instanceof StringHttpMessageConverter) {
         StringHttpMessageConverter c = ((StringHttpMessageConverter) converter);
         c.setDefaultCharset(StandardCharsets.UTF_8);

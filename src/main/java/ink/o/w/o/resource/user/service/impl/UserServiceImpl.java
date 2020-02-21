@@ -1,6 +1,7 @@
 package ink.o.w.o.resource.user.service.impl;
 
 import com.querydsl.core.types.Predicate;
+import ink.o.w.o.resource.role.constant.Roles;
 import ink.o.w.o.resource.role.domain.Role;
 import ink.o.w.o.resource.user.constant.UserConstant;
 import ink.o.w.o.resource.user.domain.User;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -84,13 +86,27 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public ServiceResult<Boolean> addRole(Integer id, Role role) {
-    return null;
-  }
+  public ServiceResult<User> modifyRoles(Integer id, Set<Role> roles) {
+    if (roles.size() == 0) {
+      throw new ServiceException("请至少分配 [ 1个 ] 权限！");
+    }
+    roles.forEach(role -> {
+      if (role.getName().equals(Roles.MASTER.getName())) {
+        throw new ServiceException("请勿分配 MASTER 权限！");
+      }
+    });
 
-  @Override
-  public ServiceResult<Boolean> removeRole(Integer id, Role role) {
-    return null;
+    var u = getUserById(id).guard();
+
+    u.getRoles().forEach(role -> {
+      if (role.getName().equals(Roles.MASTER.getName())) {
+        throw new ServiceException("请勿变动 MASTER 权限！");
+      }
+    });
+
+    return ServiceResultFactory.success(
+        userRepository.save(u.setRoles(roles))
+    );
   }
 
   @Override

@@ -6,7 +6,8 @@ import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.server.domain.ServiceResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.Set;
 
 /**
  * @author LongY
@@ -32,11 +33,7 @@ public interface UserService {
      */
      ServiceResult<Boolean> unregister(Integer id);
 
-    @PreAuthorize("principal.username.equals(#id)")
-     ServiceResult<Boolean> addRole(Integer id, Role role);
-
-    @PreAuthorize("principal.username.equals(#id)")
-     ServiceResult<Boolean> removeRole(Integer id, Role role);
+     ServiceResult<User> modifyRoles(Integer id, Set<Role> roles);
 
     /**
      * 重置用户密码

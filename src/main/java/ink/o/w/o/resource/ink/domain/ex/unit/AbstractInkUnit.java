@@ -1,6 +1,7 @@
 package ink.o.w.o.resource.ink.domain.ex.unit;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ink.o.w.o.resource.ink.constant.InkUnitType;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,6 +15,7 @@ import javax.persistence.*;
  * @since 1.0.0
  */
 @MappedSuperclass
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public abstract class AbstractInkUnit {
   /**
    * id
@@ -22,8 +24,8 @@ public abstract class AbstractInkUnit {
    * @since 1.0.0
    */
   @Id
-  @GeneratedValue(generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
+  @GeneratedValue(generator = "ink-unit-ex-uuid")
+  @GenericGenerator(name = "ink-unit-ex-uuid", strategy = "uuid")
   protected Long id;
 
   @Enumerated(value = EnumType.STRING)

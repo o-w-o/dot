@@ -12,8 +12,8 @@ import javax.persistence.*;
 @Table(name = "t_ink_unit")
 public class InkUnit {
   @Id
-  @GeneratedValue(generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
+  @GeneratedValue(generator = "ink-unit-uuid")
+  @GenericGenerator(name = "ink-unit-uuid", strategy = "uuid")
   private Long id;
 
   @Enumerated(value = EnumType.STRING)

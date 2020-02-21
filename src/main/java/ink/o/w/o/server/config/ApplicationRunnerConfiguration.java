@@ -45,6 +45,7 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
             userService.register(new User().setName("sample").setRoles(RoleHelper.toRoles(Roles.USER, Roles.RESOURCES, Roles.RESOURCES_SAMPLE)).setPassword("233333"));
             userService.register(new User().setName("actuator").setRoles(RoleHelper.toRoles(Roles.USER, Roles.ENDPOINT)).setPassword("233333"));
             userService.register(new User().setName("qa").setRoles(RoleHelper.toRoles(Roles.USER, Roles.MASTER)).setPassword("233333"));
+            userService.register(new User().setName("inker").setRoles(RoleHelper.toRoles(Roles.USER)).setPassword("233333"));
             userService.register(new User().setName("李小狼").setRoles(RoleHelper.toRoles(Roles.USER)).setGender(UserGender.BOY).setPassword("121lxl"));
             userService.register(new User().setName("金闪闪").setRoles(RoleHelper.toRoles(Roles.USER)).setGender(UserGender.BOY).setPassword("121jss"));
             userService.register(new User().setName("二二娘").setRoles(RoleHelper.toRoles(Roles.USER)).setGender(UserGender.GIRL).setPassword("121een"));

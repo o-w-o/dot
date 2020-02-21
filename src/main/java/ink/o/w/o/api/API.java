@@ -36,9 +36,11 @@ public class API {
         new EntityModel<>(
             new Object(),
             entityLinks.linkFor(API.class).withSelfRel(),
-            entityLinks.linkFor(DocAPI.class).withRel("doc"),
+            entityLinks.linkFor(DocAPI.class).withRel("docs"),
             entityLinks.linkFor(AuthorizationAPI.class).withRel("authorization"),
-            entityLinks.linkFor(UserAPI.class).withRel("user")
+            entityLinks.linkFor(MyAPI.class).withRel("my"),
+            entityLinks.linkFor(UserAPI.class).withRel("users"),
+            entityLinks.linkFor(InkAPI.class).withRel("inks")
         )
     );
   }

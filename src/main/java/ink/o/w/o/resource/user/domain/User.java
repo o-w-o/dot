@@ -11,6 +11,7 @@ import org.springframework.hateoas.RepresentationModel;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class User extends RepresentationModel<User> implements Serializable {
   @JoinTable(name = "t_user_role",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles;
+  private Set<Role> roles = new HashSet<>();
 
   private String nickName;
 

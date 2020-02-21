@@ -37,11 +37,12 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
  * @author symbols@dingtalk.com
  * @date 2019/8/4 下午2:10
  * @see ink.o.w.o.server.controller.ExceptionsController
- * @deprecated
+ * @deprecated -
  */
 
 @Slf4j
 @Component
+@Deprecated
 public class HttpExceptionConfiguration implements HandlerExceptionResolver {
 
   @Resource

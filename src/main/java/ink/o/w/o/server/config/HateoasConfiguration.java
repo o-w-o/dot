@@ -6,7 +6,7 @@ import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType
 import org.springframework.hateoas.support.WebStack;
 
 @Configuration
-@EnableHypermediaSupport(type = HypermediaType.HAL_FORMS, stacks = WebStack.WEBMVC)
+@EnableHypermediaSupport(type = HypermediaType.HAL, stacks = WebStack.WEBMVC)
 public class HateoasConfiguration {
 
 }

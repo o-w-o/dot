@@ -17,6 +17,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -253,6 +254,11 @@ public class ExceptionsController {
         ResponseEntityExceptionBody.of(request, String.format("异常 -> [ %s ]", UndeclaredThrowableException.class.getSimpleName())),
         HttpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  @ExceptionHandler(RequestRejectedException.class)
+  public ResponseEntity<?> reject(RequestRejectedException e) {
+    return ResponseEntityFactory.error(e.getMessage());
   }
 
   /**

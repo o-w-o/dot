@@ -8,9 +8,9 @@ import java.util.Optional;
 @Getter
 public enum HttpExceptionStatus {
   internalServerError(500, "发生错误，请检查API借口参数并核对其类型, 如若仍得不到解决,请联系请联系管理员！"),
-  notFound(404, "资源未找到！"),
+  notFound(404, "不存在！"),
   forbidden(403, "角色权限不匹配, 可联系管理员设置相关权限！"),
-  unauthorized(401, "未授权的访问！"),
+  unauthorized(401, "未授权！"),
   requiredRequestBodyMissing(400002, " @RequestBody 注解标识的请求体缺失！", "Required request body is missing"),
   badRequest(400, "请求异常！");
 

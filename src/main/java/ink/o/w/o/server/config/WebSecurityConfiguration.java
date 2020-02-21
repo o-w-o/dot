@@ -1,6 +1,5 @@
 package ink.o.w.o.server.config;
 
-import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
 import ink.o.w.o.server.controller.AccessDeniedController;
 import ink.o.w.o.server.controller.UnAuthorizedAccessController;
 import ink.o.w.o.server.filter.AuthorityInjector;
@@ -35,12 +34,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Value("${management.endpoints.web.base-path}")
   private String endpointBaseUrl;
 
-  @Value("${spring.data.rest.base-path}")
-  private String resourceBaseUrl;
-
-  @Value("${spring.profiles.active}")
-  private String env;
-
   @Resource
   private UnAuthorizedAccessController unAuthorizedAccessController;
 
@@ -74,15 +67,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("*", endpointBaseUrl + "/**")
             .hasRole("ENDPOINT")
     );
-
-    if (!SystemRuntimeEnv.DEVELOPMENT.equals(env)) {
-      // 配置 rest data resource
-      httpSecurity.authorizeRequests(
-          (requests) -> requests
-              .antMatchers("*", resourceBaseUrl + "/**")
-              .hasRole("RESOURCE")
-      );
-    }
 
 
     httpSecurity.authorizeRequests()

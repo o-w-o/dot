@@ -1,10 +1,12 @@
 package ink.o.w.o.resource.role.domain;
 
+import ink.o.w.o.resource.role.util.RoleHelper;
+import ink.o.w.o.server.exception.ServiceException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -15,11 +17,12 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2020/2/5 19:32
  */
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "t_role")
 
 @Data
-public class Role implements Serializable {
+public class Role extends RepresentationModel<Role> implements Serializable {
 
   private static final long serialVersionUID = 1634634962611441758L;
 
@@ -27,5 +30,20 @@ public class Role implements Serializable {
   private Integer id;
 
   @NotNull
+  @Column(unique = true)
   private String name;
+
+  private boolean system;
+
+  @PreRemove
+  public void preRemove() {
+    if (RoleHelper.ROLES_MAP.containsKey(this.name)) {
+      throw new ServiceException("系统权限不得删除！");
+    }
+  }
+
+  @PrePersist
+  public void prePersist() {
+    this.setSystem(RoleHelper.ROLES_MAP.containsKey(this.name));
+  }
 }

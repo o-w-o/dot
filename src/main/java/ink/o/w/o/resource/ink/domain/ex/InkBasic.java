@@ -1,5 +1,6 @@
 package ink.o.w.o.resource.ink.domain.ex;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import ink.o.w.o.resource.ink.constant.InkType;
 import ink.o.w.o.resource.ink.domain.*;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -20,7 +22,8 @@ import java.util.Set;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class AbstractInk {
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class InkBasic {
 
   /**
    * id
@@ -29,9 +32,9 @@ public abstract class AbstractInk {
    * @since 1.0.0
    */
   @Id
-  @GeneratedValue(generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
-  protected Long id;
+  @GeneratedValue(generator = "ink-uuid")
+  @GenericGenerator(name = "ink-uuid", strategy = "uuid")
+  protected String id;
 
   /**
    * 类型
@@ -48,7 +51,7 @@ public abstract class AbstractInk {
    * @date 2020/02/12 12:36
    * @since 1.0.0
    */
-  @OneToMany
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   protected Set<InkUnit> units;
 
   /**
@@ -57,7 +60,7 @@ public abstract class AbstractInk {
    * @date 2020/02/12 12:36
    * @since 1.0.0
    */
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   protected Set<InkRef> refs;
 
   /**
@@ -66,7 +69,7 @@ public abstract class AbstractInk {
    * @date 2020/02/12 12:36
    * @since 1.0.0
    */
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   protected InkParticipants participants;
 
   /**
@@ -75,7 +78,7 @@ public abstract class AbstractInk {
    * @date 2020/02/12 12:36
    * @since 1.0.0
    */
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   protected Set<InkFeature> features;
 
   /**
@@ -84,7 +87,7 @@ public abstract class AbstractInk {
    * @date 2020/02/12 12:36
    * @since 1.0.0
    */
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   protected Set<InkMark> marks;
 
   /**
@@ -95,4 +98,7 @@ public abstract class AbstractInk {
    */
   protected String title;
   protected String description;
+
+  @Transient
+  protected Map<String, Object> ex;
 }
