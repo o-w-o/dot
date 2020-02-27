@@ -3,7 +3,7 @@ package ink.o.w.o.api;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.service.UserService;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
-import ink.o.w.o.server.util.ServerHelper;
+import ink.o.w.o.util.ServerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -30,15 +30,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @PreAuthorize("hasRole('ROLE_USER')")
 public class MyAPI {
   private final UserService userService;
+  private final ServerHelper serverHelper;
 
   @Autowired
-  public MyAPI(UserService userService) {
+  public MyAPI(UserService userService, ServerHelper serverHelper) {
     this.userService = userService;
+    this.serverHelper = serverHelper;
   }
 
   @GetMapping({"", "profile"})
   public ResponseEntity<?> getOneUserProfile() {
-    var id = ServerHelper.getUserIdFormSecurityContext();
+    var id = serverHelper.getUserIdFormSecurityContext();
     var u = userService.getUserById(id).guard();
 
     Link link = linkTo(methodOn(UserAPI.class).getOneUserProfile(id)).withSelfRel();
@@ -51,7 +53,7 @@ public class MyAPI {
   @PatchMapping({"", "profile"})
   public ResponseEntity<?> modifyOneUserProfile(@RequestBody User u) {
     return ResponseEntityFactory.success(
-        userService.modifyProfile(u, ServerHelper.getUserIdFormSecurityContext())
+        userService.modifyProfile(u, serverHelper.getUserIdFormSecurityContext())
             .guard()
     );
   }
@@ -59,7 +61,7 @@ public class MyAPI {
   @PatchMapping("password")
   public ResponseEntity<?> modifyOneUserPassword(@RequestParam String prevPassword, @RequestParam String password) {
     return ResponseEntityFactory.success(
-        userService.modifyPassword(ServerHelper.getUserIdFormSecurityContext(), password, prevPassword)
+        userService.modifyPassword(serverHelper.getUserIdFormSecurityContext(), password, prevPassword)
             .guard()
     );
   }

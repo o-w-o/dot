@@ -36,5 +36,5 @@ public class Ink {
   private InkType type;
 
   @Lob
-  private String content;
+  private String space;
 }

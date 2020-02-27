@@ -1,7 +1,7 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.domain.AuthorizedJwt;
-import ink.o.w.o.server.service.AuthorizationService;
+import ink.o.w.o.resource.authorization.domain.AuthorizedJwt;
+import ink.o.w.o.resource.authorization.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

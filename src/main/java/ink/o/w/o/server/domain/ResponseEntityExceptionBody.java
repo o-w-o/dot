@@ -82,7 +82,7 @@ public class ResponseEntityExceptionBody<T> implements Serializable {
   }
 
   public static <T> ResponseEntityExceptionBody<T> forbidden(String message) {
-    return error(HttpExceptionStatus.forbidden.getMessage(), HttpStatus.FORBIDDEN);
+    return error(message, HttpStatus.FORBIDDEN);
   }
 
   public static <T> ResponseEntityExceptionBody<T> forbidden() {
@@ -153,9 +153,14 @@ public class ResponseEntityExceptionBody<T> implements Serializable {
     return this;
   }
 
+  @SuppressWarnings("unchecked")
   private void autocomplete() {
     if (this.payload == null) {
-      this.payload = (T) new Object();
+      try {
+        this.payload = (T) new Object();
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+      }
     }
     if (this.timestamp == null) {
       this.timestamp = new Date();

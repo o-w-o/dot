@@ -1,9 +1,11 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.domain.AuthorizedJwt;
-import ink.o.w.o.server.domain.AuthorizedJwts;
+import ink.o.w.o.resource.aliyun.service.AliyunStsService;
+import ink.o.w.o.resource.aliyun.factory.PolicyFactory;
+import ink.o.w.o.resource.authorization.domain.AuthorizedJwt;
+import ink.o.w.o.resource.authorization.domain.AuthorizedJwts;
+import ink.o.w.o.resource.authorization.service.AuthorizationService;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
-import ink.o.w.o.server.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -15,7 +17,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.security.SignatureException;
 
 
@@ -32,12 +33,14 @@ import java.security.SignatureException;
 @RequestMapping(value = "authorization")
 public class AuthorizationAPI {
   private final EntityLinks entityLinks;
-  @Resource
-  private AuthorizationService authorizationService;
+  private final AuthorizationService authorizationService;
+  private final AliyunStsService aliyunStsService;
 
   @Autowired
-  AuthorizationAPI(EntityLinks entityLinks) {
+  AuthorizationAPI(EntityLinks entityLinks, AuthorizationService authorizationService, AliyunStsService aliyunStsService) {
     this.entityLinks = entityLinks;
+    this.authorizationService = authorizationService;
+    this.aliyunStsService = aliyunStsService;
   }
 
   @PostMapping
@@ -100,5 +103,25 @@ public class AuthorizationAPI {
     return result.guard()
         ? ResponseEntityFactory.ok("注销成功")
         : ResponseEntityFactory.generateFrom(result);
+  }
+
+  @PostMapping(value = "/sts", produces = "application/json")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  public ResponseEntity<?> createSts() {
+    var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadOnly);
+    return  ResponseEntityFactory.success(result.guard());
+  }
+
+  @PostMapping(value = "/sts/somebody", produces = "application/json")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  public ResponseEntity<?> createStsSomebody() {
+    var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadAndWrite);
+    return ResponseEntityFactory.success(result.guard());
+  }
+
+  @PostMapping(value = "/sts/nobody", produces = "application/json")
+  public ResponseEntity<?> createStsNobody() {
+    var result = aliyunStsService.createStsCredentialsForAnonymous();
+    return ResponseEntityFactory.success(result.guard());
   }
 }

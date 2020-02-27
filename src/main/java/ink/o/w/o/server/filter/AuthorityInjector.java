@@ -1,12 +1,12 @@
 package ink.o.w.o.server.filter;
 
+import ink.o.w.o.resource.authorization.domain.AuthorizationPayload;
+import ink.o.w.o.resource.authorization.domain.AuthorizedUser;
+import ink.o.w.o.resource.authorization.service.AuthorizedJwtStoreService;
 import ink.o.w.o.resource.role.util.RoleHelper;
 import ink.o.w.o.resource.user.domain.User;
-import ink.o.w.o.server.domain.AuthorizationPayload;
-import ink.o.w.o.server.domain.AuthorizedUser;
 import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
 import ink.o.w.o.server.domain.ServiceResult;
-import ink.o.w.o.server.service.AuthorizedJwtStoreService;
 import ink.o.w.o.util.HttpHelper;
 import ink.o.w.o.util.JSONHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,10 +53,11 @@ public class AuthorityInjector extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain chain) throws ServletException, IOException {
 
+    String ip = getIpAddress(request);
     logger.info("Referer: [{}], UA: [{}], IP: [{}]",
         request.getHeader("Referer"),
         request.getHeader("User-Agent"),
-        getIpAddress(request)
+        ip
     );
 
     ServiceResult<AuthorizationPayload> authorizationPayloadServiceResult = authorizedJwtStoreService.validate(request);
@@ -68,20 +70,28 @@ public class AuthorityInjector extends OncePerRequestFilter {
 
       if (userAuthentication == null || !userAuthentication.isAuthenticated()) {
         logger.info("用户未授权,尝试注入权限[rol -> {}]……", userRoles);
-        AuthorizedUser authorizedUser = AuthorizedUser.parse(
-            new User()
-                .setName(userName)
-                .setRoles(RoleHelper.fromRolesString(userRoles))
-        );
+        AuthorizedUser authorizedUser = AuthorizedUser
+            .parse(
+                new User()
+                    .setName(userName)
+                    .setRoles(RoleHelper.fromRolesString(userRoles))
+            )
+            .setIp(ip);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authorizedUser, null, authorizedUser.getAuthorities());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            authorizedUser,
+            new WebAuthenticationDetailsSource().buildDetails(request),
+            authorizedUser.getAuthorities()
+        );
 
         logger.info("为可授权限用户: " + userName + "，此次访问注入权限：" + jsonHelper.toJSONString(authorizedUser.getAuthorities()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
       } else {
         logger.info("用户已授权！");
       }
+    } else {
+      var anonymousUser = AuthorizedUser.anonymousUser(ip);
+      SecurityContextHolder.getContext().setAuthentication(new AnonymousAuthenticationToken(ip, anonymousUser, anonymousUser.getAuthorities()));
     }
 
     if (authorizationPayload.isJwtHeaderValid() && !authorizationPayload.isJwtParsePassed()) {
@@ -112,20 +122,27 @@ public class AuthorityInjector extends OncePerRequestFilter {
 
   private String getIpAddress(HttpServletRequest request) {
     String ip = request.getHeader("x-forwarded-for");
+    logger.info("use x-forwarded-for -> [{}]", ip);
+
     if (getIpAddressNextProxy(ip)) {
       ip = request.getHeader("Proxy-Client-IP");
+      logger.info("use Proxy-Client-IP -> [{}]", ip);
     }
     if (getIpAddressNextProxy(ip)) {
       ip = request.getHeader("WL-Proxy-Client-IP");
+      logger.info("use WL-Proxy-Client-IP -> [{}]", ip);
     }
     if (getIpAddressNextProxy(ip)) {
       ip = request.getHeader("HTTP_CLIENT_IP");
+      logger.info("use HTTP_CLIENT_IP -> [{}]", ip);
     }
     if (getIpAddressNextProxy(ip)) {
       ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+      logger.info("use HTTP_X_FORWARDED_FOR -> [{}]", ip);
     }
     if (getIpAddressNextProxy(ip)) {
       ip = request.getRemoteAddr();
+      logger.info("use RemoteAddr");
     }
 
     // 如果是多级代理，那么取第一个 ip 为客户端 ip

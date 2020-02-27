@@ -1,7 +1,7 @@
 package ink.o.w.o.resource.ink.service.impl;
 
 import ink.o.w.o.resource.ink.domain.Ink;
-import ink.o.w.o.resource.ink.domain.ex.InkBasic;
+import ink.o.w.o.resource.ink.domain.InkBasic;
 import ink.o.w.o.resource.ink.repository.InkRepository;
 import ink.o.w.o.resource.ink.service.InkService;
 import ink.o.w.o.resource.ink.service.handler.InkHandlerHolder;

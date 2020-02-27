@@ -1,6 +1,6 @@
 package ink.o.w.o.resource.ink.service;
 
-import ink.o.w.o.resource.ink.domain.ex.InkBasic;
+import ink.o.w.o.resource.ink.domain.InkBasic;
 import ink.o.w.o.server.domain.ServiceResult;
 
 public interface InkService {

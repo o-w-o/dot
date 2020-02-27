@@ -1,6 +1,6 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.domain.AuthorizedJwts;
+import ink.o.w.o.resource.authorization.domain.AuthorizedJwts;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

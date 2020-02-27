@@ -1,5 +1,6 @@
 package ink.o.w.o.resource.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ink.o.w.o.resource.role.domain.Role;
 import ink.o.w.o.resource.user.constant.UserGender;
@@ -24,6 +25,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User extends RepresentationModel<User> implements Serializable {
 
   private static final long serialVersionUID = 1452277172712371166L;

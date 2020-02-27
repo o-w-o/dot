@@ -5,6 +5,10 @@ package ink.o.w.o.server.domain;
  * @date 2019/8/5 上午9:23
  */
 public class ServiceResultFactory {
+    public static <T> ServiceResult<T> of(Boolean result, String message) {
+        return result ? success() : error(message);
+    }
+
     public static <T> ServiceResult<T> success() {
         return new ServiceResult<T>()
             .setSuccess(true);

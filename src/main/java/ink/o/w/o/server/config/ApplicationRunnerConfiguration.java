@@ -7,7 +7,7 @@ import ink.o.w.o.resource.user.constant.UserGender;
 import ink.o.w.o.resource.user.domain.User;
 import ink.o.w.o.resource.user.service.UserService;
 import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
-import ink.o.w.o.server.repository.AuthorizedJwtStoreRepository;
+import ink.o.w.o.resource.authorization.repository.AuthorizedJwtStoreRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -40,7 +40,7 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
         authorizedJwtStoreRepository.deleteAll();
         logger.info("ApplicationRunner:run 清除令牌，END");
 
-        if (SystemRuntimeEnv.DEVELOPMENT.equals(env)) {
+        if (env.contains(SystemRuntimeEnv.DEVELOPMENT)) {
             userService.register(new User().setName("demo").setRoles(RoleHelper.toRoles(Roles.USER)).setPassword("233333"));
             userService.register(new User().setName("sample").setRoles(RoleHelper.toRoles(Roles.USER, Roles.RESOURCES, Roles.RESOURCES_SAMPLE)).setPassword("233333"));
             userService.register(new User().setName("actuator").setRoles(RoleHelper.toRoles(Roles.USER, Roles.ENDPOINT)).setPassword("233333"));

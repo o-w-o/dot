@@ -1,15 +1,23 @@
 package ink.o.w.o.util.domainconverter;
 
 public abstract class AbstractDomainEnum<S, T> {
-  protected final T value;
+  public final T value;
 
-  protected AbstractDomainEnum(T value) {
+  public AbstractDomainEnum() {
+    super();
+    this.value = null;
+  }
+
+  public AbstractDomainEnum(T value) {
+    super();
     this.value = value;
   }
 
-  public static <T, S> S of(T t) {
-    return null;
+  public static <T, S extends AbstractDomainEnum<S, T>> S of(T t, S s) {
+    return s.locateValue(t);
   }
+
+  public abstract S locateValue(T t);
 
   public T getValue() {
     return this.value;

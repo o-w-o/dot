@@ -134,6 +134,7 @@ public class ExceptionsController {
    */
   @ExceptionHandler(NullPointerException.class)
   public ResponseEntity<?> nullPointerExceptionHandler(HttpServletRequest request, NullPointerException e) {
+    e.printStackTrace();
     return ResponseEntityFactory.generateFrom(
         ResponseEntityExceptionBody.of(request, HttpExceptionStatus.internalServerError),
         HttpStatus.INTERNAL_SERVER_ERROR

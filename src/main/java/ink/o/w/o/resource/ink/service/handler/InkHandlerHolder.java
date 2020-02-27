@@ -1,7 +1,7 @@
 package ink.o.w.o.resource.ink.service.handler;
 
 import ink.o.w.o.resource.ink.constant.InkType;
-import ink.o.w.o.resource.ink.service.handler.ex.AbstractInkHandler;
+import ink.o.w.o.resource.ink.service.handler.ext.AbstractInkHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

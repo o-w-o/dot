@@ -31,3 +31,5 @@ build/
 .vscode/
 
 src/main/resources/static/docs/*.html
+src/main/resources/application-local.properties
+src/main/resources/my.properties

@@ -133,22 +133,17 @@ public class UserServiceImpl implements UserService {
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    userRepository.findById(id).ifPresentOrElse(
-        (u) -> {
-          logger.info("prevPassword -> {}, password -> {}", u.getPassword(), encoder.matches(prevPassword, u.getPassword()));
-          if (encoder.matches(prevPassword, u.getPassword())) {
-            userRepository.save(u.setPassword(password));
-          } else {
-            throw new ServiceException("旧密码错误！");
-          }
-        },
-        () -> {
-          throw new ServiceException("用户不存在！");
-        }
-    );
+    var u = getUserById(id).guard();
 
-    return ServiceResultFactory.success(
-        userRepository.modifyUserPassword(encoder.encode(password), id) > 0
+    logger.info("prevPassword -> {}, password -> {}", u.getPassword(), encoder.matches(prevPassword, u.getPassword()));
+    if (encoder.matches(prevPassword, u.getPassword())) {
+      userRepository.save(u.setPassword(password));
+    } else {
+      throw new ServiceException("旧密码错误！");
+    }
+
+    return ServiceResultFactory.of(
+        userRepository.modifyUserPassword(encoder.encode(password), id) > 0, "修改失败！"
     );
   }
 
@@ -158,7 +153,7 @@ public class UserServiceImpl implements UserService {
       return ServiceResultFactory.error("用户名已存在！");
     }
 
-    User persistUser = userRepository.findUserById(id).get();
+    User persistUser = getUserById(id).guard();
 
     if (user.getName() != null) {
       persistUser.setName(user.getName());

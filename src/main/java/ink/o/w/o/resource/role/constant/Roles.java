@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Roles {
+  public final static Role ANONYMOUS = new Role().setId(0).setName("ANONYMOUS");
   public final static Role MASTER = new Role().setId(1).setName("MASTER");
   public final static Role USER = new Role().setId(9).setName("USER");
   public final static Role ENDPOINT = new Role().setId(10).setName("ENDPOINT");
