@@ -65,8 +65,6 @@ class AuthorizedJwtStoreServiceTest {
   public void revokeAll() {
     authorizedJwtStoreService.register(user);
     authorizedJwtStoreService.register(user);
-    var jwtString = authorizedJwtStoreService.register(user).guard().getAccessToken();
-
     logger.info("count -> {}", authorizedJwtStoreRepository.findByUserId(user.getId()).size());
     assertEquals(3, authorizedJwtStoreRepository.findByUserId(user.getId()).size());
 

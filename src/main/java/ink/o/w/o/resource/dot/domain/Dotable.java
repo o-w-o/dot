@@ -9,7 +9,9 @@ public interface Dotable<T extends DotBasic> {
   default DotBasic dehydrate() {
     var ink = (T) this;
 
-    return new DotBasic();
+    return new DotBasic()
+        .setId(ink.getId())
+        .setType(ink.getType());
   }
 
   default DotBasic dehydrate(T ink) {

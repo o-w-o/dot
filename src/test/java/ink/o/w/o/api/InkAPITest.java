@@ -1,16 +1,16 @@
 package ink.o.w.o.api;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@SpringBootTest
 class InkAPITest extends APITest {
 
   @Test
-  void create() {
+  public void create() {
   }
 
   @Test
-  void fetch() {
+  public void fetch() {
   }
 }

@@ -10,16 +10,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class MyAliyunPropertiesTest {
   @Autowired
-  MyAliyunProperties.MyOssProperties myOssProperties;
+  private MyAliyunProperties.MyOssProperties myOssProperties;
 
   @Autowired
-  MyAliyunProperties.MyStsProperties myStsProperties;
+  private MyAliyunProperties.MyStsProperties myStsProperties;
 
   @Value("${my.aliyun.oss.enable}")
-  Boolean ossEnable;
+  private Boolean ossEnable;
 
   @Value("${my.aliyun.sts.enable}")
-  Boolean stsEnable;
+  private Boolean stsEnable;
 
   @Test
   public void testProperties() {

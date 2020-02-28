@@ -10,16 +10,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class MailServiceTest {
   @Autowired
-  MailService mailService;
+  private MailService mailService;
 
   @Value("${spring.mail.username}")
-  String systemSender;
+  private String systemSender;
 
   @Value("${my.mail}")
-  String myEmail;
+  private String myEmail;
 
   @Test
-  void sendEmail() {
+  public void sendEmail() {
     Assert.assertNotNull(
         mailService.sendEmail(
             systemSender,
@@ -31,6 +31,7 @@ class MailServiceTest {
   }
 
   @Test
-  void sendSystemEmail() {
+  public void sendSystemEmail() {
+    // TODO TEST
   }
 }

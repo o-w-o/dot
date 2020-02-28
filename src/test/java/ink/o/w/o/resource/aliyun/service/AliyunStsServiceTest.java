@@ -5,7 +5,6 @@ import com.aliyun.oss.OSSClientBuilder;
 import ink.o.w.o.resource.aliyun.constant.properties.MyAliyunProperties;
 import ink.o.w.o.resource.aliyun.factory.PolicyFactory;
 import ink.o.w.o.resource.authorization.domain.AuthorizedUser;
-import ink.o.w.o.resource.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 class AliyunStsServiceTest {
   @Autowired
-  AliyunStsService aliyunStsService;
+  private AliyunStsService aliyunStsService;
 
   @Autowired
-  UserService userService;
-
-  @Autowired
-  MyAliyunProperties.MyOssProperties myOssProperties;
+  private MyAliyunProperties.MyOssProperties myOssProperties;
 
   @Value("${my.ip}")
-  String myIp;
+  private String myIp;
 
   @Test
   public void createSts() {

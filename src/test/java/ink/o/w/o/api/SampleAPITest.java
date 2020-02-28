@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 public class SampleAPITest extends APITest {
   @Autowired
-  AuthorizationService authorizationService;
+  private AuthorizationService authorizationService;
 
   @Test
   public void sampleAuthenticationHeader() throws Exception {

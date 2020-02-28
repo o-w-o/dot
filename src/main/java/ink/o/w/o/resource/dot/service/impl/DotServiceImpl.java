@@ -78,7 +78,7 @@ public class DotServiceImpl implements DotService {
 
     var createdDot = result.get().guard();
 
-    var indexedDot = dotRepository.save(
+    dotRepository.save(
         new Dot()
             .setId(createdDot.getId())
             .setType(createdDot.getType())

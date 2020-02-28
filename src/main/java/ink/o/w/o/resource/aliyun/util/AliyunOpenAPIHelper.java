@@ -54,7 +54,7 @@ public class AliyunOpenAPIHelper {
       this.client = new DefaultAcsClient(this.profile);
     }
 
-    Request<T> setRequestPayload(AcsRequest<T> requestPayload) {
+    private Request<T> setRequestPayload(AcsRequest<T> requestPayload) {
       this.requestPayload = requestPayload;
       this.requestPayload.setSysRegionId(myAuthorizationProperties.getRegionId());
       return this;

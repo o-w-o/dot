@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import ink.o.w.o.resource.ink.domain.InkBasic;
 import ink.o.w.o.resource.ink.service.InkService;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
-import ink.o.w.o.util.JSONHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -23,13 +22,11 @@ import javax.transaction.Transactional;
 public class InkAPI {
   private final InkService inkService;
   private final EntityLinks entityLinks;
-  private final JSONHelper jsonHelper;
 
   @Autowired
-  public InkAPI(EntityLinks entityLinks, InkService inkService, JSONHelper jsonHelper) {
+  public InkAPI(EntityLinks entityLinks, InkService inkService) {
     this.entityLinks = entityLinks;
     this.inkService = inkService;
-    this.jsonHelper = jsonHelper;
   }
 
   @PostMapping
@@ -49,7 +46,7 @@ public class InkAPI {
     var hal = new EntityModel<>(
         ink,
         entityLinks.linkFor(InkAPI.class).slash(ink.getId()).withSelfRel()
-    );;
+    );
 
     return hal;
   }

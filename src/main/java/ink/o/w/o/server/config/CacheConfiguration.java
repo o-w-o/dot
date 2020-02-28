@@ -64,7 +64,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     // 修复热部署时的缓存异常
     JdkSerializationRedisSerializer jdkSerializationRedisSerializer = new JdkSerializationRedisSerializer(getClass().getClassLoader());
 
-    return RedisCacheConfiguration.defaultCacheConfig()
+    return defaultCacheConfig()
         .entryTtl(Duration.ofMinutes(1))
         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jdkSerializationRedisSerializer));
   }

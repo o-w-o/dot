@@ -79,7 +79,7 @@ public class InkServiceImpl implements InkService {
 
     var createdInk = result.get().guard();
 
-    var indexedInk = inkRepository.save(
+    inkRepository.save(
         new Ink()
             .setId(createdInk.getId())
             .setType(createdInk.getType())
