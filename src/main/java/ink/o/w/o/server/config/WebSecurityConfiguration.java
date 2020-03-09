@@ -71,9 +71,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     httpSecurity.authorizeRequests()
 
-        // 对于获取 token 的 rest api 要允许匿名访问
-        .antMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
-
         // 允许对于网站静态资源的无授权访问
         .antMatchers(HttpMethod.GET, "/static/resources/**").permitAll()
 

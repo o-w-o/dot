@@ -1,7 +1,7 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.resource.aliyun.service.AliyunStsService;
-import ink.o.w.o.resource.aliyun.factory.PolicyFactory;
+import ink.o.w.o.integration.aliyun.service.AliyunStsService;
+import ink.o.w.o.integration.aliyun.factory.PolicyFactory;
 import ink.o.w.o.resource.authorization.domain.AuthorizedJwt;
 import ink.o.w.o.resource.authorization.domain.AuthorizedJwts;
 import ink.o.w.o.resource.authorization.service.AuthorizationService;

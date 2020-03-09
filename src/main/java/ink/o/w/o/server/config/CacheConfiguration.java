@@ -49,7 +49,9 @@ public class CacheConfiguration extends CachingConfigurerSupport {
       sb.append(o.getClass().getName()).append("@");
       sb.append(method.getName()).append(":");
       for (Object param : params) {
-        sb.append(param.toString());
+        if (param != null) {
+          sb.append(param.toString());
+        }
       }
 
       String key = sb.toString();

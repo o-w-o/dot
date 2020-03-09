@@ -75,4 +75,6 @@ public interface AuthorizedJwtStoreService {
    * @since 1.0
    */
   ServiceResult<AuthorizationPayload> validate(HttpServletRequest request);
+
+  ServiceResult<AuthorizationPayload> validate(String jwt);
 }

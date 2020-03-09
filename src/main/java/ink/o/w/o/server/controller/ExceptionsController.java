@@ -23,6 +23,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -256,6 +257,12 @@ public class ExceptionsController {
         HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
+
+  @ExceptionHandler(HttpClientErrorException.class)
+  public ResponseEntity<?> httpClient(HttpClientErrorException e) {
+    return ResponseEntityFactory.error(e.getMessage(), e.getStatusCode());
+  }
+
 
   @ExceptionHandler(RequestRejectedException.class)
   public ResponseEntity<?> reject(RequestRejectedException e) {

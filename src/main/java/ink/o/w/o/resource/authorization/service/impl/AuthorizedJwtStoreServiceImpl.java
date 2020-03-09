@@ -119,6 +119,47 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
   }
 
   @Override
+  public ServiceResult<AuthorizationPayload> validate(String jwt) {
+    AuthorizationPayload authorizationPayload = new AuthorizationPayload();
+
+    ServiceResult<AuthorizationPayload> serviceResult = new ServiceResult<>();
+    serviceResult.setPayload(authorizationPayload);
+
+    try {
+      Claims claims = AuthorizedJwt.parseClaimsFromJwtString(jwt);
+      AuthorizedJwt authorizedJwt = AuthorizedJwt.generateJwtFromClaims(claims, true);
+      authorizationPayload.setJwt(authorizedJwt);
+      authorizationPayload.setJwtClaims(claims);
+      authorizationPayload.setJwtParsePassed(true);
+    } catch (Exception e) {
+      authorizationPayload.setJwtParsePassed(false);
+    }
+
+    if (!authorizationPayload.isJwtParsePassed()) {
+      logger.info("用户授权信息不足，授权终止！");
+      return serviceResult.setMessage("用户授权信息不足，授权终止！").setSuccess(false);
+    }
+
+    logger.info("用户 TOKEN 检验……");
+
+    AuthorizedJwt authorizedJwt = AuthorizedJwt.generateJwtFromClaims(authorizationPayload.getJwtClaims(), true);
+    if (!authorizedJwtStoreRepository.existsById(AuthorizedJwtStore.generateUuid(authorizedJwt))) {
+      logger.info("用户 TOKEN 检验未通过，令牌可能已被注销！");
+      return serviceResult.setMessage("用户 TOKEN 检验未通过，服务端存储异常，令牌可能已被注销！").setSuccess(false);
+    }
+
+    authorizationPayload.setJwtValid(AuthorizedJwt.valid(authorizationPayload.getJwtClaims()));
+    if (authorizationPayload.isJwtValid()) {
+      logger.info("用户 TOKEN 检验通过！");
+      return serviceResult.setPayload(authorizationPayload).setSuccess(true);
+    }
+
+    logger.info("用户 TOKEN 检验未通过！");
+    return serviceResult.setMessage("用户 TOKEN 检验未通过！").setSuccess(false);
+
+  }
+
+  @Override
   public ServiceResult<AuthorizationPayload> validate(HttpServletRequest request) {
     AuthorizationPayload authorizationPayload = new AuthorizationPayload();
 

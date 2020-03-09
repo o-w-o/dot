@@ -26,7 +26,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
    */
   @Override
   public void configurePathMatch(PathMatchConfigurer configurer) {
-    configurer.setUseSuffixPatternMatch(false);
+
   }
 
   /**
@@ -76,6 +76,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
         .allowedOrigins("https://o-w-o.ink")
+        .allowedMethods("GET", "POST", "DELETE", "PATCH", "OPTIONS")
+        .allowCredentials(true)
+        .allowedHeaders("*");
+
+    registry.addMapping("/**")
+        .allowedOrigins("http://localhost:3000")
         .allowedMethods("GET", "POST", "DELETE", "PATCH", "OPTIONS")
         .allowCredentials(true)
         .allowedHeaders("*");

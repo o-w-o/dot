@@ -76,6 +76,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
                     .setName(userName)
                     .setRoles(RoleHelper.fromRolesString(userRoles))
             )
+            .setId(authorizationPayload.getJwt().getUid())
             .setIp(ip);
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -124,22 +125,6 @@ public class AuthorityInjector extends OncePerRequestFilter {
     String ip = request.getHeader("x-forwarded-for");
     logger.info("use x-forwarded-for -> [{}]", ip);
 
-    if (getIpAddressNextProxy(ip)) {
-      ip = request.getHeader("Proxy-Client-IP");
-      logger.info("use Proxy-Client-IP -> [{}]", ip);
-    }
-    if (getIpAddressNextProxy(ip)) {
-      ip = request.getHeader("WL-Proxy-Client-IP");
-      logger.info("use WL-Proxy-Client-IP -> [{}]", ip);
-    }
-    if (getIpAddressNextProxy(ip)) {
-      ip = request.getHeader("HTTP_CLIENT_IP");
-      logger.info("use HTTP_CLIENT_IP -> [{}]", ip);
-    }
-    if (getIpAddressNextProxy(ip)) {
-      ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-      logger.info("use HTTP_X_FORWARDED_FOR -> [{}]", ip);
-    }
     if (getIpAddressNextProxy(ip)) {
       ip = request.getRemoteAddr();
       logger.info("use RemoteAddr");
