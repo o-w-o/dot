@@ -1,7 +1,7 @@
 package ink.o.w.o.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import ink.o.w.o.resource.ink.domain.InkBasic;
+import ink.o.w.o.resource.ink.domain.Ink;
 import ink.o.w.o.resource.ink.service.InkService;
 import ink.o.w.o.server.domain.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class InkAPI {
   }
 
   @PostMapping
-  public ResponseEntity<?> create(@RequestBody InkBasic ink) {
+  public ResponseEntity<?> create(@RequestBody Ink ink) {
     var createdInk = inkService.create(ink).guard();
     return ResponseEntityFactory.ok(
         new EntityModel<>(
@@ -41,7 +41,7 @@ public class InkAPI {
   }
 
   @GetMapping("/{id}")
-  public EntityModel<InkBasic> fetch(@PathVariable String id) throws JsonProcessingException {
+  public EntityModel<Ink> fetch(@PathVariable String id) throws JsonProcessingException {
     var ink = inkService.fetch(id).guard();
     var hal = new EntityModel<>(
         ink,

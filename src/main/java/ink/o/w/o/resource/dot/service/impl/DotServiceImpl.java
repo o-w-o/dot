@@ -1,7 +1,6 @@
 package ink.o.w.o.resource.dot.service.impl;
 
 import ink.o.w.o.resource.dot.domain.Dot;
-import ink.o.w.o.resource.dot.domain.DotBasic;
 import ink.o.w.o.resource.dot.repository.DotRepository;
 import ink.o.w.o.resource.dot.service.DotService;
 import ink.o.w.o.resource.dot.service.handler.DotHandlerHolder;
@@ -34,7 +33,7 @@ public class DotServiceImpl implements DotService {
   }
 
   @Override
-  public String test(DotBasic dot) {
+  public String test(Dot dot) {
     logger.info("处理 DOT 开始：{}", dot.getType());
     var status = new AtomicReference<>(false);
     var result = new AtomicReference<>("");
@@ -49,12 +48,12 @@ public class DotServiceImpl implements DotService {
   }
 
   @Override
-  public ServiceResult<DotBasic> fetch(String dotId) {
+  public ServiceResult<Dot> fetch(String dotId) {
     logger.info("处理 DOT 开始：{}", dotId);
 
     var dot = dotRepository.findById(dotId).orElseThrow(() -> new ServiceException(String.format("Dot id[ %s ] 不存在！", dotId)));
     var status = new AtomicReference<>(false);
-    var result = new AtomicReference<DotBasic>(null);
+    var result = new AtomicReference<Dot>(null);
 
     dotHandlerHolder.select(dot.getType()).ifPresent(handler -> {
       result.set(handler.fetch(dot.getId(), dot.getType()).guard());
@@ -67,10 +66,10 @@ public class DotServiceImpl implements DotService {
 
 
   @Override
-  public ServiceResult<DotBasic> create(DotBasic dot) {
+  public ServiceResult<Dot> create(Dot dot) {
     logger.info("处理 DOT 开始： type -> [ {} ]", dot.getType());
 
-    var result = new AtomicReference<ServiceResult<DotBasic>>(null);
+    var result = new AtomicReference<ServiceResult<Dot>>(null);
 
     dotHandlerHolder.select(dot.getType()).ifPresent(handler -> {
       result.set(handler.create(dot));

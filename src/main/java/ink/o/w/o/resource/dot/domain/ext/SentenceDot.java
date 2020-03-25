@@ -1,6 +1,6 @@
 package ink.o.w.o.resource.dot.domain.ext;
 
-import ink.o.w.o.resource.dot.domain.DotBasic;
+import ink.o.w.o.resource.dot.domain.DotSpace;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,6 +14,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "t_dot__sentence")
-public class SentenceDot extends DotBasic {
+public class SentenceDot extends DotSpace {
 }
 

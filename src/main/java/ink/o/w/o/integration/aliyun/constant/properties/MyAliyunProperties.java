@@ -39,6 +39,8 @@ public class MyAliyunProperties {
     private String temporaryDir;
     private String protectDir;
     private String privateDir;
+    private String processPrefix;
+    private String processDefaultName;
   }
 
   @Getter

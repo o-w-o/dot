@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -29,8 +28,7 @@ public class Role extends RepresentationModel<Role> implements Serializable {
   @Id
   private Integer id;
 
-  @NotNull
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   private String name;
 
   private boolean system;

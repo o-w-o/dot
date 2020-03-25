@@ -200,6 +200,12 @@
             <version>0.33.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+        </dependency>
+
         <!-- 常用库依赖 -->
         <dependency>
             <groupId>org.projectlombok</groupId>

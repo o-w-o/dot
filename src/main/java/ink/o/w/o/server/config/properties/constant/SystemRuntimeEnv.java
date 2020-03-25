@@ -9,6 +9,11 @@ package ink.o.w.o.server.config.properties.constant;
 public class SystemRuntimeEnv {
 
     /**
+     * 本地环境
+     */
+    public static final String LOCAL = "local";
+
+    /**
      * 开发环境
      */
     public static final String DEVELOPMENT = "development";

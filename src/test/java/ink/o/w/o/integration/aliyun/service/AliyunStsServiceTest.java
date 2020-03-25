@@ -17,7 +17,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AliyunStsServiceTest {
   @Autowired
   private AliyunStsService aliyunStsService;

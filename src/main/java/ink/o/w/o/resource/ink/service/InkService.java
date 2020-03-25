@@ -1,12 +1,12 @@
 package ink.o.w.o.resource.ink.service;
 
-import ink.o.w.o.resource.ink.domain.InkBasic;
+import ink.o.w.o.resource.ink.domain.Ink;
 import ink.o.w.o.server.domain.ServiceResult;
 
 public interface InkService {
-  String test(InkBasic ink);
+  String test(Ink ink);
 
-  ServiceResult<InkBasic> create(InkBasic ink);
+  ServiceResult<Ink> create(Ink ink);
 
-  ServiceResult<InkBasic> fetch(String inkId);
+  ServiceResult<Ink> fetch(String inkId);
 }

@@ -2,21 +2,18 @@ package ink.o.w.o.util;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class RequestHelper {
-  @Autowired
-  private JSONHelper jsonHelper;
-
   /**
-   * 将对象装换为map
+   * 将对象装换为 map
    *
    * @param bean -
    * @return -
@@ -40,20 +37,24 @@ public class RequestHelper {
     return map;
   }
 
-  public <T> String stringifyQueryParameters(T parameters) {
+  public <T> String stringifyQueryParameters(@NotNull T parameters) {
     var builder = new StringBuilder();
-    Map parameterMap = jsonHelper.getObjectMapper().convertValue(parameters, Map.class);
+    try {
+      var parameterMap = beanToMap(parameters);
 
-    parameterMap
-        .keySet()
-        .stream()
-        .map(String::valueOf)
-        .filter(parameterMap::containsKey)
-        .forEach((key) -> builder
-            .append(builder.indexOf("?") == -1 ? "?" : "&")
-            .append(key).append("=")
-            .append(parameterMap.get(key))
-        );
+      parameterMap
+          .keySet()
+          .stream()
+          .map(String::valueOf)
+          .filter(parameterMap::containsKey)
+          .forEach((key) -> builder
+              .append(builder.indexOf("?") == -1 ? "?" : "&")
+              .append(key).append("=")
+              .append(parameterMap.get(key))
+          );
+    } catch (ClassCastException | IllegalArgumentException e) {
+      e.printStackTrace();
+    }
 
     logger.debug("stringifyQueryParameters -> [{}]", builder.toString());
     return builder.toString();

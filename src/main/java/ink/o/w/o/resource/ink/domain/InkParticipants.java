@@ -22,6 +22,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class InkParticipants {
   @Id
+  @GeneratedValue
   private Long id;
 
   @OneToOne(cascade = {CascadeType.REFRESH})

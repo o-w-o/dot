@@ -1,7 +1,6 @@
 package ink.o.w.o.resource.ink.service.impl;
 
 import ink.o.w.o.resource.ink.domain.Ink;
-import ink.o.w.o.resource.ink.domain.InkBasic;
 import ink.o.w.o.resource.ink.repository.InkRepository;
 import ink.o.w.o.resource.ink.service.InkService;
 import ink.o.w.o.resource.ink.service.handler.InkHandlerHolder;
@@ -34,7 +33,7 @@ public class InkServiceImpl implements InkService {
   }
 
   @Override
-  public String test(InkBasic ink) {
+  public String test(Ink ink) {
     logger.info("处理 INK 开始：{}", ink.getType());
     var status = new AtomicReference<>(false);
     var result = new AtomicReference<>("");
@@ -49,43 +48,38 @@ public class InkServiceImpl implements InkService {
   }
 
   @Override
-  public ServiceResult<InkBasic> fetch(String inkId) {
+  public ServiceResult<Ink> fetch(String inkId) {
     logger.info("处理 INK 开始：{}", inkId);
 
     var ink = inkRepository.findById(inkId).orElseThrow(() -> new ServiceException(String.format("Ink id[ %s ] 不存在！", inkId)));
     var status = new AtomicReference<>(false);
-    var result = new AtomicReference<InkBasic>(null);
+    var result = new AtomicReference<Ink>(null);
 
     inkHandlerHolder.select(ink.getType()).ifPresent(handler -> {
       result.set(handler.fetch(ink.getId(), ink.getType()).guard());
       status.set(true);
     });
 
-    result.get().getRefs();
     logger.info("处理 INK 结束：{}", status.get());
     return ServiceResultFactory.success(result.get());
   }
 
 
   @Override
-  public ServiceResult<InkBasic> create(InkBasic ink) {
-    logger.info("处理 INK 开始： type -> [ {} ]", ink.getType());
+  public ServiceResult<Ink> create(Ink ink) {
+    logger.info("处理 INK 开始： type -> [ {} ] [ {} ]", ink.getType(), ink);
 
-    var result = new AtomicReference<ServiceResult<InkBasic>>(null);
+    var result = new AtomicReference<ServiceResult<Ink>>(null);
 
     inkHandlerHolder.select(ink.getType()).ifPresent(handler -> {
       result.set(handler.create(ink));
     });
 
-    var createdInk = result.get().guard();
+    var spaceMountedInk = result.get().guard();
 
-    inkRepository.save(
-        new Ink()
-            .setId(createdInk.getId())
-            .setType(createdInk.getType())
-    );
+    inkRepository.save(spaceMountedInk);
 
     logger.info("处理 INK 结束： success -> [ {} ]", result.get().getSuccess());
-    return ServiceResultFactory.success(createdInk);
+    return ServiceResultFactory.success(spaceMountedInk);
   }
 }

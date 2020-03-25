@@ -1,9 +1,14 @@
 package ink.o.w.o.resource.ink.domain;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ink.o.w.o.resource.ink.constant.InkType;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Set;
+
+import static javax.persistence.CascadeType.PERSIST;
 
 
 /**
@@ -14,9 +19,13 @@ import javax.persistence.*;
  * @since 1.0.0
  */
 @Data
+
 @Entity
 @Table(name = "t_ink")
 public class Ink {
+  @Transient
+  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+  public InkSpace space;
   /**
    * id
    *
@@ -24,8 +33,9 @@ public class Ink {
    * @since 1.0.0
    */
   @Id
-  private String id;
-
+  @GeneratedValue(generator = "ink-uuid")
+  @GenericGenerator(name = "ink-uuid", strategy = "uuid")
+  protected String id;
   /**
    * 类型
    *
@@ -33,8 +43,49 @@ public class Ink {
    * @since 1.0.0
    */
   @Enumerated(value = EnumType.STRING)
-  private InkType type;
-
+  protected InkType type;
+  /**
+   * 参考文献
+   *
+   * @date 2020/02/12 12:36
+   * @since 1.0.0
+   */
+  @ManyToMany(fetch = FetchType.LAZY)
+  protected Set<InkRef> refs;
+  /**
+   * 参与者
+   *
+   * @date 2020/02/12 12:36
+   * @since 1.0.0
+   */
+  @OneToOne(fetch = FetchType.LAZY, cascade = PERSIST)
+  protected InkParticipants participants;
+  /**
+   * 特性
+   *
+   * @date 2020/02/12 12:36
+   * @since 1.0.0
+   */
+  @ManyToMany(fetch = FetchType.LAZY)
+  protected Set<InkFeature> features;
+  /**
+   * 标志
+   *
+   * @date 2020/02/12 12:36
+   * @since 1.0.0
+   */
+  @ManyToMany(fetch = FetchType.LAZY)
+  protected Set<InkMark> marks;
+  /**
+   * 标题
+   *
+   * @date 2020/02/12 12:36
+   * @since 1.0.0
+   */
+  protected String title;
+  protected String description;
   @Lob
-  private String space;
+  protected String spaceContent;
+  @Column(unique = true)
+  protected String spaceId;
 }
