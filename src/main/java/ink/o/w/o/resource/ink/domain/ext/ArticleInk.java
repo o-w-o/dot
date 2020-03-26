@@ -11,13 +11,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
+
+@JsonTypeName(InkType.TypeName.ARTICLE)
+
 @Entity
-@NoArgsConstructor
-
-@JsonTypeName("ARTICLE")
-
 @Table(name = "t_ink__article")
 public class ArticleInk extends InkSpace implements Serializable {
   private static final long serialVersionUID = 2582992954173051962L;

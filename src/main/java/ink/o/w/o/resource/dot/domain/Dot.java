@@ -4,6 +4,7 @@ package ink.o.w.o.resource.dot.domain;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ink.o.w.o.resource.dot.constant.DotType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -11,7 +12,9 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Optional;
 
+@NoArgsConstructor
 @Data
+
 @Entity
 @Table(name = "t_dot")
 public class Dot {

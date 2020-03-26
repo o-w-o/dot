@@ -17,10 +17,10 @@ import java.io.Serializable;
  * @date 2020/2/5 19:32
  */
 @EqualsAndHashCode(callSuper = true)
+@Data
+
 @Entity
 @Table(name = "t_role")
-
-@Data
 public class Role extends RepresentationModel<Role> implements Serializable {
 
   private static final long serialVersionUID = 1634634962611441758L;

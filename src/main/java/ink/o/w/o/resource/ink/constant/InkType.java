@@ -1,6 +1,8 @@
 package ink.o.w.o.resource.ink.constant;
 
 
+import lombok.Getter;
+
 /**
  * InkType 枚举类型
  *
@@ -15,5 +17,24 @@ public enum InkType {
    * @date 2020/02/12 16:41
    * @since 1.0.0
    */
-  ARTICLE;
+  ARTICLE(TypeName.ARTICLE);
+
+
+
+  /**
+   * 类型名称
+   *
+   * @date 2020/02/12 16:42
+   * @since 1.0.0
+   */
+  @Getter
+  private String typeName;
+
+  InkType(String typeName) {
+    this.typeName = typeName;
+  }
+
+  public static class TypeName {
+    public static final String ARTICLE = "ARTICLE";
+  }
 }

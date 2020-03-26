@@ -12,9 +12,9 @@ import java.io.Serializable;
  * @date 2019/8/5 上午9:12
  */
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class ServiceResult<T> implements Serializable {
 
   public final static Integer OK_RESULT_CODE = 0;

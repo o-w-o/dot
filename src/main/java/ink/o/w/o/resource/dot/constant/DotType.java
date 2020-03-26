@@ -18,29 +18,29 @@ public enum DotType {
    * @date 2020/02/12 16:42
    * @since 1.0.0
    */
-  ATTACHMENT("ATTACHMENT"),
+  ATTACHMENT(TypeName.ATTACHMENT),
   /**
    * 图像
    *
    * @date 2020/02/12 16:42
    * @since 1.0.0
    */
-  IMAGE("IMAGE"),
-  RESOURCE("RESOURCE"),
+  IMAGE(TypeName.IMAGE),
+  RESOURCE(TypeName.RESOURCE),
   /**
    * 句子
    *
    * @date 2020/02/12 16:42
    * @since 1.0.0
    */
-  SENTENCE("SENTENCE"),
+  SENTENCE(TypeName.SENTENCE),
   /**
    * 通用
    *
    * @date 2020/02/12 16:42
    * @since 1.0.0
    */
-  JSON("JSON");
+  JSON(TypeName.JSON);
 
   /**
    * 类型名称
@@ -53,5 +53,13 @@ public enum DotType {
 
   DotType(String typeName) {
     this.typeName = typeName;
+  }
+
+  public static class TypeName {
+      public static final String ATTACHMENT = "ATTACHMENT";
+      public static final String IMAGE = "IMAGE";
+      public static final String RESOURCE = "RESOURCE";
+      public static final String SENTENCE = "SENTENCE";
+      public static final String JSON = "JSON";
   }
 }

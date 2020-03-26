@@ -1,11 +1,9 @@
 package ink.o.w.o.resource.dot.domain.ext;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import ink.o.w.o.resource.dot.constant.DotType;
 import ink.o.w.o.resource.dot.domain.DotSpace;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -17,10 +15,12 @@ import javax.persistence.Table;
  * @date 2020/02/12 16:48
  * @since 1.0.0
  */
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Data
+
+@JsonTypeName(DotType.TypeName.RESOURCE)
+
 @Entity
 @Table(name = "t_dot__resource")
 public class ResourceDot extends DotSpace {

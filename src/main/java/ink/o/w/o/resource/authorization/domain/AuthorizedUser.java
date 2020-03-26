@@ -18,12 +18,13 @@ import java.util.Set;
 /**
  * @author LongY
  */
+@NoArgsConstructor
+@Setter
+@Getter
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 @Component
-@Setter
-@Getter
-@NoArgsConstructor
 public class AuthorizedUser extends User implements UserDetails {
 
   private Integer id;

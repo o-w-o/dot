@@ -15,10 +15,10 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2019/8/4 下午6:56
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class ResponseEntityBody<T> extends RepresentationModel<ResponseEntityBody<T>> implements Serializable {
 
   private static final long serialVersionUID = 1580635028746898160L;
