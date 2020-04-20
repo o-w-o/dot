@@ -1,8 +1,8 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.resource.user.domain.User;
-import ink.o.w.o.resource.user.service.UserService;
-import ink.o.w.o.server.domain.ResponseEntityFactory;
+import ink.o.w.o.resource.system.user.domain.User;
+import ink.o.w.o.resource.system.user.service.UserService;
+import ink.o.w.o.server.io.api.ResponseEntityFactory;
 import ink.o.w.o.util.ServerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package ink.o.w.o.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
-import ink.o.w.o.server.domain.ServiceResult;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.service.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;

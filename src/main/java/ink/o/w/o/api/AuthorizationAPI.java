@@ -1,11 +1,11 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.integration.aliyun.service.AliyunStsService;
-import ink.o.w.o.integration.aliyun.factory.PolicyFactory;
-import ink.o.w.o.resource.authorization.domain.AuthorizedJwt;
-import ink.o.w.o.resource.authorization.domain.AuthorizedJwts;
-import ink.o.w.o.resource.authorization.service.AuthorizationService;
-import ink.o.w.o.server.domain.ResponseEntityFactory;
+import ink.o.w.o.resource.integration.aliyun.service.AliyunStsService;
+import ink.o.w.o.resource.integration.aliyun.factory.PolicyFactory;
+import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwt;
+import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwts;
+import ink.o.w.o.resource.system.authorization.service.AuthorizationService;
+import ink.o.w.o.server.io.api.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;

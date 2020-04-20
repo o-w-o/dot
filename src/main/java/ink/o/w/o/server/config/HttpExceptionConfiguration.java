@@ -1,10 +1,10 @@
 package ink.o.w.o.server.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
-import ink.o.w.o.server.exception.ServiceException;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.util.HttpHelper;
-import ink.o.w.o.util.JSONHelper;
+import ink.o.w.o.util.JsonHelper;
 import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.MissingClaimException;
@@ -46,7 +46,7 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class HttpExceptionConfiguration implements HandlerExceptionResolver {
 
   @Resource
-  private JSONHelper jsonHelper;
+  private JsonHelper jsonHelper;
 
   @Override
   public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e) {
@@ -124,7 +124,7 @@ public class HttpExceptionConfiguration implements HandlerExceptionResolver {
     response.setStatus(responseEntityExceptionBody.getCode());
 
     try {
-      String json = jsonHelper.toJSONString(responseEntityExceptionBody);
+      String json = jsonHelper.toJsonString(responseEntityExceptionBody);
 
       try (PrintWriter writer = response.getWriter()) {
         writer.write(json);

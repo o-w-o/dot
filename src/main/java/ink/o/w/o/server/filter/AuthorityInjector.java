@@ -1,14 +1,14 @@
 package ink.o.w.o.server.filter;
 
-import ink.o.w.o.resource.authorization.domain.AuthorizationPayload;
-import ink.o.w.o.resource.authorization.domain.AuthorizedUser;
-import ink.o.w.o.resource.authorization.service.AuthorizedJwtStoreService;
-import ink.o.w.o.resource.role.util.RoleHelper;
-import ink.o.w.o.resource.user.domain.User;
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
-import ink.o.w.o.server.domain.ServiceResult;
+import ink.o.w.o.resource.system.authorization.domain.AuthorizationPayload;
+import ink.o.w.o.resource.system.authorization.domain.AuthorizedUser;
+import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
+import ink.o.w.o.resource.system.role.util.RoleHelper;
+import ink.o.w.o.resource.system.user.domain.User;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.util.HttpHelper;
-import ink.o.w.o.util.JSONHelper;
+import ink.o.w.o.util.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class AuthorityInjector extends OncePerRequestFilter {
 
   @Autowired
-  private JSONHelper jsonHelper;
+  private JsonHelper jsonHelper;
 
   @Autowired
   private AuthorizedJwtStoreService authorizedJwtStoreService;
@@ -85,7 +85,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
             authorizedUser.getAuthorities()
         );
 
-        logger.info("为可授权限用户: " + userName + "，此次访问注入权限：" + jsonHelper.toJSONString(authorizedUser.getAuthorities()));
+        logger.info("为可授权限用户: " + userName + "，此次访问注入权限：" + jsonHelper.toJsonString(authorizedUser.getAuthorities()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
       } else {
         logger.info("用户已授权！");
@@ -108,7 +108,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
     response.setStatus(HttpStatus.FORBIDDEN.value());
 
     try (PrintWriter writer = response.getWriter()) {
-      writer.write(jsonHelper.toJSONString(
+      writer.write(jsonHelper.toJsonString(
           ResponseEntityExceptionBody.error(HttpHelper.formatResponseDataMessage(request).apply("用户授权信息解析异常，授权终止！"))
               .setPath(request.getRequestURI())
               .setCode(12333)

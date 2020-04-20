@@ -1,6 +1,6 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.domain.ResponseEntityFactory;
+import ink.o.w.o.server.io.api.ResponseEntityFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -40,7 +40,7 @@ public class API {
             entityLinks.linkFor(AuthorizationAPI.class).withRel("authorization"),
             entityLinks.linkFor(MyAPI.class).withRel("my"),
             entityLinks.linkFor(UserAPI.class).withRel("users"),
-            entityLinks.linkFor(InkAPI.class).withRel("inks")
+            entityLinks.linkFor(SymbolsAPI.class).withRel("inks")
         )
     );
   }

@@ -2,9 +2,9 @@ package ink.o.w.o.server.controller;
 
 
 import ink.o.w.o.server.constant.HttpExceptionStatus;
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
-import ink.o.w.o.server.domain.ResponseEntityFactory;
-import ink.o.w.o.server.exception.ServiceException;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.api.ResponseEntityFactory;
+import ink.o.w.o.server.io.service.ServiceException;
 import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.MissingClaimException;

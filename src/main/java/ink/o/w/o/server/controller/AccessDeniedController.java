@@ -1,7 +1,7 @@
 package ink.o.w.o.server.controller;
 
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
-import ink.o.w.o.util.JSONHelper;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.util.JsonHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,7 +25,7 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class AccessDeniedController implements AccessDeniedHandler {
 
   @Resource
-  private JSONHelper jsonHelper;
+  private JsonHelper jsonHelper;
 
   @Override
   public void handle(HttpServletRequest request, HttpServletResponse response,
@@ -35,7 +35,7 @@ public class AccessDeniedController implements AccessDeniedHandler {
     response.setStatus(HttpStatus.FORBIDDEN.value());
 
     try (PrintWriter writer = response.getWriter()) {
-      writer.write(jsonHelper.toJSONString(
+      writer.write(jsonHelper.toJsonString(
           ResponseEntityExceptionBody.forbidden()
               .setPath(request.getRequestURI())
       ));

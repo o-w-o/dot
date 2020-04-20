@@ -1,9 +1,9 @@
 package ink.o.w.o.websocket;
 
-import ink.o.w.o.resource.authorization.service.AuthorizedJwtStoreService;
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
+import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
 import ink.o.w.o.util.ContextHelper;
-import ink.o.w.o.util.JSONHelper;
+import ink.o.w.o.util.JsonHelper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,7 @@ import java.util.Objects;
 @Component
 @ServerEndpoint("/websocket/{sid}/{accessToken}")
 public class WebSocketSession extends ContextHelper.AbstractContext {
-  private JSONHelper jsonHelper;
+  private JsonHelper jsonHelper;
   private WebSocketSessionManager webSocketSessionManager = WebSocketSessionManager.getWebSocketSessionManager();
   private AuthorizedJwtStoreService authorizedJwtStoreService;
 
@@ -44,7 +44,7 @@ public class WebSocketSession extends ContextHelper.AbstractContext {
   public void init() {
     if (this.isContextInitCompletely()) {
       if (this.getContextInitialStatus() && !this.getResourceInitialStatus()) {
-        this.jsonHelper = this.getBean(JSONHelper.class);
+        this.jsonHelper = this.getBean(JsonHelper.class);
         this.authorizedJwtStoreService = this.getBean(AuthorizedJwtStoreService.class);
         this.setResourceInitialStatus(true);
       }
@@ -69,7 +69,7 @@ public class WebSocketSession extends ContextHelper.AbstractContext {
           CloseReason closeReason = new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "用户权限不匹配！");
 
           session.getBasicRemote().sendText(
-              this.jsonHelper.toJSONString(ResponseEntityExceptionBody.error("用户权限不匹配！"))
+              this.jsonHelper.toJsonString(ResponseEntityExceptionBody.error("用户权限不匹配！"))
           );
           session.close(closeReason);
         } catch (IOException e) {
@@ -81,7 +81,7 @@ public class WebSocketSession extends ContextHelper.AbstractContext {
         CloseReason closeReason = new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "用户权限不足！");
 
         session.getBasicRemote().sendText(
-            this.jsonHelper.toJSONString(ResponseEntityExceptionBody.error("用户权限不足！"))
+            this.jsonHelper.toJsonString(ResponseEntityExceptionBody.error("用户权限不足！"))
         );
         session.close(closeReason);
       } catch (IOException e) {
@@ -120,7 +120,7 @@ public class WebSocketSession extends ContextHelper.AbstractContext {
   public void onError(Session session, Throwable error) throws IOException {
     logger.error("发生错误 id[{}] uri[{}] sid[{}]", session.getId(), session.getRequestURI(), this.sid);
     error.printStackTrace();
-    session.getBasicRemote().sendText(jsonHelper.toJSONString(ResponseEntityExceptionBody.error(error.getMessage())));
+    session.getBasicRemote().sendText(jsonHelper.toJsonString(ResponseEntityExceptionBody.error(error.getMessage())));
   }
 
   /**
@@ -134,6 +134,6 @@ public class WebSocketSession extends ContextHelper.AbstractContext {
     msg.put("timestamp", new Date().toString());
     msg.put("message", message);
 
-    this.session.getBasicRemote().sendText(jsonHelper.toJSONString(msg));
+    this.session.getBasicRemote().sendText(jsonHelper.toJsonString(msg));
   }
 }

@@ -1,9 +1,9 @@
 package ink.o.w.o.server.controller;
 
-import ink.o.w.o.server.domain.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
 import ink.o.w.o.server.constant.HttpExceptionStatus;
 import ink.o.w.o.util.HttpHelper;
-import ink.o.w.o.util.JSONHelper;
+import ink.o.w.o.util.JsonHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -20,7 +20,7 @@ import java.io.Serializable;
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 
 /**
- * 未授权用户入口,设定控制器,统一返回 403 未授权提示, 并将提示结果封装为 RESTFUL API 的JSON数据.
+ * 未授权用户入口,设定控制器,统一返回 403 未授权提示, 并将提示结果封装为 RESTFUL API 的 JSON 数据.
  *
  * @author symbols@dingtalk.com
  * @version 1.0
@@ -32,7 +32,7 @@ public class UnAuthorizedAccessController implements AuthenticationEntryPoint, S
   private static final long serialVersionUID = -8970718410437077606L;
 
   @Resource
-  private JSONHelper jsonHelper;
+  private JsonHelper jsonHelper;
 
   @Override
   public void commence(
@@ -48,7 +48,7 @@ public class UnAuthorizedAccessController implements AuthenticationEntryPoint, S
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
     try (PrintWriter writer = response.getWriter()) {
-      writer.write(jsonHelper.toJSONString(
+      writer.write(jsonHelper.toJsonString(
           ResponseEntityExceptionBody.unauthorized()
               .setPath(request.getRequestURI())
               .setMessage(HttpHelper.formatResponseDataMessage(request).apply(HttpExceptionStatus.forbidden.getMessage()))

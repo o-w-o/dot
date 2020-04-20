@@ -1,5 +1,6 @@
 package ink.o.w.o.server.config;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +25,12 @@ public class RedisConfiguration {
   private ObjectMapper objectMapper;
 
   @Bean
-  @SuppressWarnings("all")
   public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
     var template = new RedisTemplate<String, Object>();
 
     template.setConnectionFactory(factory);
 
-    var jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+    var jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
     jackson2JsonRedisSerializer
         .setObjectMapper(objectMapper);
 

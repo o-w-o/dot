@@ -14,9 +14,9 @@ public enum HttpExceptionStatus {
   requiredRequestBodyMissing(400002, " @RequestBody 注解标识的请求体缺失！", "Required request body is missing"),
   badRequest(400, "请求异常！");
 
-  private Integer code;
-  private String message;
-  private String matcher;
+  private final Integer code;
+  private final String message;
+  private final String matcher;
 
   HttpExceptionStatus(Integer code, String message) {
     this.code = code;
