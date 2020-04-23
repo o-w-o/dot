@@ -17,7 +17,7 @@
     <properties>
         <java.version>11</java.version>
         <querydsl.version>4.2.1</querydsl.version>
-        <aliyun.openapisdk.version>4.5.0</aliyun.openapisdk.version>
+        <aliyun.openapisdk.version>4.5.1</aliyun.openapisdk.version>
         <aliyun.oss.version>3.9.1</aliyun.oss.version>
     </properties>
 
