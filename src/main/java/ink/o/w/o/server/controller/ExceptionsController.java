@@ -31,7 +31,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.Optional;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -205,7 +205,7 @@ public class ExceptionsController {
    * 请求 Method 不匹配
    */
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-  public ResponseEntity<?> requestMissingServletRequest(HttpServletRequest request, HttpRequestMethodNotSupportedException e) {
+  public ResponseEntity<?> HttpRequestMethodNotSupportedException(HttpServletRequest request, HttpRequestMethodNotSupportedException e) {
     String message = String.format("不支持 [ %s ] 方法，仅支持 [ %s ] 方法类型", e.getMethod(), StringUtils.join(e.getSupportedMethods(), ","));
 
     return ResponseEntityFactory.generateFrom(
@@ -234,16 +234,17 @@ public class ExceptionsController {
    */
   @ExceptionHandler({MethodArgumentNotValidException.class})
   public ResponseEntity<?> methodArgumentNotValidException(HttpServletRequest request, MethodArgumentNotValidException e) {
-    var message = new AtomicReference<>("");
+    var message = new AtomicReference<>(new HashMap<String, String>());
 
-    Optional.ofNullable(e.getBindingResult().getFieldError()).ifPresentOrElse(fieldError -> message.set(
-        fieldError.getDefaultMessage()),
-        () -> message.set("fetch error failed！")
-    );
+    e.getBindingResult().getFieldErrors()
+        .forEach(fieldError ->
+            message.get().put(fieldError.getField(), fieldError.getDefaultMessage())
+        );
+
 
     return ResponseEntityFactory.generateFrom(
-        ResponseEntityExceptionBody.of(request, message.get()),
-        HttpStatus.INTERNAL_SERVER_ERROR
+        ResponseEntityExceptionBody.of(request, "参数校验失败！").setPayload(message.get()),
+        HttpStatus.BAD_REQUEST
     );
   }
 

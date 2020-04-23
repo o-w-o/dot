@@ -1,29 +1,40 @@
 package ink.o.w.o.resource.core.dot.service.handler;
 
 import ink.o.w.o.resource.core.dot.domain.DotType;
-import ink.o.w.o.resource.core.dot.service.handler.ext.AbstractDotHandler;
+import ink.o.w.o.resource.core.dot.repository.DotTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
-public class DotHandlerHolder implements ApplicationContextAware {
+public class DotSpaceHandlerHolder implements ApplicationContextAware {
   private ApplicationContext applicationContext;
 
-  private Map<DotType.DotTypeEnum, AbstractDotHandler> container = new HashMap<>();
+  private final Map<DotType.DotTypeEnum, DotSpaceHandler> container = new HashMap<>();
+  @Resource
+  DotTypeRepository dotTypeRepository;
 
   @PostConstruct
   public void init() {
+    initDotHandlerHolder();
+    initDotTypes();
+  }
+
+  public void initDotHandlerHolder() {
     logger.info("DotHandlerHolder register handler -> START");
-    Map<String, AbstractDotHandler> dotHandlers = applicationContext.getBeansOfType(AbstractDotHandler.class);
+    Map<String, DotSpaceHandler> dotHandlers = applicationContext.getBeansOfType(DotSpaceHandler.class);
     if (dotHandlers.isEmpty()) {
       logger.warn("DotHandlerHolder register handler -> EMPTY");
       return;
@@ -40,12 +51,17 @@ public class DotHandlerHolder implements ApplicationContextAware {
     logger.info("DotHandlerHolder register handler -> END");
   }
 
-  public Optional<AbstractDotHandler> select(DotType dotType) {
-    return Optional.ofNullable(container.get(dotType));
+  public void initDotTypes() {
+    dotTypeRepository.saveAll(Stream.of(DotType.DotTypeEnum.values()).map(DotType::new).collect(Collectors.toList()));
+  }
+
+  public Optional<DotSpaceHandler> select(DotType dotType) {
+    return Optional.ofNullable(container.get(dotType.getType()));
   }
 
   @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+
+  public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
   }
 }

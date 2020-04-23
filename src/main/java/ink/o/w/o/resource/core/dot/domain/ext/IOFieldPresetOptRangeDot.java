@@ -16,16 +16,16 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Data
 
-@JsonTypeName(DotType.TypeName.IO_FIELD_PRESET_OPT_ONE)
+@JsonTypeName(DotType.TypeName.IO_FIELD_PRESET_OPT_MANY)
 
 @Entity
-@Table(name = "t_dot__iofield_preset_opt_one")
-public class IOFieldPresetOptOneDot extends DotSpace {
-  @Override
-  public DotType.DotTypeEnum getType() {
-    return DotType.DotTypeEnum.IO_FIELD_PRESET_OPT_ONE;
-  }
-
+@Table(name = "t_dot__iofield_preset_opt_range")
+public class IOFieldPresetOptRangeDot extends DotSpace {
   @OneToOne
   private Dot referenceDot;
+
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.IO_FIELD_PRESET_OPT_MANY;
+  }
 }

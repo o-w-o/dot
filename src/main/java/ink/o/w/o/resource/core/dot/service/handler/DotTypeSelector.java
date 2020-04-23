@@ -8,7 +8,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface DotTypeSelector {
+public @interface
+DotTypeSelector {
 
   DotType.DotTypeEnum value();
 

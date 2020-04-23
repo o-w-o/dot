@@ -27,6 +27,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__link_picture")
 public class LinkPictureDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.LINK;
+  }
 
   private String link;
   private CopyrightType copyrightType;

@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ public class Dot {
   @ManyToOne
   private DotType type;
 
+  @Valid
   @Transient
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
   private DotSpace space;

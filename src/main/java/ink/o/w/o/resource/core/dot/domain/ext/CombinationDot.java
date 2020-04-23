@@ -16,11 +16,15 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Data
 
-@JsonTypeName(DotType.TypeName.REFERENCE)
+@JsonTypeName(DotType.TypeName.COMBINATION)
 
 @Entity
 @Table(name = "t_dot__combination")
 public class CombinationDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.COMBINATION;
+  }
 
   @OneToOne
   private Dot referenceDot;

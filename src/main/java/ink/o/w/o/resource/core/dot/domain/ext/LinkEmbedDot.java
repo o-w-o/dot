@@ -27,6 +27,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__link_embed")
 public class LinkEmbedDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.LINK;
+  }
 
   private String embedLink;
   private String originLink;

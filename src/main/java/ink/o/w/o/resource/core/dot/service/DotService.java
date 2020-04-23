@@ -3,10 +3,16 @@ package ink.o.w.o.resource.core.dot.service;
 import ink.o.w.o.resource.core.dot.domain.Dot;
 import ink.o.w.o.server.io.service.ServiceResult;
 
-public interface DotService {
-  String test(Dot dot);
+import java.util.List;
 
+public interface DotService {
   ServiceResult<Dot> create(Dot dot);
 
-  ServiceResult<Dot> fetch(String dotId);
+  ServiceResult<Dot> update(Dot dot);
+
+  ServiceResult<Dot> retrieve(String dotId);
+
+  ServiceResult<List<Dot>> retrieve(String[] dotIds);
+
+  ServiceResult<Dot> delete(Dot dot);
 }

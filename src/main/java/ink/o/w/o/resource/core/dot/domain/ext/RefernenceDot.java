@@ -21,6 +21,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__reference")
 public class RefernenceDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.REFERENCE;
+  }
 
   @OneToOne
   private Dot referenceDot;

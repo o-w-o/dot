@@ -26,8 +26,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__resource_text")
 public class ResourceTextDot extends DotSpace {
-
-  private final DotType.DotTypeEnum type = DotType.DotTypeEnum.TEXT;
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.RESOURCE_TEXT;
+  }
 
   /**
    * 文件大小

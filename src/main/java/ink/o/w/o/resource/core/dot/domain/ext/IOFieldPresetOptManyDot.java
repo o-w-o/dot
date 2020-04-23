@@ -21,6 +21,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__iofield_preset_opt_many")
 public class IOFieldPresetOptManyDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.IO_FIELD_PRESET_OPT_MANY;
+  }
 
   @OneToOne
   private Dot referenceDot;

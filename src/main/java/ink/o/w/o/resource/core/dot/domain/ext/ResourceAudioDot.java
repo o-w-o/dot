@@ -26,8 +26,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__resource_audio")
 public class ResourceAudioDot extends DotSpace {
-
-  private final DotType.DotTypeEnum type = DotType.DotTypeEnum.TEXT;
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.RESOURCE_AUDIO;
+  }
 
   /**
    * 文件大小

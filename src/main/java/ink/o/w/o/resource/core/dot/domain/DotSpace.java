@@ -8,17 +8,22 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.util.Map;
 
 /**
- * AbstractInkUnit
+ * DotSpace
  *
  * @author symbols@dingtalk.com
  * @date 2020/02/12 17:00
  * @since 1.0.0
  */
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -39,6 +44,8 @@ public abstract class DotSpace {
    * @date 2020/02/12 16:48
    * @since 1.0.0
    */
+  @GeneratedValue(generator = "dot_space-uuid")
+  @GenericGenerator(name = "dot_space-uuid", strategy = "uuid")
   @Id
   protected String id;
 

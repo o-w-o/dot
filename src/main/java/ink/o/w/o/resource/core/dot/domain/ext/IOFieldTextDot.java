@@ -21,6 +21,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_dot__iofield_text")
 public class IOFieldTextDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.IO_FIELD_TEXT;
+  }
 
   @OneToOne
   private Dot referenceDot;

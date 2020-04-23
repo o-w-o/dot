@@ -28,6 +28,11 @@ import java.util.Set;
 @Entity
 @Table(name = "t_dot__text")
 public class TextDot extends DotSpace {
+  @Override
+  public DotType.DotTypeEnum getType() {
+    return DotType.DotTypeEnum.TEXT;
+  }
+
   @Enumerated
   private TextType textType;
 
@@ -53,7 +58,7 @@ public class TextDot extends DotSpace {
     ;
 
     @Getter
-    private Integer order;
+    private final Integer order;
 
     TextLevel(Integer order) {
       this.order = order;
@@ -69,7 +74,7 @@ public class TextDot extends DotSpace {
     ;
 
     @Getter
-    private String typeName;
+    private final String typeName;
 
     TextType(String typeName) {
       this.typeName = typeName;
