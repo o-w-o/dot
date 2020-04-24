@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -31,8 +32,10 @@ public class Dot {
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
   private DotSpace space;
   private String spaceId;
-  @Lob
-  private String spaceContent;
+
+  @Column(columnDefinition = "json")
+  @Type(type = "ink.o.w.o.server.def.JsonbType")
+  private Object spaceContent;
 
   @CreatedDate
   @Temporal(TemporalType.TIMESTAMP)

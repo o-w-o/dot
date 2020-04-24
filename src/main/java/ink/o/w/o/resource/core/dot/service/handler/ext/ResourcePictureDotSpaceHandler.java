@@ -34,18 +34,17 @@ public class ResourcePictureDotSpaceHandler extends DotSpaceHandler {
   }
 
   @Override
-
   public String handle(Dot dot) {
     return dotDotSpaceDefaultHandler.handle(dot);
   }
 
   @Override
-  public ServiceResult<Dot> fetch(String dotId, DotType dotType) {
+  public ServiceResult<Dot> retrieve(String dotId, DotType dotType) {
     return dotDotSpaceDefaultHandler.fetch(dotId, dotType);
   }
 
   @Override
-  public ServiceResult<DotSpace> fetchSpace(String dotSpaceId, DotType dotType) {
+  public ServiceResult<DotSpace> retrieveSpace(String dotSpaceId, DotType dotType) {
     return dotDotSpaceDefaultHandler.fetchSpace(dotSpaceId, dotType);
   }
 

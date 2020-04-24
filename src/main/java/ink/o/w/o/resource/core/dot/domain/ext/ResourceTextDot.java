@@ -2,7 +2,6 @@ package ink.o.w.o.resource.core.dot.domain.ext;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import ink.o.w.o.resource.core.dot.domain.DotType;
-import ink.o.w.o.resource.core.dot.domain.DotSpace;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,43 +24,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "t_dot__resource_text")
-public class ResourceTextDot extends DotSpace {
+public class ResourceTextDot extends Resource {
   @Override
   public DotType.DotTypeEnum getType() {
     return DotType.DotTypeEnum.RESOURCE_TEXT;
   }
-
-  /**
-   * 文件大小
-   */
-  private Long size;
-
-  /**
-   * 文件的绝对路径
-   */
-  private String uri;
-
-  /**
-   * 文件的web访问地址
-   */
-  private String url;
-
-  /**
-   * 文件后缀
-   */
-  private String suffix;
-
-  /**
-   * 存储的bucket
-   */
-  private String bucket;
-
-  /**
-   * 原文件名
-   */
-  private String name;
-  /**
-   * 存储的文件夹
-   */
-  private String path;
 }

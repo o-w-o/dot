@@ -64,7 +64,8 @@ public class AuthorityInjector extends OncePerRequestFilter {
     AuthorizationPayload authorizationPayload = authorizationPayloadServiceResult.getPayload();
 
     if (authorizationPayloadServiceResult.getSuccess()) {
-      String userName = authorizationPayload.getJwt().getUid().toString();
+      var userId = authorizationPayload.getJwt().getUid();
+      String userName = userId.toString();
       String userRoles = authorizationPayload.getJwt().getRol();
       Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -73,6 +74,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
         AuthorizedUser authorizedUser = AuthorizedUser
             .parse(
                 new User()
+                    .setId(userId)
                     .setName(userName)
                     .setRoles(RoleHelper.fromRolesString(userRoles))
             )

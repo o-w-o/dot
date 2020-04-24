@@ -9,9 +9,9 @@ public abstract class DotSpaceHandler {
 
   abstract public String handle(Dot dot);
 
-  abstract public ServiceResult<Dot> fetch(String dotId, DotType dotType);
+  abstract public ServiceResult<Dot> retrieve(String dotId, DotType dotType);
 
-  abstract public ServiceResult<DotSpace> fetchSpace(String dotSpaceId, DotType dotType);
+  abstract public ServiceResult<DotSpace> retrieveSpace(String dotSpaceId, DotType dotType);
 
   abstract public ServiceResult<Dot> create(Dot dot);
 

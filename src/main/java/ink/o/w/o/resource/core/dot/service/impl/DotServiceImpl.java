@@ -44,7 +44,7 @@ public class DotServiceImpl implements DotService {
     var result = new AtomicReference<Dot>(null);
 
     dotSpaceHandlerHolder.select(dot.getType()).ifPresent(handler -> {
-      result.set(handler.fetch(dot.getId(), dot.getType()).guard());
+      result.set(handler.retrieve(dot.getId(), dot.getType()).guard());
       status.set(true);
     });
 

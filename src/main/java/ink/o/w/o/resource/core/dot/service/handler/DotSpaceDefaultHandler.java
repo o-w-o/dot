@@ -23,6 +23,7 @@ public class DotSpaceDefaultHandler<T extends DotSpace> {
   private DotRepository dotRepository;
   private DotSpaceRepository<T> dotSpaceRepository;
 
+  @SuppressWarnings({"unchecked", ""})
   public String handle(Dot dot) {
     T resourcePictureDot = (T) dot.getSpace();
     try {
@@ -48,25 +49,18 @@ public class DotSpaceDefaultHandler<T extends DotSpace> {
     );
   }
 
+  @SuppressWarnings({"unchecked", ""})
   public ServiceResult<Dot> create(Dot dot) {
     T space = (T) dot.getSpace();
-    var createdDotSpace = dotSpaceRepository.save(space);
-    try {
-      var spaceMountedDot = dot
-          .setSpace(createdDotSpace)
-          .setSpaceId(createdDotSpace.getId());
+    T createdDotSpace = dotSpaceRepository.save(space);
+    var spaceMountedDot = dot
+        .setSpace(createdDotSpace)
+        .setSpaceId(createdDotSpace.getId());
 
-      var spaceContent = jsonHelper.toJsonString(createdDotSpace);
-      logger.info("spaceContent -> [{}]", spaceContent);
+    spaceMountedDot.setSpaceContent(createdDotSpace);
+    logger.info("spaceMountedDot -> [{}]", spaceMountedDot);
 
-      spaceMountedDot.setSpaceContent(spaceContent);
-      logger.info("spaceMountedDot -> [{}]", spaceMountedDot);
-
-      return ServiceResultFactory.success(spaceMountedDot);
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      return ServiceResultFactory.error(e.getMessage());
-    }
+    return ServiceResultFactory.success(spaceMountedDot);
   }
 
 }

@@ -1,5 +1,6 @@
 package ink.o.w.o.resource.integration.aliyun.service.impl;
 
+import ink.o.w.o.resource.integration.aliyun.domain.Policy;
 import ink.o.w.o.resource.integration.aliyun.domain.Sts;
 import ink.o.w.o.resource.integration.aliyun.repository.AliyunStsRepository;
 import ink.o.w.o.resource.integration.aliyun.service.AliyunStsService;
@@ -45,8 +46,25 @@ public class AliyunStsServiceImpl implements AliyunStsService {
     var user = serverHelper.getAuthorizedUserFormSecurityContext();
     return createStsCredentialsForUser(preset, user);
   }
+
   @Override
   public ServiceResult<Sts.Credentials> createStsCredentialsForAnonymous() {
     return createStsCredentialsForUser(PolicyFactory.Preset.Anonymous);
+  }
+
+  @Override
+  public ServiceResult<Sts.Credentials> createStsCredentialsByPolicy(Policy policy, AuthorizedUser user) {
+    var optionalSts = aliyunStsRepository.createSts(
+        stsHelper.generateStsSessionName(user),
+        stsHelper.generateStsPolicy(policy)
+    );
+
+    if (optionalSts.isPresent()) {
+      return ServiceResultFactory.success(
+          Sts.Credentials.of(optionalSts.get().getCredentials())
+      );
+    }
+
+    return ServiceResultFactory.error("授权失败！");
   }
 }

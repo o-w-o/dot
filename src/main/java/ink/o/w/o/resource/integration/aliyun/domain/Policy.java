@@ -13,4 +13,9 @@ public class Policy {
 
   @JsonProperty("Statement")
   private Set<Statement> statements;
+
+  @Override
+  public Policy clone(){
+    return new Policy().setStatements(Set.copyOf(statements));
+  }
 }

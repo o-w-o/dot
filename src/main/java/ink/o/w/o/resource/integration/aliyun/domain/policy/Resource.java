@@ -30,13 +30,13 @@ public class Resource {
   public static Resource privateResource(User user) {
     return new Resource()
         .setBucketName(myOssProperties.getBucketName())
-        .setDirName(String.format("%s/%s", myOssProperties.getPrivateDir(), user.getId()));
+        .setDirName(String.format("%s/%s/*", myOssProperties.getPrivateDir(), user.getId()));
   }
 
   public static Resource temporaryResource(User user) {
     return new Resource()
         .setBucketName(myOssProperties.getBucketName())
-        .setDirName(String.format("%s/%s", myOssProperties.getTemporaryDir(), user.getId()));
+        .setDirName(String.format("%s/%s/*", myOssProperties.getTemporaryDir(), user.getId()));
   }
 
   @Autowired
@@ -48,6 +48,6 @@ public class Resource {
   public String toJson() {
     return dirName == null
         ? String.format("acs:oss:*:*:%s", bucketName)
-        : String.format("acs:oss:*:*:%s/%s/*", bucketName, dirName);
+        : String.format("acs:oss:*:*:%s/%s", bucketName, dirName);
   }
 }
