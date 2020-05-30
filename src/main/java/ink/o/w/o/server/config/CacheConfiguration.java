@@ -1,7 +1,7 @@
 package ink.o.w.o.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.service.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -23,7 +23,6 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import javax.annotation.Resource;
-
 import java.time.Duration;
 
 import static org.springframework.data.redis.cache.RedisCacheConfiguration.defaultCacheConfig;
@@ -125,6 +124,6 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
   @Bean
   public CacheManager cacheManagerForHttpResponseData() {
-    return createCacheManagerX(ResponseEntityExceptionBody.class);
+    return createCacheManagerX(APIException.class);
   }
 }

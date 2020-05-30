@@ -30,7 +30,7 @@ import java.util.UUID;
 @Component
 @Configuration
 @EnableScheduling
-public class InitTask {
+public class InitTaskSchedule {
   private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
   private final static String MASTER_NAME = "master";
 
@@ -46,7 +46,7 @@ public class InitTask {
   @Value("${spring.profiles.active}")
   private String env;
 
-  public InitTask(UserService userService, MailService mailService) {
+  public InitTaskSchedule(UserService userService, MailService mailService) {
     this.userService = userService;
     this.mailService = mailService;
   }

@@ -2,51 +2,44 @@ package ink.o.w.o.api;
 
 import ink.o.w.o.resource.core.symbols.domain.Symbols;
 import ink.o.w.o.resource.core.symbols.service.SymbolsService;
-import ink.o.w.o.server.io.api.ResponseEntityFactory;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.*;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.EntityLinks;
-import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 
 @Slf4j
-@RestController
-@ExposesResourceFor(SymbolsAPI.class)
-@RequestMapping("symbols")
+@APIResource(path = "symbols")
 @Transactional
 public class SymbolsAPI {
   private final SymbolsService symbolsService;
-  private final EntityLinks entityLinks;
 
   @Autowired
-  public SymbolsAPI(EntityLinks entityLinks, SymbolsService symbolsService) {
-    this.entityLinks = entityLinks;
+  public SymbolsAPI(SymbolsService symbolsService) {
     this.symbolsService = symbolsService;
   }
 
-  @PostMapping
-  public ResponseEntity<?> create(@RequestBody Symbols symbols) {
-    var createdInk = symbolsService.create(symbols).guard();
-    return ResponseEntityFactory.ok(
-        new EntityModel<>(
-            createdInk,
-            entityLinks.linkFor(SymbolsAPI.class).slash(createdInk.getId()).withSelfRel()
-        )
-    );
+  @APIResourceSchema
+  public APIResult<APISchemata> fetchSchema() {
+    return APIResult.of(ContextHelper.fetchAPIContext(SymbolsAPI.class).orElseThrow(APIException::new));
   }
 
-  @GetMapping("/{id}")
-  public EntityModel<Symbols> fetch(@PathVariable String id) {
-    var ink = symbolsService.fetch(id).guard();
-    var hal = new EntityModel<>(
-        ink,
-        entityLinks.linkFor(SymbolsAPI.class).slash(ink.getId()).withSelfRel()
-    );
+  @APIResourceCreate(name = "创建 Symbols")
+  public APIResult<?> create(@RequestBody Symbols symbols) {
+    var createdInk = symbolsService.create(symbols).guard();
+    return APIResult.of(createdInk);
+  }
 
-    return hal;
+  @APIResourceFetch(path = "/{id}")
+  public APIResult<Symbols> fetch(@PathVariable String id) {
+    var ink = symbolsService.fetch(id).guard();
+
+    return APIResult.of(ink);
   }
 }

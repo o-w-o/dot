@@ -1,15 +1,15 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.server.io.api.ResponseEntityFactory;
+import ink.o.w.o.server.io.api.annotation.APIResource;
+import ink.o.w.o.server.io.api.annotation.APIResourceFetch;
+import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.EntityLinks;
-import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * API 入口
@@ -19,29 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @Slf4j
-@ExposesResourceFor(API.class)
-@RestController
-@RequestMapping
+@APIResource
 public class API {
-  private final EntityLinks entityLinks;
 
-  @Autowired
-  API(EntityLinks entityLinks) {
-    this.entityLinks = entityLinks;
+  @APIResourceFetch(name = "获取 API 文档索引！")
+  public APIResult<Map<String, String>> index() {
+    return APIResult.of(ContextHelper.fetchAPIContext());
   }
 
-  @GetMapping
-  public ResponseEntity<?> index() {
-    return ResponseEntityFactory.ok(
-        new EntityModel<>(
-            new Object(),
-            entityLinks.linkFor(API.class).withSelfRel(),
-            entityLinks.linkFor(DocAPI.class).withRel("docs"),
-            entityLinks.linkFor(AuthorizationAPI.class).withRel("authorization"),
-            entityLinks.linkFor(MyAPI.class).withRel("my"),
-            entityLinks.linkFor(UserAPI.class).withRel("users"),
-            entityLinks.linkFor(SymbolsAPI.class).withRel("inks")
-        )
-    );
+  @APIResourceSchema
+  public APIResult<APISchemata> schema() {
+    return APIResult.of(ContextHelper.fetchAPIContext(API.class).orElseThrow(APIException::new));
   }
 }

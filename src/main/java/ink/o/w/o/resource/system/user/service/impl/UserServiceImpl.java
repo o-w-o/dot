@@ -8,7 +8,6 @@ import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.repository.UserRepository;
 import ink.o.w.o.resource.system.user.service.UserService;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.util.PasswordEncoderHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +32,13 @@ public class UserServiceImpl implements UserService {
   @Override
   public ServiceResult<User> getUserByUsername(String username) {
     if (userRepository.existsByName(username)) {
-      return ServiceResultFactory.success(
+      return ServiceResult.success(
           userRepository.findUserByName(username)
               .orElseThrow(new ServiceException("用户不存在！"))
       );
     }
 
-    return ServiceResultFactory.error("用户不存在！");
+    return ServiceResult.error("用户不存在！");
 
   }
 
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
   @Cacheable(cacheNames = "getUserById")
   public ServiceResult<User> getUserById(Integer id) {
     if (userRepository.existsById(id)) {
-      return ServiceResultFactory.success(
+      return ServiceResult.success(
           userRepository.findById(id)
               .orElseThrow(
                   new ServiceException(String.format("[ %d ] 用户不存在", id))
@@ -55,13 +54,13 @@ public class UserServiceImpl implements UserService {
       );
     }
 
-    return ServiceResultFactory.error(String.format("[ %d ] 用户不存在", id));
+    return ServiceResult.error(String.format("[ %d ] 用户不存在", id));
   }
 
   @Override
   public ServiceResult<User> register(User user) {
     if (userRepository.existsByName(user.getName())) {
-      return ServiceResultFactory.error(String.format("[ %s ] 用户已存在!", user.getName()));
+      return ServiceResult.error(String.format("[ %s ] 用户已存在!", user.getName()));
     }
 
     if (user.getPassword() == null) {
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserService {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     user.setPassword(encoder.encode(user.getPassword()));
 
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         userRepository.save(user)
     );
   }
@@ -79,7 +78,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public ServiceResult<Boolean> unregister(Integer id) {
     userRepository.deleteById(id);
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         userRepository.findById(id)
             .isEmpty()
     );
@@ -104,21 +103,21 @@ public class UserServiceImpl implements UserService {
       }
     });
 
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         userRepository.save(u.setRoles(roles))
     );
   }
 
   @Override
   public ServiceResult<Page<User>> listUser(Predicate predicate, Pageable pageable) {
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         userRepository.findAll(predicate, pageable)
     );
   }
 
   @Override
   public ServiceResult<Boolean> resetPassword(Integer id) {
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         userRepository.modifyUserPassword(PasswordEncoderHelper.encoder().encode(UserConstant.USER_INITIAL_PASSWORD), id) > 0
     );
   }
@@ -142,7 +141,7 @@ public class UserServiceImpl implements UserService {
       throw new ServiceException("旧密码错误！");
     }
 
-    return ServiceResultFactory.of(
+    return ServiceResult.of(
         userRepository.modifyUserPassword(encoder.encode(password), id) > 0, "修改失败！"
     );
   }
@@ -150,7 +149,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public ServiceResult<User> modifyProfile(User user, int id) {
     if (userRepository.existsByNameAndIdIsNot(user.getName(), id)) {
-      return ServiceResultFactory.error("用户名已存在！");
+      return ServiceResult.error("用户名已存在！");
     }
 
     User persistUser = getUserById(id).guard();
@@ -167,7 +166,7 @@ public class UserServiceImpl implements UserService {
       persistUser.setGender(user.getGender());
     }
 
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         userRepository.save(persistUser)
     );
   }

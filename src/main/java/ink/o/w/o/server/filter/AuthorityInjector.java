@@ -5,8 +5,9 @@ import ink.o.w.o.resource.system.authorization.domain.AuthorizedUser;
 import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.domain.User;
-import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.service.ServiceResult;
+import ink.o.w.o.util.ContextHelper;
 import ink.o.w.o.util.HttpHelper;
 import ink.o.w.o.util.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +15,7 @@ import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -53,12 +50,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain chain) throws ServletException, IOException {
 
-    String ip = getIpAddress(request);
-    logger.info("Referer: [{}], UA: [{}], IP: [{}]",
-        request.getHeader("Referer"),
-        request.getHeader("User-Agent"),
-        ip
-    );
+    String ip = attachIpToContext(request);
 
     ServiceResult<AuthorizationPayload> authorizationPayloadServiceResult = authorizedJwtStoreService.validate(request);
     AuthorizationPayload authorizationPayload = authorizationPayloadServiceResult.getPayload();
@@ -67,7 +59,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
       var userId = authorizationPayload.getJwt().getUid();
       String userName = userId.toString();
       String userRoles = authorizationPayload.getJwt().getRol();
-      Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
+      Authentication userAuthentication = ContextHelper.getAuthenticationFormSecurityContext();
 
       if (userAuthentication == null || !userAuthentication.isAuthenticated()) {
         logger.info("用户未授权,尝试注入权限[rol -> {}]……", userRoles);
@@ -81,20 +73,11 @@ public class AuthorityInjector extends OncePerRequestFilter {
             .setId(authorizationPayload.getJwt().getUid())
             .setIp(ip);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            authorizedUser,
-            new WebAuthenticationDetailsSource().buildDetails(request),
-            authorizedUser.getAuthorities()
-        );
-
+        ContextHelper.attachAuthenticationToSecurityContext(authorizedUser, request);
         logger.info("为可授权限用户: " + userName + "，此次访问注入权限：" + jsonHelper.toJsonString(authorizedUser.getAuthorities()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
       } else {
         logger.info("用户已授权！");
       }
-    } else {
-      var anonymousUser = AuthorizedUser.anonymousUser(ip);
-      SecurityContextHolder.getContext().setAuthentication(new AnonymousAuthenticationToken(ip, anonymousUser, anonymousUser.getAuthorities()));
     }
 
     if (authorizationPayload.isJwtHeaderValid() && !authorizationPayload.isJwtParsePassed()) {
@@ -111,7 +94,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
 
     try (PrintWriter writer = response.getWriter()) {
       writer.write(jsonHelper.toJsonString(
-          ResponseEntityExceptionBody.error(HttpHelper.formatResponseDataMessage(request).apply("用户授权信息解析异常，授权终止！"))
+          APIException.of(HttpHelper.formatResponseDataMessage(request).apply("用户授权信息解析异常，授权终止！"))
               .setPath(request.getRequestURI())
               .setCode(12333)
       ));
@@ -137,6 +120,18 @@ public class AuthorityInjector extends OncePerRequestFilter {
       ip = ip.substring(0, ip.indexOf(",")).trim();
     }
 
+    return ip;
+  }
+
+  private String attachIpToContext(HttpServletRequest request) {
+    String ip = getIpAddress(request);
+    logger.info("Referer: [{}], UA: [{}], IP: [{}]",
+        request.getHeader("Referer"),
+        request.getHeader("User-Agent"),
+        ip
+    );
+
+    ContextHelper.setIpToRequestContext(ip);
     return ip;
   }
 

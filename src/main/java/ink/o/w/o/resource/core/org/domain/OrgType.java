@@ -34,5 +34,6 @@ public class OrgType {
     public static final String SET = "SET";
     public static final String TREE = "TREE";
     public static final String NET = "NET";
+    public static final String CLASSIFICATION = "CLASSIFICATIONp";
   }
 }

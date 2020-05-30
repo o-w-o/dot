@@ -2,50 +2,40 @@ package ink.o.w.o.api;
 
 import ink.o.w.o.resource.core.dot.domain.Dot;
 import ink.o.w.o.resource.core.dot.service.DotService;
-import ink.o.w.o.server.io.api.ResponseEntityFactory;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.*;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.EntityLinks;
-import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 
 @Slf4j
-@RestController
-@ExposesResourceFor(DotAPI.class)
-@RequestMapping("dots")
+@APIResource(path = "dots")
 public class DotAPI {
   private final DotService dotService;
-  private final EntityLinks entityLinks;
 
   @Autowired
-  public DotAPI(EntityLinks entityLinks, DotService dotService) {
-    this.entityLinks = entityLinks;
+  public DotAPI(DotService dotService) {
     this.dotService = dotService;
   }
 
-  @PostMapping
-  public ResponseEntity<?> create(@RequestBody @Valid Dot dot) {
-    var createdDot = dotService.create(dot).guard();
-    return ResponseEntityFactory.ok(
-        new EntityModel<>(
-            createdDot,
-            entityLinks.linkFor(DotAPI.class).slash(createdDot.getId()).withSelfRel()
-        )
-    );
+  @APIResourceSchema
+  public APIResult<APISchemata> schema() {
+    return APIResult.of(ContextHelper.fetchAPIContext(DotAPI.class).orElseThrow(APIException::new));
   }
 
-  @GetMapping("/{id}")
-  public EntityModel<Dot> retrieve(@PathVariable String id) {
-    var dot = dotService.retrieve(id).guard();
-    var hal = new EntityModel<>(
-        dot,
-        entityLinks.linkFor(DotAPI.class).slash(dot.getId()).withSelfRel()
-    );
+  @APIResourceCreate(name = "创建 Dot")
+  public APIResult<Dot> create(@RequestBody @Valid Dot dot) {
+    return APIResult.of(dotService.create(dot).guard());
+  }
 
-    return hal;
+  @APIResourceFetch(path = "/{id}", name = "根据 Id 获取 Dot")
+  public APIResult<Dot> retrieve(@PathVariable("id") String dotId) {
+    return APIResult.of(dotService.retrieve(dotId).guard());
   }
 }

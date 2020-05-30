@@ -11,7 +11,6 @@ import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.resource.system.authorization.repository.AuthorizedJwtStoreRepository;
 import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.util.JsonHelper;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +61,7 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
             .setAuthorizedJwts(authorizedJwts)
     );
 
-    return ServiceResultFactory.success(authorizedJwts);
+    return ServiceResult.success(authorizedJwts);
   }
 
   @Override
@@ -72,22 +71,22 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
 
     if (authorizedJwtStoreRepository.existsById(uuid)) {
       authorizedJwtStoreRepository.deleteById(uuid);
-      return ServiceResultFactory.success(true);
+      return ServiceResult.success(true);
     }
 
-    return ServiceResultFactory.error("令牌已被注销！");
+    return ServiceResult.error("令牌已被注销！");
   }
 
   @Override
   public ServiceResult<Boolean> revokeAll(Integer userId) {
     authorizedJwtStoreRepository.deleteAll(authorizedJwtStoreRepository.findByUserId(userId));
-    return ServiceResultFactory.success(true);
+    return ServiceResult.success(true);
   }
 
   @Override
   public ServiceResult<Boolean> reset() {
     authorizedJwtStoreRepository.deleteAll();
-    return ServiceResultFactory.success(true);
+    return ServiceResult.success(true);
   }
 
   @Override
@@ -111,7 +110,7 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
         )
     );
 
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         authorizedJwtStoreRepository.findById(id)
             .get()
             .getAuthorizedJwts()

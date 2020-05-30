@@ -1,7 +1,6 @@
 package ink.o.w.o.resource.integration.email.service.impl;
 
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.resource.integration.email.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,11 +41,11 @@ public class MailServiceImpl implements MailService {
 
     javaMailSender.send(mainMessage);
 
-    return ServiceResultFactory.success();
+    return ServiceResult.success();
   }
 
   @Override
   public ServiceResult<String> sendSystemEmail(String receiver, String title, String text) {
-    return ServiceResultFactory.success(sendEmail(systemSender, receiver, title, text).guard());
+    return ServiceResult.success(sendEmail(systemSender, receiver, title, text).guard());
   }
 }

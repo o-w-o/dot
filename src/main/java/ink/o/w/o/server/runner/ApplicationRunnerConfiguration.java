@@ -1,4 +1,4 @@
-package ink.o.w.o.server.config;
+package ink.o.w.o.server.runner;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,9 +10,14 @@ import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.constant.UserGender;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.service.UserService;
+import ink.o.w.o.server.io.api.annotation.APIResource;
+import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -58,13 +63,26 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
     logger.info("ApplicationRunner:run 收集并注册 [JsonTypeName] 类，END");
   }
 
+  private void collectAndRegisterApiSchema() {
+    logger.info("ApplicationRunner:run 收集并注册 [ApiSchema] 类");
+    Reflections reflections = new Reflections("ink.o.w.o.api", new TypeAnnotationsScanner(), new SubTypesScanner(false));
+    Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(APIResource.class);
+
+    classSet.forEach(v -> {
+      logger.info("Reflections(ink.o.w.o.api) clazz -> [{}], registerApiSchema -> [{}]", v.getSimpleName(), v.getAnnotation(APIResource.class).path());
+      ContextHelper.attachSchemaToAPIContext(v, APISchemata.of(v));
+    });
+    logger.info("ApplicationRunner:run 收集并注册 [ApiSchema] 类，END");
+  }
+
   @Override
   public void run(ApplicationArguments args) {
-    logger.info("ApplicationRunner:run ……");
+    logger.info("ApplicationRunner: [START]");
 
     initSystemRoles();
     resetAuthorizedJwtStoreRepository();
     collectAndRegisterJsonTypes();
+    collectAndRegisterApiSchema();
 
     if (!env.contains(SystemRuntimeEnv.PRODUCTION)) {
       userService.register(new User().setName("demo").setRoles(RoleHelper.toRoles(Roles.USER)).setPassword("233333"));
@@ -77,5 +95,7 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
       userService.register(new User().setName("二二娘").setRoles(RoleHelper.toRoles(Roles.USER)).setGender(UserGender.GIRL).setPassword("121een"));
       userService.register(new User().setName("三三娘").setRoles(RoleHelper.toRoles(Roles.USER)).setGender(UserGender.GIRL).setPassword("121ssn"));
     }
+
+    logger.info("ApplicationRunner: [END]");
   }
 }

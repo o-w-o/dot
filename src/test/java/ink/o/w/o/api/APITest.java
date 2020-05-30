@@ -19,9 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 
 @Slf4j
-@SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs(uriHost = "api.o-w-o.ink", uriScheme = "https", uriPort = 443)
+@AutoConfigureRestDocs(uriHost = "o-w-o.ink/api", uriScheme = "https", uriPort = 443)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(RestDocumentTestConfiguration.class)
 public class APITest {
   @Autowired

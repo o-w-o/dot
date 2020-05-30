@@ -10,7 +10,6 @@ import ink.o.w.o.resource.core.way.repository.WayRepository;
 import ink.o.w.o.resource.core.way.service.handler.WayTypeSelector;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.util.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -48,12 +47,12 @@ public class MapsiteWayHandler extends AbstractWayHandler {
             () -> new ServiceException(String.format("未找到 Way -> id[ %s ], type[ %s ]", wayId, wayType))
         );
     ink.setSpace(fetchSpace(ink.getSpaceId(), wayType).guard());
-    return ServiceResultFactory.success(ink);
+    return ServiceResult.success(ink);
   }
 
   @Override
   public ServiceResult<WaySpace> fetchSpace(String waySpaceId, WayType.WayTypeEnum wayType) {
-    return ServiceResultFactory.success(
+    return ServiceResult.success(
         sitemapWayRepository.findById(waySpaceId).orElseThrow(
             () -> new ServiceException(String.format("未找到 Way -> id[ %s ], type[ %s ]", waySpaceId, wayType))
         )
@@ -69,10 +68,10 @@ public class MapsiteWayHandler extends AbstractWayHandler {
           .setSpaceId(createdInkSpace.getId())
           .setSpaceContent(jsonHelper.toJsonString(createdInkSpace));
       logger.info("spaceMountedInk -> [{}]", spaceMountedInk);
-      return ServiceResultFactory.success(spaceMountedInk);
+      return ServiceResult.success(spaceMountedInk);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
-      return ServiceResultFactory.error(e.getMessage());
+      return ServiceResult.error(e.getMessage());
     }
   }
 }

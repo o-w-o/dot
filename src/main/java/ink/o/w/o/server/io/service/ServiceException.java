@@ -14,32 +14,36 @@ import java.util.function.Supplier;
  */
 public class ServiceException extends RuntimeException implements Supplier<ServiceException> {
 
-    @Getter
-    @Setter
-    private ServiceResult<? extends Object> result;
+  @Getter
+  @Setter
+  private ServiceResult<? extends Object> result;
 
-    public ServiceException(String message) {
-        super(message);
-        this.result = ServiceResultFactory.error(message);
-    }
+  public ServiceException(String message) {
+    super(message);
+    this.result = ServiceResult.error(message);
+  }
 
-    public ServiceException(String message, Integer code) {
-        super(message);
-        this.result = ServiceResultFactory.error(message, code);
-    }
+  public ServiceException(String message, Integer code) {
+    super(message);
+    this.result = ServiceResult.error(message, code);
+  }
 
-    public ServiceException(ServiceResult<? extends Object> result) {
-        super(result.getMessage());
-        this.result = result;
-    }
+  public ServiceException(ServiceResult<? extends Object> result) {
+    super(result.getMessage());
+    this.result = result;
+  }
 
-    public ServiceException(ServiceResult<? extends Object> result, Throwable cause) {
-        super(result.getMessage(), cause);
-        this.result = result;
-    }
+  public ServiceException(ServiceResult<? extends Object> result, Throwable cause) {
+    super(result.getMessage(), cause);
+    this.result = result;
+  }
 
-    @Override
-    public ServiceException get() {
-        return this;
-    }
+  public static ServiceException of(String message) {
+    return new ServiceException(message);
+  }
+
+  @Override
+  public ServiceException get() {
+    return this;
+  }
 }

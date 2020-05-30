@@ -6,7 +6,6 @@ import ink.o.w.o.resource.core.way.service.WayService;
 import ink.o.w.o.resource.core.way.service.handler.WayHandlerHolder;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,7 +60,7 @@ public class WayServiceImpl implements WayService {
     });
 
     logger.info("处理 WAY 结束：{}", status.get());
-    return ServiceResultFactory.success(result.get());
+    return ServiceResult.success(result.get());
   }
 
 
@@ -78,6 +77,6 @@ public class WayServiceImpl implements WayService {
     wayRepository.save(spaceMountedInk);
 
     logger.info("处理 WAY 结束： success -> [ {} ]", result.get().getSuccess());
-    return ServiceResultFactory.success(spaceMountedInk);
+    return ServiceResult.success(spaceMountedInk);
   }
 }

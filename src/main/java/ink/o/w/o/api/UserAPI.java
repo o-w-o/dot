@@ -4,18 +4,18 @@ import com.querydsl.core.types.Predicate;
 import ink.o.w.o.resource.system.role.domain.Role;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.service.UserService;
-import ink.o.w.o.server.io.api.ResponseEntityFactory;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.*;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.EntityLinks;
-import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Set;
 
@@ -27,69 +27,67 @@ import java.util.Set;
  * @date 2020/2/5 19:11
  */
 @Slf4j
-@RestController
-@ExposesResourceFor(UserAPI.class)
-@RequestMapping("users")
+@APIResource(path = "users")
 @PreAuthorize("hasRole('ROLE_MASTER')")
 public class UserAPI {
 
-  private final EntityLinks entityLinks;
   private final UserService userService;
 
   @Autowired
-  public UserAPI(EntityLinks entityLinks, UserService userService) {
-    this.entityLinks = entityLinks;
+  public UserAPI(UserService userService) {
     this.userService = userService;
   }
 
-  @GetMapping
-  public ResponseEntity<?> listUsers(@QuerydslPredicate(root = User.class) Predicate predicate, Pageable pageable) {
-    return ResponseEntityFactory.ok(
+  @APIResourceSchema
+  public APIResult<APISchemata> fetchSchema() {
+    return APIResult.of(ContextHelper.fetchAPIContext(UserAPI.class).orElseThrow(APIException::new));
+  }
+
+  @APIResourceFetch
+  public APIResult<?> listUsers(@QuerydslPredicate(root = User.class) Predicate predicate, Pageable pageable) {
+    return APIResult.of(
         userService.listUser(predicate, pageable)
             .guard()
     );
   }
 
-  @PostMapping
-  public ResponseEntity<?> registerOneUser(@RequestBody User u) {
-    return ResponseEntityFactory.ok(
+  @APIResourceCreate(name = "注册用户")
+  public APIResult<?> registerOneUser(@RequestBody User u) {
+    return APIResult.of(
         userService.register(u)
             .guard()
     );
   }
 
-  @GetMapping("{id}")
+  @APIResourceFetch(path = "{id}")
   @PreAuthorize("hasRole('ROLE_MASTER') or (hasRole('ROLE_USER') and principal.username.equals(#id.toString()))")
-  public ResponseEntity<?> getOneUserProfile(@PathVariable Integer id) {
+  public APIResult<?> getOneUserProfile(@PathVariable Integer id) {
     var u = userService.getUserById(id)
         .guard();
-    Link link = entityLinks
-        .linkFor(UserAPI.class, id).withSelfRel();
-    return ResponseEntityFactory.ok(
-        new EntityModel<>(u, link)
-    );
+
+    return APIResult.of(u);
   }
 
-  @PostMapping("{id}/roles")
+  @APIResourceCreate(path = "{id}/roles", name = "权限修改")
   @PreAuthorize("hasRole('ROLE_MASTER')")
-  public ResponseEntity<?> modifyOneUserRole(@PathVariable Integer id, @RequestBody Set<Role> roles) {
-    return ResponseEntityFactory.success(
+  public APIResult<?> modifyOneUserRole(@PathVariable Integer id, @RequestBody Set<Role> roles) {
+    return APIResult.of(
         userService.modifyRoles(id, roles)
             .guard()
     );
   }
 
-  @PostMapping("{id}/password/reset")
-  public ResponseEntity<?> resetOneUserPassword(@PathVariable Integer id) {
-    return ResponseEntityFactory.success(
+  @APIResourceCreate(path = "{id}/password/reset", name = "密码重置")
+  public APIResult<?> resetOneUserPassword(@PathVariable Integer id) {
+    return APIResult.of(
         userService.resetPassword(id)
             .guard()
     );
   }
 
-  @DeleteMapping("{id}")
-  public ResponseEntity<?> revokeOneUser(@PathVariable Integer id) {
-    return ResponseEntityFactory.success(
+  @APIResourceDestroy(path = "{id}", name = "注销用户")
+  public APIResult<?> revokeOneUser(@PathVariable Integer id) {
+    return APIResult.of(
         userService.unregister(id)
             .guard()
     );

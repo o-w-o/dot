@@ -18,13 +18,13 @@ public class Resource {
   public static Resource publicResource() {
     return new Resource()
         .setBucketName(myOssProperties.getBucketName())
-        .setDirName(myOssProperties.getPublicDir());
+        .setDirName(String.format("%s/*",myOssProperties.getPublicDir()));
   }
 
   public static Resource protectResource() {
     return new Resource()
         .setBucketName(myOssProperties.getBucketName())
-        .setDirName(myOssProperties.getProtectDir());
+        .setDirName(String.format("%s/*",myOssProperties.getProtectDir()));
   }
 
   public static Resource privateResource(User user) {

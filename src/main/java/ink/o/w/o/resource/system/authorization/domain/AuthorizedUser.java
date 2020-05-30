@@ -2,7 +2,6 @@ package ink.o.w.o.resource.system.authorization.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import ink.o.w.o.resource.system.role.constant.Roles;
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.domain.User;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author LongY
@@ -26,6 +24,7 @@ import java.util.Set;
 
 @Component
 public class AuthorizedUser extends User implements UserDetails {
+  public static final String USER_NAME_ANONYMOUS = "anonymous";
 
   private Integer id;
 
@@ -44,9 +43,9 @@ public class AuthorizedUser extends User implements UserDetails {
 
   public static AuthorizedUser anonymousUser(String ip) {
       return new AuthorizedUser()
-          .setUsername("anno")
-          .setIp(ip)
-          .setAuthorities(RoleHelper.toAuthorities(Set.of(Roles.ANONYMOUS)));
+          .setUsername(USER_NAME_ANONYMOUS)
+          .setId(0)
+          .setIp(ip);
   }
 
   @JsonIgnore

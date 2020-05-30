@@ -5,7 +5,6 @@ import ink.o.w.o.resource.core.symbols.repository.SymbolsRepository;
 import ink.o.w.o.resource.core.symbols.service.SymbolsService;
 import ink.o.w.o.resource.core.symbols.service.handler.SymbolsHandlerHolder;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.server.io.service.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,7 @@ public class SymbolsServiceImpl implements SymbolsService {
     });
 
     logger.info("处理 SYMBOLS 结束：{}", status.get());
-    return ServiceResultFactory.success(result.get());
+    return ServiceResult.success(result.get());
   }
 
 
@@ -80,6 +79,6 @@ public class SymbolsServiceImpl implements SymbolsService {
     symbolsRepository.save(spaceMountedInk);
 
     logger.info("处理 SYMBOLS 结束： success -> [ {} ]", result.get().getSuccess());
-    return ServiceResultFactory.success(spaceMountedInk);
+    return ServiceResult.success(spaceMountedInk);
   }
 }

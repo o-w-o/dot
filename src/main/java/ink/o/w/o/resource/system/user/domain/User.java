@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,14 +21,13 @@ import java.util.Set;
  * @author symbols@dingtalk.com
  */
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Data
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 @Entity
 @Table(name = "t_user")
-public class User extends RepresentationModel<User> implements Serializable {
+public class User implements Serializable {
 
   private static final long serialVersionUID = 1452277172712371166L;
 

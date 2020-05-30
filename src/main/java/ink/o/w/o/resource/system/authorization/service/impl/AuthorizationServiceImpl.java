@@ -5,7 +5,6 @@ import ink.o.w.o.resource.system.user.repository.UserRepository;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.resource.system.authorization.service.AuthorizationService;
 import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
@@ -35,35 +34,35 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public ServiceResult<AuthorizedJwts> authorize(String username, String password) {
         if (!userRepository.existsByName(username)) {
-            return ServiceResultFactory.error(String.format("用户 [ %s ] 不存在！", username));
+            return ServiceResult.error(String.format("用户 [ %s ] 不存在！", username));
         }
 
         User user = userRepository.findUserByName(username).orElseThrow(new ServiceException(""));
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (encoder.matches(password, user.getPassword())) {
-            return ServiceResultFactory.success(
+            return ServiceResult.success(
                 authorizedJwtStoreService.register(user).guard()
             );
         }
 
         logger.debug("isPasswordMatch ? {}, password -> {}, user -> {}", user.getPassword().equals(password), password, user);
-        return ServiceResultFactory.error("登录密码错误！");
+        return ServiceResult.error("登录密码错误！");
     }
 
     @Override
     public ServiceResult<String> reauthorize(String refreshToken) {
         if (refreshToken == null || "".equals(refreshToken)) {
-            return ServiceResultFactory.error("用户 refreshToken 为空！");
+            return ServiceResult.error("用户 refreshToken 为空！");
         }
 
         AuthorizedJwt authorizedJwt = AuthorizedJwt.generateJwtFromJwtString(refreshToken, true);
 
         if (AuthorizedJwt.isExpired(authorizedJwt)) {
-            return ServiceResultFactory.error("用户 refreshToken 已过期！");
+            return ServiceResult.error("用户 refreshToken 已过期！");
         }
 
-        return ServiceResultFactory.success(
+        return ServiceResult.success(
             authorizedJwtStoreService
                 .refresh(authorizedJwt, refreshToken)
                 .guard()

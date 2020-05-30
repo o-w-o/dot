@@ -2,19 +2,16 @@ package ink.o.w.o.api;
 
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.service.UserService;
-import ink.o.w.o.server.io.api.ResponseEntityFactory;
-import ink.o.w.o.util.ServerHelper;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.*;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户相关 API
@@ -24,44 +21,41 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * @date 2020/2/5 19:11
  */
 @Slf4j
-@RestController
-@ExposesResourceFor(MyAPI.class)
-@RequestMapping("my")
+@APIResource(path = "my")
 @PreAuthorize("hasRole('ROLE_USER')")
 public class MyAPI {
   private final UserService userService;
-  private final ServerHelper serverHelper;
 
   @Autowired
-  public MyAPI(UserService userService, ServerHelper serverHelper) {
+  public MyAPI(UserService userService) {
     this.userService = userService;
-    this.serverHelper = serverHelper;
   }
 
-  @GetMapping({"", "profile"})
-  public ResponseEntity<?> getOneUserProfile() {
-    var id = serverHelper.getUserIdFormSecurityContext();
+  @APIResourceSchema
+  public APIResult<APISchemata> fetchSchema() {
+    return APIResult.of(ContextHelper.fetchAPIContext(MyAPI.class).orElseThrow(APIException::new));
+  }
+
+  @APIResourceFetch(path = {"", "profile"})
+  public APIResult<?> getOneUserProfile() {
+    var id = ContextHelper.getUserIdFormSecurityContext();
     var u = userService.getUserById(id).guard();
 
-    Link link = linkTo(methodOn(UserAPI.class).getOneUserProfile(id)).withSelfRel();
-
-    return ResponseEntityFactory.ok(
-        new EntityModel<>(u, link)
-    );
+    return APIResult.of(u);
   }
 
-  @PatchMapping({"", "profile"})
-  public ResponseEntity<?> modifyOneUserProfile(@RequestBody User u) {
-    return ResponseEntityFactory.success(
-        userService.modifyProfile(u, serverHelper.getUserIdFormSecurityContext())
+  @APIResourceModify(path = {"", "profile"})
+  public APIResult<?> modifyOneUserProfile(@RequestBody User u) {
+    return APIResult.of(
+        userService.modifyProfile(u, ContextHelper.getUserIdFormSecurityContext())
             .guard()
     );
   }
 
-  @PatchMapping("password")
-  public ResponseEntity<?> modifyOneUserPassword(@RequestParam String prevPassword, @RequestParam String password) {
-    return ResponseEntityFactory.success(
-        userService.modifyPassword(serverHelper.getUserIdFormSecurityContext(), password, prevPassword)
+  @APIResourceModify(path = "password")
+  public APIResult<?> modifyOneUserPassword(@RequestParam String prevPassword, @RequestParam String password) {
+    return APIResult.of(
+        userService.modifyPassword(ContextHelper.getUserIdFormSecurityContext(), password, prevPassword)
             .guard()
     );
   }

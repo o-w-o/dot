@@ -1,7 +1,8 @@
 package ink.o.w.o.server.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.controller.APIExceptionsControllerAdvice;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.util.HttpHelper;
 import ink.o.w.o.util.JsonHelper;
@@ -36,7 +37,7 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
  *
  * @author symbols@dingtalk.com
  * @date 2019/8/4 下午2:10
- * @see ink.o.w.o.server.controller.ExceptionsController
+ * @see APIExceptionsControllerAdvice
  * @deprecated -
  */
 
@@ -51,8 +52,7 @@ public class HttpExceptionConfiguration implements HandlerExceptionResolver {
   @Override
   public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e) {
 
-    var result = ResponseEntityExceptionBody.error("")
-        .setPath(request.getRequestURI());
+    var result = APIException.of().setPath(request.getRequestURI());
 
     Function<String, String> formatResponseDataMessage = HttpHelper.formatResponseDataMessage(request);
 
@@ -118,13 +118,13 @@ public class HttpExceptionConfiguration implements HandlerExceptionResolver {
   }
 
 
-  private void formatsResponseResult(HttpServletResponse response, ResponseEntityExceptionBody<?> responseEntityExceptionBody) {
+  private void formatsResponseResult(HttpServletResponse response, APIException apiException) {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setCharacterEncoding(UTF_8);
-    response.setStatus(responseEntityExceptionBody.getCode());
+    response.setStatus(apiException.getCode());
 
     try {
-      String json = jsonHelper.toJsonString(responseEntityExceptionBody);
+      String json = jsonHelper.toJsonString(apiException);
 
       try (PrintWriter writer = response.getWriter()) {
         writer.write(json);

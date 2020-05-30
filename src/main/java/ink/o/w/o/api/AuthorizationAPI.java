@@ -1,21 +1,23 @@
 package ink.o.w.o.api;
 
-import ink.o.w.o.resource.integration.aliyun.service.AliyunStsService;
 import ink.o.w.o.resource.integration.aliyun.factory.PolicyFactory;
+import ink.o.w.o.resource.integration.aliyun.service.AliyunStsService;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import ink.o.w.o.resource.system.authorization.service.AuthorizationService;
-import ink.o.w.o.server.io.api.ResponseEntityFactory;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.*;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.QueryParameter;
-import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.hateoas.server.ExposesResourceFor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.SignatureException;
 
@@ -30,98 +32,71 @@ import java.security.SignatureException;
 @Slf4j
 @RestController
 @ExposesResourceFor(AuthorizationAPI.class)
-@RequestMapping(value = "authorization")
+@APIResource(path = "authorization")
 public class AuthorizationAPI {
-  private final EntityLinks entityLinks;
   private final AuthorizationService authorizationService;
   private final AliyunStsService aliyunStsService;
 
   @Autowired
-  AuthorizationAPI(EntityLinks entityLinks, AuthorizationService authorizationService, AliyunStsService aliyunStsService) {
-    this.entityLinks = entityLinks;
+  AuthorizationAPI(AuthorizationService authorizationService, AliyunStsService aliyunStsService) {
     this.authorizationService = authorizationService;
     this.aliyunStsService = aliyunStsService;
   }
 
-  @PostMapping
-  public ResponseEntity<?> createAuthenticationToken(
-      @RequestParam(value = "username") String username,
-      @RequestParam(value = "password") String password) throws AuthenticationException {
+  @APIResourceSchema
+  public APIResult<APISchemata> fetchSchema() {
+    return APIResult.of(ContextHelper.fetchAPIContext(AuthorizationAPI.class).orElseThrow(APIException::new));
+  }
+
+
+  @APIResourceCreate(name = "创建令牌")
+  public APIResult<?> createAuthenticationToken(
+      @RequestParam(name = "username") String username,
+      @RequestParam(name = "password") String password) throws AuthenticationException {
 
     var jwts = authorizationService.authorize(username, password)
         .guard();
 
-    return ResponseEntity.ok(
-        new EntityModel<>(
-            jwts,
+    return APIResult.of(jwts);
+  }
 
-            entityLinks
-                .linkFor(AuthorizationAPI.class).withSelfRel()
-                .withTitle("令牌获取")
-                .withName("fetch"),
-            entityLinks
-                .linkFor(AuthorizationAPI.class, QueryParameter.required("refreshToken")).slash("refresh").withRel("refresh")
-                .withTitle("令牌刷新")
-                .withName("refresh"),
-            entityLinks
-                .linkFor(AuthorizationAPI.class).slash("revoke").withRel("revoke")
-                .withTitle("令牌注销")
-                .withName("revoke")
-        )
+  @APIResourceCreate(path = "/refresh", name = "刷新令牌")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  public APIResult<?> refreshAuthenticationToken(
+      @RequestParam(name = "refreshToken") String refreshToken) throws AuthenticationException, SignatureException {
+
+    return APIResult.of(
+        new AuthorizedJwts()
+            .setAccessToken(authorizationService.reauthorize(refreshToken).guard())
+            .setRefreshToken(refreshToken)
     );
   }
 
-  @PostMapping("/refresh")
+  @APIResourceDestroy(path = "/revoke", name = "注销令牌", produces = "application/json")
   @PreAuthorize("hasRole('ROLE_USER')")
-  public ResponseEntity<?> refreshAuthenticationToken(
-      @RequestParam String refreshToken) throws AuthenticationException, SignatureException {
-
-    return ResponseEntity.ok(
-        new EntityModel<>(
-            new AuthorizedJwts()
-                .setAccessToken(authorizationService.reauthorize(refreshToken).guard())
-                .setRefreshToken(refreshToken),
-
-            entityLinks
-                .linkFor(AuthorizationAPI.class).slash("refresh").withSelfRel()
-                .withTitle("令牌刷新")
-                .withName("refresh"),
-            entityLinks
-                .linkFor(AuthorizationAPI.class).slash("revoke").withRel("revoke")
-                .withTitle("令牌注销")
-                .withName("revoke")
-        )
-    );
-  }
-
-  @DeleteMapping(value = "/revoke", produces = "application/json")
-  @PreAuthorize("hasRole('ROLE_USER')")
-  public ResponseEntity<?> revokeAuthenticationToken(
+  public APIResult<?> revokeAuthenticationToken(
       @RequestHeader(name = AuthorizedJwt.AUTHORIZATION_HEADER_KEY) String jwt
   ) throws AuthenticationException {
     var result = authorizationService.revoke(jwt.substring(AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX.length()));
-    return result.guard()
-        ? ResponseEntityFactory.ok("注销成功")
-        : ResponseEntityFactory.generateFrom(result);
+    return APIResult.from(result);
   }
 
-  @PostMapping(value = "/sts", produces = "application/json")
+  @APIResourceCreate(path = "/sts/somebody", name = "创建【读写】STS", produces = "application/json")
   @PreAuthorize("hasRole('ROLE_USER')")
-  public ResponseEntity<?> createSts() {
-    var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadOnly);
-    return  ResponseEntityFactory.success(result.guard());
-  }
-
-  @PostMapping(value = "/sts/somebody", produces = "application/json")
-  @PreAuthorize("hasRole('ROLE_USER')")
-  public ResponseEntity<?> createStsSomebody() {
+  public APIResult<?> createStsSomebody() {
     var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadAndWrite);
-    return ResponseEntityFactory.success(result.guard());
+    return APIResult.of(result.guard());
   }
 
-  @PostMapping(value = "/sts/nobody", produces = "application/json")
-  public ResponseEntity<?> createStsNobody() {
-    var result = aliyunStsService.createStsCredentialsForAnonymous();
-    return ResponseEntityFactory.success(result.guard());
+  @APIResourceCreate(path = "/sts", name = "创建【只读】STS", produces = "application/json")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  public APIResult<?> createSts() {
+    var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadOnly);
+    return APIResult.of(result.guard());
+  }
+
+  @APIResourceCreate(path = "/sts/nobody", name = "创建【匿名】STS", produces = "application/json")
+  public APIResult<?> createStsNobody() {
+    return APIResult.of(aliyunStsService.createStsCredentialsForAnonymous().guard());
   }
 }

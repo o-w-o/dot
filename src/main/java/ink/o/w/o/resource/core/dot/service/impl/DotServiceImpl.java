@@ -5,7 +5,6 @@ import ink.o.w.o.resource.core.dot.repository.DotRepository;
 import ink.o.w.o.resource.core.dot.service.DotService;
 import ink.o.w.o.resource.core.dot.service.handler.DotSpaceHandlerHolder;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceResultFactory;
 import ink.o.w.o.server.io.service.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class DotServiceImpl implements DotService {
     });
 
     logger.info("处理 DOT 结束：{}", status.get());
-    return ServiceResultFactory.success(result.get());
+    return ServiceResult.success(result.get());
   }
 
   @Override
@@ -70,7 +69,7 @@ public class DotServiceImpl implements DotService {
     var createdDot = dotRepository.save(spaceMountedDot);
 
     logger.info("处理 DOT 结束： success -> [ {} ]", result.get().getSuccess());
-    return ServiceResultFactory.success(createdDot);
+    return ServiceResult.success(createdDot);
   }
 
   @Override

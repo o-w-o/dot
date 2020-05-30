@@ -70,11 +70,6 @@ public class PolicyFactory {
                                 Condition.Operator.IpAddress,
                                 new Condition.OperatorKV()
                                     .add(Condition.Key.ACS_SourceIp, Set.of(user.getIp())))
-                            .add(
-                                Condition.Operator.StringEquals,
-                                new Condition.OperatorKV()
-                                    .add(Condition.Key.OSS_Delimiter, Set.of("/"))
-                            )
                     )
                     .setResources(
                         Set.of(

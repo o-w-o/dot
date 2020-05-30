@@ -1,6 +1,6 @@
 package ink.o.w.o.server.controller;
 
-import ink.o.w.o.server.io.api.ResponseEntityExceptionBody;
+import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.util.JsonHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,7 +36,7 @@ public class AccessDeniedController implements AccessDeniedHandler {
 
     try (PrintWriter writer = response.getWriter()) {
       writer.write(jsonHelper.toJsonString(
-          ResponseEntityExceptionBody.forbidden()
+          APIException.forbidden()
               .setPath(request.getRequestURI())
       ));
       writer.flush();

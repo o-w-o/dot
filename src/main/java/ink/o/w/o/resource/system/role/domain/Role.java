@@ -3,8 +3,6 @@ package ink.o.w.o.resource.system.role.domain;
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.server.io.service.ServiceException;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,12 +14,11 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2020/2/5 19:32
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 
 @Entity
 @Table(name = "t_role")
-public class Role extends RepresentationModel<Role> implements Serializable {
+public class Role implements Serializable {
 
   private static final long serialVersionUID = 1634634962611441758L;
 
