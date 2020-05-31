@@ -18,6 +18,7 @@ public enum APIExceptions {
   forbidden(403, "角色权限不匹配, 可联系管理员设置相关权限！"),
   unauthorized(401, "未授权！"),
   requiredRequestBodyMissing(400002, " @RequestBody 注解标识的请求体缺失！", "Required request body is missing"),
+  requiredRequestHeaderMissing(400003, " @RequestHeader 注解标识的请求体缺失！"),
   badRequest(400, "请求异常！");
 
   private final Integer code;

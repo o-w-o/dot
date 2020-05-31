@@ -33,6 +33,17 @@ public class APIResult<T> implements Serializable {
    * @author symbols@dingtalk.com
    * @date 2020/5/30
    */
+  public static APIResult<Boolean> from(ServiceResult<Boolean> i, String successMessage) {
+    return from(i, successMessage, i.getMessage());
+  }
+  public static APIResult<Boolean> from(ServiceResult<Boolean> i, String successMessage, String failureMessage) {
+    return new APIResult<Boolean>()
+        .setCode(i.getCode())
+        .setSuccess(i.getSuccess())
+        .setPayload(i.getPayload())
+        .setMessage(i.getPayload() ? successMessage : failureMessage);
+  }
+
   public static <T> APIResult<T> from(ServiceResult<T> i) {
     return new APIResult<T>()
         .setCode(i.getCode())

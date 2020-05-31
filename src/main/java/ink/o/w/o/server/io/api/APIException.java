@@ -20,18 +20,17 @@ import java.util.function.Supplier;
 
 @Getter
 @Setter
-@JsonIgnoreProperties({"cause", "stackTrace", "suppressed"})
+@JsonIgnoreProperties({"cause", "stackTrace", "suppressed", "localizedMessage"})
 public class APIException extends RuntimeException implements Supplier<APIException> {
   public static final String DEFAULT_MESSAGE = "[default]: 接口异常";
   public static final Integer DEFAULT_CODE = 110;
 
   private Integer code;
-  private String message;
   private String method = "";
   private String path = "";
-  private Date timestamp = new Date();
-
   private Exception payload;
+  private String message;
+  private Date timestamp = new Date();
 
   public APIException() {
     this.code = DEFAULT_CODE;

@@ -18,6 +18,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -186,6 +187,14 @@ public class APIExceptionsControllerAdvice {
     APIExceptions.requiredRequestBodyMissing.getMessage(message.get()).ifPresent(message::set);
 
     return APIException.from(request, message.get());
+  }
+
+  @ExceptionHandler({MissingRequestHeaderException.class})
+  public APIException missingRequestHeaderException(HttpServletRequest request, MissingRequestHeaderException e) {
+    return APIException.from(
+        request,
+        String.format("%s -> %s", APIExceptions.requiredRequestHeaderMissing.getMessage(), e.getHeaderName())
+    );
   }
 
   /**

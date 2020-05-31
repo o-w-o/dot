@@ -1,7 +1,7 @@
 package ink.o.w.o.server.io.api;
 
 import ink.o.w.o.server.io.api.annotation.*;
-import ink.o.w.o.util.JsonSchemaHelper;
+import ink.o.w.o.server.io.json.JsonSchemaHelper;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;

@@ -12,7 +12,6 @@ import ink.o.w.o.server.io.api.APIResult;
 import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -31,7 +30,6 @@ import java.security.SignatureException;
  */
 @Slf4j
 @RestController
-@ExposesResourceFor(AuthorizationAPI.class)
 @APIResource(path = "authorization")
 public class AuthorizationAPI {
   private final AuthorizationService authorizationService;
@@ -78,7 +76,7 @@ public class AuthorizationAPI {
       @RequestHeader(name = AuthorizedJwt.AUTHORIZATION_HEADER_KEY) String jwt
   ) throws AuthenticationException {
     var result = authorizationService.revoke(jwt.substring(AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX.length()));
-    return APIResult.from(result);
+    return APIResult.from(result, "注销成功");
   }
 
   @APIResourceCreate(path = "/sts/somebody", name = "创建【读写】STS", produces = "application/json")

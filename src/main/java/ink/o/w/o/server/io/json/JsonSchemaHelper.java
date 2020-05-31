@@ -1,4 +1,4 @@
-package ink.o.w.o.util;
+package ink.o.w.o.server.io.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.victools.jsonschema.generator.*;
