@@ -5,7 +5,7 @@ import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.controller.APIExceptionsControllerAdvice;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.util.HttpHelper;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.MissingClaimException;

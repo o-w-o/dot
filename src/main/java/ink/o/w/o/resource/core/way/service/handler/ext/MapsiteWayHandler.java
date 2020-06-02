@@ -10,7 +10,7 @@ import ink.o.w.o.resource.core.way.repository.WayRepository;
 import ink.o.w.o.resource.core.way.service.handler.WayTypeSelector;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

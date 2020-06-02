@@ -1,6 +1,6 @@
 package ink.o.w.o.resource.core.way.domain;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ink.o.w.o.server.io.json.annotation.JsonTypedSpace;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,7 +21,7 @@ import javax.persistence.*;
 public class Way {
 
   @Transient
-  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+  @JsonTypedSpace
   public WaySpace space;
   /**
    * id

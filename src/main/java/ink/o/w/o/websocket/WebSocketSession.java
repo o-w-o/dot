@@ -3,7 +3,7 @@ package ink.o.w.o.websocket;
 import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.util.ContextHelper;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 

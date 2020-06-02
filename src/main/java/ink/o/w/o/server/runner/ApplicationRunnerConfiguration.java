@@ -10,10 +10,12 @@ import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.constant.UserGender;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.service.UserService;
-import ink.o.w.o.server.io.api.annotation.APIResource;
-import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
-import ink.o.w.o.util.ContextHelper;
+import ink.o.w.o.server.io.api.APIContext;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.APIResource;
+import ink.o.w.o.server.io.db.annotation.EntityEnumerated;
+import ink.o.w.o.server.io.system.SystemContext;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -24,6 +26,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -33,6 +37,8 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
   private UserService userService;
   @Resource
   private RoleService roleService;
+  @Resource
+  private SystemContext systemContext;
   @Resource
   private AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
   @Value("${spring.profiles.active}")
@@ -50,6 +56,38 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
     logger.info("ApplicationRunner:run 清除令牌");
     authorizedJwtStoreRepository.deleteAll();
     logger.info("ApplicationRunner:run 清除令牌，END");
+  }
+
+  private void collectAndInitEnumeratedEntity() {
+    logger.info("ApplicationRunner:run 收集并注册 [EntityEnumerated] 类");
+    Reflections reflections = new Reflections("ink.o.w.o.resource");
+    Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(EntityEnumerated.class);
+
+    classSet.forEach(v -> {
+      logger.info("Reflections(ink.o.w.o.resource) clazz -> [{}]", v.getSimpleName());
+      Optional.ofNullable(v.getAnnotation(EntityEnumerated.class)).ifPresent(a -> {
+        var entityClass = a.entityClass();
+        var repositoryClass = a.repositoryClass();
+
+        logger.info("entityClass [{}], repositoryClass [{}]", entityClass, repositoryClass);
+        Optional.ofNullable(v.getEnumConstants()).ifPresent(i -> {
+          for (var o : i) {
+            try {
+              try {
+                var e = entityClass.getDeclaredConstructor(o.getClass()).newInstance(o);
+                var createdE = SystemContext.getBean(repositoryClass).save(e);
+                logger.info("e -> [{}]", createdE);
+              } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            } catch (NoSuchMethodException e) {
+              e.printStackTrace();
+            }
+          }
+        });
+      });
+
+    });
   }
 
   private void collectAndRegisterJsonTypes() {
@@ -70,7 +108,7 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
 
     classSet.forEach(v -> {
       logger.info("Reflections(ink.o.w.o.api) clazz -> [{}], registerApiSchema -> [{}]", v.getSimpleName(), v.getAnnotation(APIResource.class).path());
-      ContextHelper.attachSchemaToAPIContext(v, APISchemata.of(v));
+      APIContext.attachSchemaToAPIContext(v, APISchemata.of(v));
     });
     logger.info("ApplicationRunner:run 收集并注册 [ApiSchema] 类，END");
   }
@@ -83,6 +121,7 @@ public class ApplicationRunnerConfiguration implements ApplicationRunner {
     resetAuthorizedJwtStoreRepository();
     collectAndRegisterJsonTypes();
     collectAndRegisterApiSchema();
+    collectAndInitEnumeratedEntity();
 
     if (!env.contains(SystemRuntimeEnv.PRODUCTION)) {
       userService.register(new User().setName("demo").setRoles(RoleHelper.toRoles(Roles.USER)).setPassword("233333"));

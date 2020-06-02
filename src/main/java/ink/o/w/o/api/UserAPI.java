@@ -4,11 +4,11 @@ import com.querydsl.core.types.Predicate;
 import ink.o.w.o.resource.system.role.domain.Role;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.service.UserService;
+import ink.o.w.o.server.io.api.APIContext;
 import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.io.api.annotation.*;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIResult;
-import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +40,7 @@ public class UserAPI {
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {
-    return APIResult.of(ContextHelper.fetchAPIContext(UserAPI.class).orElseThrow(APIException::new));
+    return APIResult.of(APIContext.fetchAPIContext(UserAPI.class).orElseThrow(APIException::new));
   }
 
   @APIResourceFetch

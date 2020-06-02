@@ -11,7 +11,7 @@ import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.resource.system.authorization.repository.AuthorizedJwtStoreRepository;
 import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;

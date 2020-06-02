@@ -1,8 +1,7 @@
 package ink.o.w.o.resource.core.way.domain;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ink.o.w.o.server.io.json.annotation.JsonEntityProperty;
+import ink.o.w.o.server.io.json.annotation.JsonTypedSpace;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,9 +22,8 @@ import javax.persistence.Transient;
 @Getter
 @Setter
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonEntityProperty
+@JsonTypedSpace
 
 @MappedSuperclass
 public abstract class WaySpace {

@@ -1,7 +1,7 @@
 package ink.o.w.o.server.controller;
 
 import ink.o.w.o.server.io.api.APIException;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;

@@ -6,10 +6,10 @@ import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.service.ServiceContext;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.util.ContextHelper;
 import ink.o.w.o.util.HttpHelper;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
       var userId = authorizationPayload.getJwt().getUid();
       String userName = userId.toString();
       String userRoles = authorizationPayload.getJwt().getRol();
-      Authentication userAuthentication = ContextHelper.getAuthenticationFormSecurityContext();
+      Authentication userAuthentication = ServiceContext.getAuthenticationFormSecurityContext();
 
       if (userAuthentication == null || !userAuthentication.isAuthenticated()) {
         logger.info("用户未授权,尝试注入权限[rol -> {}]……", userRoles);
@@ -73,7 +73,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
             .setId(authorizationPayload.getJwt().getUid())
             .setIp(ip);
 
-        ContextHelper.attachAuthenticationToSecurityContext(authorizedUser, request);
+        ServiceContext.attachAuthenticationToSecurityContext(authorizedUser, request);
         logger.info("为可授权限用户: " + userName + "，此次访问注入权限：" + jsonHelper.toJsonString(authorizedUser.getAuthorities()));
       } else {
         logger.info("用户已授权！");
@@ -131,7 +131,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
         ip
     );
 
-    ContextHelper.setIpToRequestContext(ip);
+    ServiceContext.setIpToRequestContext(ip);
     return ip;
   }
 

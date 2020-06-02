@@ -1,17 +1,18 @@
 package ink.o.w.o.resource.core.symbols.domain;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ink.o.w.o.resource.core.dot.domain.DotType;
 import ink.o.w.o.resource.core.dot.domain.Dot;
+import ink.o.w.o.resource.core.dot.domain.DotType;
 import ink.o.w.o.resource.core.org.domain.OrgType;
+import ink.o.w.o.server.io.json.annotation.JsonEntityProperty;
+import ink.o.w.o.server.io.json.annotation.JsonTypedSpace;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Set;
+
+import static javax.persistence.CascadeType.PERSIST;
 
 
 /**
@@ -24,9 +25,8 @@ import java.util.Set;
 @Getter
 @Setter
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonEntityProperty
+@JsonTypedSpace
 
 @MappedSuperclass
 public abstract class SymbolsSpace {
@@ -72,6 +72,19 @@ public abstract class SymbolsSpace {
   )
   protected Set<OrgType> acceptOrgTypes;
 
+  /**
+   * 参与者
+   *
+   * @date 2020/02/12 12:36
+   * @since 1.0.0
+   */
+  @OneToOne(fetch = FetchType.LAZY, cascade = PERSIST)
+  protected SymbolsParticipants participants;
+
   @Transient
-  protected SymbolsSpaceDocument document;
+  protected SymbolsDocument document;
+
+
+  @Transient
+  protected SymbolsRelationships relationship;
 }

@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
  * @date 2020/5/31
  */
 
-@JacksonAnnotationsInside
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@JacksonAnnotationsInside
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public @interface JsonTypedSpace {
 }

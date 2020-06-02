@@ -28,7 +28,7 @@ public class APIException extends RuntimeException implements Supplier<APIExcept
   private Integer code;
   private String method = "";
   private String path = "";
-  private Exception payload;
+  private Map<String, ?> payload;
   private String message;
   private Date timestamp = new Date();
 

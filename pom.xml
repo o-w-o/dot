@@ -20,6 +20,7 @@
         <aliyun.openapisdk.version>4.5.0</aliyun.openapisdk.version>
         <aliyun.oss.version>3.9.1</aliyun.oss.version>
         <jsonwebtoken.vserion>0.11.1</jsonwebtoken.vserion>
+        <victools.vserion>4.12.1</victools.vserion>
     </properties>
 
     <dependencies>
@@ -124,10 +125,21 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- JSON Schema Generator 库 -->
         <dependency>
             <groupId>com.github.victools</groupId>
             <artifactId>jsonschema-generator</artifactId>
-            <version>4.12.1</version>
+            <version>${victools.vserion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.victools</groupId>
+            <artifactId>jsonschema-module-jackson</artifactId>
+            <version>${victools.vserion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.victools</groupId>
+            <artifactId>jsonschema-module-javax-validation</artifactId>
+            <version>${victools.vserion}</version>
         </dependency>
 
         <!-- DB 驱动 -->

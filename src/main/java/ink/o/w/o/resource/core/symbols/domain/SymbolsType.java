@@ -1,8 +1,11 @@
 package ink.o.w.o.resource.core.symbols.domain;
 
 
+import ink.o.w.o.resource.core.symbols.repository.SymbolsTypeRepository;
+import ink.o.w.o.server.io.db.annotation.EntityEnumerated;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -13,6 +16,7 @@ import javax.persistence.*;
  * @date 2020/02/12 16:41
  * @since 1.0.0
  */
+@NoArgsConstructor
 @Data
 
 @Entity
@@ -20,11 +24,17 @@ import javax.persistence.*;
 public class SymbolsType {
 
   @Id
-  private String id;
+  private Integer id;
 
   @Enumerated(value = EnumType.STRING)
   private SymbolsTypeEnum type;
 
+  public SymbolsType(SymbolsTypeEnum symbolsTypeEnum) {
+    this.id = symbolsTypeEnum.id;
+    this.type = symbolsTypeEnum;
+  }
+
+  @EntityEnumerated(enumClass = SymbolsTypeEnum.class, entityClass = SymbolsType.class, repositoryClass = SymbolsTypeRepository.class)
   public enum SymbolsTypeEnum {
     /**
      * 文章
@@ -32,7 +42,7 @@ public class SymbolsType {
      * @date 2020/02/12 16:41
      * @since 1.0.0
      */
-    DOCUMENT(TypeName.DOCUMENT),
+    DOCUMENT(1, TypeName.DOCUMENT),
 
     /**
      * 伴生文章
@@ -40,7 +50,7 @@ public class SymbolsType {
      * @date 2020/02/12 16:41
      * @since 1.0.0
      */
-    DERIVANT(TypeName.DERIVANT),
+    DERIVANT(2, TypeName.DERIVANT),
 
     /**
      * 模板
@@ -48,7 +58,7 @@ public class SymbolsType {
      * @date 2020/02/12 16:41
      * @since 1.0.0
      */
-    TEMPLATE(TypeName.TEMPLATE),
+    TEMPLATE(9, TypeName.TEMPLATE),
 
     /**
      * 数据网格
@@ -56,8 +66,7 @@ public class SymbolsType {
      * @date 2020/02/12 16:41
      * @since 1.0.0
      */
-    DATAGIRD(TypeName.DATAGIRD)
-    ;
+    DATAGIRD(0, TypeName.DATAGIRD);
 
     /**
      * 类型名称
@@ -67,9 +76,12 @@ public class SymbolsType {
      */
     @Getter
     private final String typeName;
+    @Getter
+    private final Integer id;
 
-    SymbolsTypeEnum(String typeName) {
+    SymbolsTypeEnum(Integer id, String typeName) {
       this.typeName = typeName;
+      this.id = id;
     }
   }
 

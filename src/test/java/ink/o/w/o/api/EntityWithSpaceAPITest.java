@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SymbolsAPITest extends APITest {
+class EntityWithSpaceAPITest extends APITest {
 
   @Test
   public void create() {

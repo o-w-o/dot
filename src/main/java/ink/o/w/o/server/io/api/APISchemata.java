@@ -1,7 +1,7 @@
 package ink.o.w.o.server.io.api;
 
 import ink.o.w.o.server.io.api.annotation.*;
-import ink.o.w.o.server.io.json.JsonSchemaHelper;
+import ink.o.w.o.server.io.jsonschema.JsonSchemaGenerator;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
@@ -95,7 +95,7 @@ public class APISchemata {
           logger.info("annotation -> [{}]", annotation);
 
           if (annotation.annotationType() == RequestBody.class) {
-            var schema = JsonSchemaHelper.generateSchema(parameter.getType());
+            var schema = JsonSchemaGenerator.generateSchema(parameter.getType());
             logger.info("API.RequestBody[{}], schema -> [{}]", parameter.getType(), schema);
 
             builder.body(schema);

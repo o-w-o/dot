@@ -1,8 +1,11 @@
 package ink.o.w.o.server.controller;
 
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIExceptions;
+import ink.o.w.o.server.io.json.JsonParseEntityEnumException;
 import ink.o.w.o.server.io.service.ServiceException;
 import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -184,9 +187,40 @@ public class APIExceptionsControllerAdvice {
   public APIException httpMessageNotReadableException(HttpServletRequest request, HttpMessageNotReadableException e) {
     AtomicReference<String> message = new AtomicReference<>(e.getMessage());
 
-    APIExceptions.requiredRequestBodyMissing.getMessage(message.get()).ifPresent(message::set);
+    var eCause = e.getCause();
 
-    return APIException.from(request, message.get());
+    while (eCause != null) {
+      Throwable cause = eCause.getCause();
+      if (cause == null) {
+        logger.info("HttpMessageNotReadableException nested Exception -> [{}]", eCause.getClass());
+        break;
+      }
+      eCause = cause;
+    }
+
+    assert eCause != null;
+
+    if (eCause instanceof JsonParseEntityEnumException) {
+      return jsonParseEntityEnumException(request, (JsonParseEntityEnumException) eCause);
+    }
+
+    if (eCause instanceof InvalidFormatException) {
+      return invalidFormatException(request, (InvalidFormatException) eCause);
+    }
+
+    if (eCause instanceof HttpMessageNotReadableException) {
+      APIExceptions.requiredRequestBodyMissing.getMessage(message.get()).ifPresent(message::set);
+
+      return APIException.from(request, message.get());
+    }
+
+    return APIException.from(request, String.format("未知异常 [%s]，异常摘要：%s", e.getClass(), e.getMessage()));
+  }
+
+  @ExceptionHandler({InvalidFormatException.class})
+  public APIException invalidFormatException(HttpServletRequest request, InvalidFormatException e) {
+    return APIException.from(request, String.format("数据转化失败！ [%s] -> [%s]", e.getProcessor(), e.getMessage()));
+
   }
 
   @ExceptionHandler({MissingRequestHeaderException.class})
@@ -210,7 +244,31 @@ public class APIExceptionsControllerAdvice {
         );
 
 
-    return APIException.from(request, "参数校验失败！").setPayload(APIException.Exception.builder().errors(message.get()).build());
+    return APIException.from(request, "参数校验失败！").setPayload(message.get());
+  }
+
+  /**
+   * JSON 数据转换异常
+   */
+  @ExceptionHandler({JsonMappingException.class})
+  public APIException jsonMappingException(HttpServletRequest request, JsonMappingException e) {
+    return APIException.from(request, String.format("数据转化失败！ [%s]", e.getOriginalMessage()));
+  }
+
+  /**
+   * JSON 数据转换异常
+   */
+  @ExceptionHandler({JsonParseEntityEnumException.class})
+  public APIException jsonParseEntityEnumException(HttpServletRequest request, JsonParseEntityEnumException e) {
+    var payload = new HashMap<String, Object>();
+    payload.put("enum", e.enumClazz.getEnumConstants());
+
+    return APIException.from(
+        request,
+        String.format("数据枚举转化失败！ [%s]", e.getEnumName())
+    ).setPayload(
+        payload
+    ).setCode(JsonParseEntityEnumException.exceptionCode);
   }
 
   /**

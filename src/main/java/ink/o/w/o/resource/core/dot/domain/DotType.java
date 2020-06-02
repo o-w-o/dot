@@ -1,6 +1,8 @@
 package ink.o.w.o.resource.core.dot.domain;
 
 
+import ink.o.w.o.resource.core.dot.repository.DotTypeRepository;
+import ink.o.w.o.server.io.db.annotation.EntityEnumerated;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,14 +28,15 @@ public class DotType {
   @Id
   private Integer id;
 
-  public DotType(DotTypeEnum dot){
+  @Enumerated(value = EnumType.STRING)
+  private DotTypeEnum type;
+
+  public DotType(DotTypeEnum dot) {
     this.id = dot.getId();
     this.type = dot;
   }
 
-  @Enumerated(value = EnumType.STRING)
-  private DotTypeEnum type;
-
+  @EntityEnumerated(enumClass = DotTypeEnum.class, entityClass = DotType.class, repositoryClass = DotTypeRepository.class)
   public enum DotTypeEnum {
 
     /**
@@ -52,6 +55,7 @@ public class DotType {
      * @date 2020/02/12 16:42
      * @since 1.0.0
      */
+    RESOURCE(20, TypeName.RESOURCE, StoreTypeName.OSS),
     RESOURCE_PICTURE(21, TypeName.RESOURCE_PICTURE, StoreTypeName.OSS),
 
     RESOURCE_AUDIO(22, TypeName.RESOURCE_AUDIO, StoreTypeName.OSS),
@@ -100,6 +104,7 @@ public class DotType {
 
   public static class TypeName {
     public static final String TEXT = "TEXT";
+    public static final String RESOURCE = "RESOURCE";
     public static final String RESOURCE_AUDIO = "RESOURCE_AUDIO";
     public static final String RESOURCE_BINARY = "RESOURCE_BINARY";
     public static final String RESOURCE_PICTURE = "RESOURCE_PICTURE";

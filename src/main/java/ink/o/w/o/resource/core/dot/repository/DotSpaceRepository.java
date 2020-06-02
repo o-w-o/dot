@@ -12,23 +12,7 @@ public interface DotSpaceRepository<T extends DotSpace> extends JpaRepository<T,
   }
 
   @Repository
-  interface ResourceText extends DotSpaceRepository<ResourceTextDot> {
-  }
-
-  @Repository
-  interface ResourcePicture extends DotSpaceRepository<ResourcePictureDot> {
-  }
-
-  @Repository
-  interface ResourceAudio extends DotSpaceRepository<ResourceAudioDot> {
-  }
-
-  @Repository
-  interface ResourceVideo extends DotSpaceRepository<ResourceVideoDot> {
-  }
-
-  @Repository
-  interface ResourceBinary extends DotSpaceRepository<ResourceBinaryDot> {
+  interface Resource extends DotSpaceRepository<ResourceSpace> {
   }
 
   @Repository

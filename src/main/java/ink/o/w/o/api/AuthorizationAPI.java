@@ -5,11 +5,11 @@ import ink.o.w.o.resource.integration.aliyun.service.AliyunStsService;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import ink.o.w.o.resource.system.authorization.service.AuthorizationService;
+import ink.o.w.o.server.io.api.APIContext;
 import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.io.api.annotation.*;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIResult;
-import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,7 +43,7 @@ public class AuthorizationAPI {
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {
-    return APIResult.of(ContextHelper.fetchAPIContext(AuthorizationAPI.class).orElseThrow(APIException::new));
+    return APIResult.of(APIContext.fetchAPIContext(AuthorizationAPI.class).orElseThrow(APIException::new));
   }
 
 

@@ -25,38 +25,38 @@ public class ServiceResult<T> implements Serializable {
   private String message;
 
   public static <T> ServiceResult<T> of(Boolean result, String message) {
-      return result ? success() : error(message);
+    return result ? success() : error(message);
   }
 
   public static <T> ServiceResult<T> success() {
-      return new ServiceResult<T>()
-          .setSuccess(true);
+    return new ServiceResult<T>()
+        .setSuccess(true);
   }
 
   public static <T> ServiceResult<T> success(T payload) {
-      return new ServiceResult<T>()
-          .setSuccess(true)
-          .setPayload(payload);
+    return new ServiceResult<T>()
+        .setSuccess(true)
+        .setPayload(payload);
   }
 
   public static <T> ServiceResult<T> success(T payload, String message) {
-      return new ServiceResult<T>()
-          .setSuccess(true)
-          .setMessage(message)
-          .setPayload(payload);
+    return new ServiceResult<T>()
+        .setSuccess(true)
+        .setMessage(message)
+        .setPayload(payload);
   }
 
   public static <T> ServiceResult<T> error(String message) {
-      return new ServiceResult<T>()
-          .setSuccess(false)
-          .setMessage(message);
+    return new ServiceResult<T>()
+        .setSuccess(false)
+        .setMessage(message);
   }
 
   public static <T> ServiceResult<T> error(String message, int code) {
-      return new ServiceResult<T>()
-          .setSuccess(false)
-          .setMessage(message)
-          .setCode(code);
+    return new ServiceResult<T>()
+        .setSuccess(false)
+        .setMessage(message)
+        .setCode(code);
   }
 
   public ServiceResult<T> setSuccess(Boolean success) {

@@ -1,25 +1,29 @@
 package ink.o.w.o.resource.core.symbols.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import ink.o.w.o.resource.core.symbols.constant.SymbolsParticipantsVisibility;
 import ink.o.w.o.resource.system.user.domain.User;
+import ink.o.w.o.server.io.json.annotation.JsonEntityProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
-
 /**
- * Ink 的参与者
+ * SymbolsParticipants
  *
  * @author symbols@dingtalk.com
  * @date 2020/02/13 09:12
  * @since 1.0.0
  */
+@NoArgsConstructor
+@Data
+
+@JsonEntityProperty
+
 @Entity
 @Table(name = "t_symbols_participants")
-@Data
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SymbolsParticipants {
   @Id
   @GeneratedValue
@@ -35,6 +39,8 @@ public class SymbolsParticipants {
   @OneToMany
   private Set<User> readers;
 
+  @NotNull
   @Enumerated(value = EnumType.STRING)
   private SymbolsParticipantsVisibility visibility;
 }
+

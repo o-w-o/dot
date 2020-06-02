@@ -1,12 +1,12 @@
 package ink.o.w.o.api;
 
+import ink.o.w.o.server.io.api.APIContext;
 import ink.o.w.o.server.io.api.annotation.APIResource;
 import ink.o.w.o.server.io.api.annotation.APIResourceFetch;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIResult;
-import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -24,11 +24,11 @@ public class API {
 
   @APIResourceFetch(name = "获取 API 文档索引！")
   public APIResult<Map<String, String>> index() {
-    return APIResult.of(ContextHelper.fetchAPIContext());
+    return APIResult.of(APIContext.fetchAPIContext());
   }
 
   @APIResourceSchema
   public APIResult<APISchemata> schema() {
-    return APIResult.of(ContextHelper.fetchAPIContext(API.class).orElseThrow(APIException::new));
+    return APIResult.of(APIContext.fetchAPIContext(API.class).orElseThrow(APIException::new));
   }
 }

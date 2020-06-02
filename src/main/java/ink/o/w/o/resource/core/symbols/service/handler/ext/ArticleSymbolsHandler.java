@@ -10,7 +10,7 @@ import ink.o.w.o.resource.core.symbols.repository.SymbolsRepository;
 import ink.o.w.o.resource.core.symbols.service.handler.SymbolsTypeSelector;
 import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.server.io.service.ServiceException;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +68,7 @@ public class ArticleSymbolsHandler extends AbstractSymbolsHandler {
           .setSpaceId(createdSymbolsSpace.getId())
           .setSpaceContent(jsonHelper.toJsonString(createdSymbolsSpace));
       logger.info("spaceMountedSymbols -> [{}]", spaceMountedSymbols);
-      return ServiceResult.success(spaceMountedSymbols);
+      return ServiceResult.success((Symbols) spaceMountedSymbols);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       return ServiceResult.error(e.getMessage());

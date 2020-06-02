@@ -3,7 +3,7 @@ package ink.o.w.o.resource.system.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import ink.o.w.o.resource.system.user.service.UserService;
-import ink.o.w.o.util.JsonHelper;
+import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

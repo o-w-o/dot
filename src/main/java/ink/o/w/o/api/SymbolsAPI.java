@@ -2,11 +2,11 @@ package ink.o.w.o.api;
 
 import ink.o.w.o.resource.core.symbols.domain.Symbols;
 import ink.o.w.o.resource.core.symbols.service.SymbolsService;
+import ink.o.w.o.server.io.api.APIContext;
 import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.io.api.annotation.*;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIResult;
-import ink.o.w.o.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +27,7 @@ public class SymbolsAPI {
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {
-    return APIResult.of(ContextHelper.fetchAPIContext(SymbolsAPI.class).orElseThrow(APIException::new));
+    return APIResult.of(APIContext.fetchAPIContext(SymbolsAPI.class).orElseThrow(APIException::new));
   }
 
   @APIResourceCreate(name = "创建 Symbols")

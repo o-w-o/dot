@@ -11,7 +11,7 @@ import java.util.Set;
 
 
 /**
- * InkSpaceDocument
+ * SymbolsDocument
  *
  * @author symbols@dingtalk.com
  * @date 2020/03/26
@@ -20,7 +20,7 @@ import java.util.Set;
 @Data
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SymbolsSpaceDocument {
+public class SymbolsDocument {
   private String id;
   private DotElement element = generateRootElement();
 
