@@ -12,21 +12,21 @@ public abstract class ResourceSpacePayload {
   private ResourceSpacePayloadType payloadType;
 
   /**
-   * 音频单元
+   * 文本文件单元
    *
    * @author symbols@dingtalk.com
    * @date 2020/02/12 16:48
    * @since 1.0.0
    */
-  @EqualsAndHashCode(callSuper = true)
   @NoArgsConstructor
+  @EqualsAndHashCode(callSuper = true)
   @Data
 
-  @JsonTypeName(ResourceSpacePayloadType.TypeName.RESOURCE_AUDIO)
-  public static class Audio extends ResourceSpacePayload {
+  @JsonTypeName(ResourceSpacePayloadType.TypeName.TEXT)
+  public static class Text extends ResourceSpacePayload {
     @Override
     public ResourceSpacePayloadType getPayloadType() {
-      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.RESOURCE_AUDIO);
+      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.TEXT);
     }
   }
 
@@ -41,11 +41,11 @@ public abstract class ResourceSpacePayload {
   @EqualsAndHashCode(callSuper = true)
   @Data
 
-  @JsonTypeName(ResourceSpacePayloadType.TypeName.RESOURCE_BINARY)
+  @JsonTypeName(ResourceSpacePayloadType.TypeName.BINARY)
   public static class Binary extends ResourceSpacePayload {
     @Override
     public ResourceSpacePayloadType getPayloadType() {
-      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.RESOURCE_BINARY);
+      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.BINARY);
     }
   }
 
@@ -60,32 +60,36 @@ public abstract class ResourceSpacePayload {
   @EqualsAndHashCode(callSuper = true)
   @Data
 
-  @JsonTypeName(ResourceSpacePayloadType.TypeName.RESOURCE_PICTURE)
+  @JsonTypeName(ResourceSpacePayloadType.TypeName.PICTURE)
   public static class Picture extends ResourceSpacePayload {
-    private String uuid;
+    private String thumbnailUrl;
 
     @Override
     public ResourceSpacePayloadType getPayloadType() {
-      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.RESOURCE_PICTURE);
+      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.PICTURE);
     }
   }
 
   /**
-   * 文本文件单元
+   * 音频单元
    *
    * @author symbols@dingtalk.com
    * @date 2020/02/12 16:48
    * @since 1.0.0
    */
-  @NoArgsConstructor
   @EqualsAndHashCode(callSuper = true)
+  @NoArgsConstructor
   @Data
 
-  @JsonTypeName(ResourceSpacePayloadType.TypeName.RESOURCE_TEXT)
-  public static class Text extends ResourceSpacePayload {
+  @JsonTypeName(ResourceSpacePayloadType.TypeName.AUDIO)
+  public static class Audio extends ResourceSpacePayload {
+    private Integer duration;
+    private String subtitles;
+    private String coverPictureUrl;
+
     @Override
     public ResourceSpacePayloadType getPayloadType() {
-      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.RESOURCE_TEXT);
+      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.AUDIO);
     }
   }
 
@@ -100,11 +104,15 @@ public abstract class ResourceSpacePayload {
   @EqualsAndHashCode(callSuper = true)
   @Data
 
-  @JsonTypeName(ResourceSpacePayloadType.TypeName.RESOURCE_VIDEO)
+  @JsonTypeName(ResourceSpacePayloadType.TypeName.VIDEO)
   public static class Video extends ResourceSpacePayload {
+    private Integer duration;
+    private String subtitles;
+    private String coverPictureUrl;
+
     @Override
     public ResourceSpacePayloadType getPayloadType() {
-      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.RESOURCE_VIDEO);
+      return new ResourceSpacePayloadType(ResourceSpacePayloadType.TypeEnum.VIDEO);
     }
   }
 }

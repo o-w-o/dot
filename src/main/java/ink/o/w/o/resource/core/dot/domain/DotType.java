@@ -1,15 +1,20 @@
 package ink.o.w.o.resource.core.dot.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import ink.o.w.o.resource.core.dot.repository.DotTypeRepository;
 import ink.o.w.o.server.io.db.annotation.EntityEnumerated;
+import ink.o.w.o.server.io.json.JsonParseEntityEnumException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * DotType 枚举类型
@@ -29,25 +34,29 @@ public class DotType {
   private Integer id;
 
   @Enumerated(value = EnumType.STRING)
-  private DotTypeEnum type;
+  private TypeEnum type;
 
-  public DotType(DotTypeEnum dot) {
+  @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+  public DotType(TypeEnum dot) {
     this.id = dot.getId();
     this.type = dot;
   }
 
-  @EntityEnumerated(enumClass = DotTypeEnum.class, entityClass = DotType.class, repositoryClass = DotTypeRepository.class)
-  public enum DotTypeEnum {
+  public DotType(String type) {
+    Stream
+        .of(TypeEnum.values())
+        .filter(typeEnum -> Objects.equals(typeEnum.typeName, type))
+        .findFirst()
+        .ifPresent(typeEnum -> {
+          this.id = typeEnum.id;
+          this.type = typeEnum;
+        });
 
-    /**
-     * 引用
-     *
-     * @date 2020/02/12 16:42
-     * @since 1.0.0
-     */
-    REFERENCE(41, TypeName.REFERENCE, StoreTypeName.OSS),
-    LINK(51, TypeName.LINK, StoreTypeName.URL),
-    COMBINATION(91, TypeName.COMBINATION, StoreTypeName.DB),
+    Optional.ofNullable(this.type).orElseThrow(() -> JsonParseEntityEnumException.of(TypeEnum.class));
+  }
+
+  @EntityEnumerated(enumClass = TypeEnum.class, entityClass = DotType.class, repositoryClass = DotTypeRepository.class)
+  public enum TypeEnum {
 
     /**
      * 资源
@@ -56,12 +65,6 @@ public class DotType {
      * @since 1.0.0
      */
     RESOURCE(20, TypeName.RESOURCE, StoreTypeName.OSS),
-    RESOURCE_PICTURE(21, TypeName.RESOURCE_PICTURE, StoreTypeName.OSS),
-
-    RESOURCE_AUDIO(22, TypeName.RESOURCE_AUDIO, StoreTypeName.OSS),
-    RESOURCE_VIDEO(23, TypeName.RESOURCE_VIDEO, StoreTypeName.OSS),
-    RESOURCE_BINARY(24, TypeName.RESOURCE_BINARY, StoreTypeName.OSS),
-    RESOURCE_TEXT(25, TypeName.RESOURCE_TEXT, StoreTypeName.OSS),
 
     /**
      * IO 字段
@@ -95,7 +98,7 @@ public class DotType {
     @Getter
     private final Integer id;
 
-    DotTypeEnum(Integer id, String typeName, String storeTypeName) {
+    TypeEnum(Integer id, String typeName, String storeTypeName) {
       this.typeName = typeName;
       this.storeTypeName = storeTypeName;
       this.id = id;
@@ -105,39 +108,29 @@ public class DotType {
   public static class TypeName {
     public static final String TEXT = "TEXT";
     public static final String RESOURCE = "RESOURCE";
-    public static final String RESOURCE_AUDIO = "RESOURCE_AUDIO";
-    public static final String RESOURCE_BINARY = "RESOURCE_BINARY";
-    public static final String RESOURCE_PICTURE = "RESOURCE_PICTURE";
-    public static final String RESOURCE_TEXT = "RESOURCE_TEXT";
-    public static final String RESOURCE_VIDEO = "RESOURCE_VIDEO";
-    public static final String LINK = "LINK";
-    public static final String REFERENCE = "REFERENCE";
 
     public static final String IO_FIELD_TEXT = "IO_FIELD_TEXT";
     public static final String IO_FIELD_PRESET_OPT_MANY = "IO_FIELD_PRESET_OPT_MANY";
     public static final String IO_FIELD_PRESET_OPT_RANGE = "IO_FIELD_PRESET_OPT_RANGE";
     public static final String IO_FIELD_PRESET_OPT_ONE = "IO_FIELD_PRESET_OPT_ONE";
 
-    public static final String COMBINATION = "COMBINATION";
   }
 
   public static class StoreTypeName {
     public static final String OSS = "OSS";
     public static final String DB = "DB";
-    public static final String URL = "URL";
-    public static final String URI = "URI";
   }
 
-  public static class SetConverter implements AttributeConverter<Set<DotTypeEnum>, String> {
+  public static class SetConverter implements AttributeConverter<Set<TypeEnum>, String> {
 
     @Override
-    public String convertToDatabaseColumn(Set<DotTypeEnum> attribute) {
-      return attribute.stream().map(DotTypeEnum::getTypeName).reduce("", (acc, next) -> "".equals(acc) ? next : next + ",");
+    public String convertToDatabaseColumn(Set<TypeEnum> attribute) {
+      return attribute.stream().map(TypeEnum::getTypeName).reduce("", (acc, next) -> "".equals(acc) ? next : next + ",");
     }
 
     @Override
-    public Set<DotTypeEnum> convertToEntityAttribute(String dbData) {
-      return Set.of(dbData.split(",")).stream().map(DotTypeEnum::valueOf).collect(Collectors.toSet());
+    public Set<TypeEnum> convertToEntityAttribute(String dbData) {
+      return Set.of(dbData.split(",")).stream().map(TypeEnum::valueOf).collect(Collectors.toSet());
     }
   }
 }

@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 public @interface
 DotTypeSelector {
 
-  DotType.DotTypeEnum value();
+  DotType.TypeEnum value();
 
 }

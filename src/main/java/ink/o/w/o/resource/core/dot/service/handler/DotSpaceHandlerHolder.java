@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class DotSpaceHandlerHolder implements ApplicationContextAware {
   private ApplicationContext applicationContext;
 
-  private final Map<DotType.DotTypeEnum, DotSpaceHandler> container = new HashMap<>();
+  private final Map<DotType.TypeEnum, DotSpaceHandler> container = new HashMap<>();
   @Resource
   DotTypeRepository dotTypeRepository;
 
@@ -52,7 +52,7 @@ public class DotSpaceHandlerHolder implements ApplicationContextAware {
   }
 
   public void initDotTypes() {
-    dotTypeRepository.saveAll(Stream.of(DotType.DotTypeEnum.values()).map(DotType::new).collect(Collectors.toList()));
+    dotTypeRepository.saveAll(Stream.of(DotType.TypeEnum.values()).map(DotType::new).collect(Collectors.toList()));
   }
 
   public Optional<DotSpaceHandler> select(DotType dotType) {

@@ -26,5 +26,5 @@ import javax.persistence.MappedSuperclass;
 @JsonTypedSpace
 
 @MappedSuperclass
-public abstract class DotSpace extends EntitySpace<DotType.DotTypeEnum> {
+public abstract class DotSpace extends EntitySpace<DotType.TypeEnum> {
 }

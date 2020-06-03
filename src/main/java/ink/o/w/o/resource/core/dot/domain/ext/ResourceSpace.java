@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * 音频单元
+ * 资源单元
  *
  * @author symbols@dingtalk.com
  * @date 2020/02/12 16:48
@@ -74,6 +74,7 @@ public class ResourceSpace extends DotSpace {
    * 存储的 bucket
    */
   private String bucket;
+
   @Valid
   @Transient
   @JsonTypedSpacePayload
@@ -82,7 +83,7 @@ public class ResourceSpace extends DotSpace {
   private ResourceSpacePayloadType payloadType;
 
   @Override
-  public DotType.DotTypeEnum getType() {
-    return DotType.DotTypeEnum.RESOURCE;
+  public DotType.TypeEnum getType() {
+    return DotType.TypeEnum.RESOURCE;
   }
 }

@@ -3,8 +3,8 @@ package ink.o.w.o.resource.core.dot.service.handler.ext;
 import ink.o.w.o.resource.core.dot.domain.Dot;
 import ink.o.w.o.resource.core.dot.domain.DotSpace;
 import ink.o.w.o.resource.core.dot.domain.DotType;
-import ink.o.w.o.resource.core.dot.domain.ext.ResourceSpace;
-import ink.o.w.o.resource.core.dot.domain.ext.ResourceSpacePayload;
+import ink.o.w.o.resource.core.dot.domain.ext.TextSpace;
+import ink.o.w.o.resource.core.dot.domain.ext.TextSpacePayload;
 import ink.o.w.o.resource.core.dot.repository.DotSpaceRepository;
 import ink.o.w.o.resource.core.dot.service.handler.DotSpaceDefaultHandler;
 import ink.o.w.o.resource.core.dot.service.handler.DotSpaceHandler;
@@ -20,19 +20,19 @@ import javax.annotation.Resource;
 
 @Slf4j
 @Component
-@DotTypeSelector(value = DotType.TypeEnum.RESOURCE)
-public class ResourceDotSpaceHandler extends DotSpaceHandler {
+@DotTypeSelector(value = DotType.TypeEnum.TEXT)
+public class TextDotSpaceHandler extends DotSpaceHandler {
 
   @Resource
-  DotSpaceRepository<ResourceSpace> resourceRepository;
+  DotSpaceRepository<TextSpace> textRepository;
 
   @Resource
-  DotSpaceHandlerFactory<ResourceSpace> dotDotSpaceHandlerFactory;
-  DotSpaceDefaultHandler<ResourceSpace> dotDotSpaceDefaultHandler;
+  DotSpaceHandlerFactory<TextSpace> dotDotSpaceHandlerFactory;
+  DotSpaceDefaultHandler<TextSpace> dotDotSpaceDefaultHandler;
 
   @PostConstruct
   private void init() {
-    dotDotSpaceDefaultHandler = dotDotSpaceHandlerFactory.getDefaultHandler(resourceRepository);
+    dotDotSpaceDefaultHandler = dotDotSpaceHandlerFactory.getDefaultHandler(textRepository);
   }
 
   @Override
@@ -52,44 +52,44 @@ public class ResourceDotSpaceHandler extends DotSpaceHandler {
 
   @Override
   public ServiceResult<Dot> create(Dot dot) {
-    var space = (ResourceSpace) dot.getSpace();
+    var space = (TextSpace) dot.getSpace();
     logger.info("dot -> [{}], payload -> [{}]", space, space.getPayload());
 
     switch (space.getPayloadType().getType()) {
-      case PICTURE: {
-        var payload = (ResourceSpacePayload.Picture) space.getPayload();
+      case SUMMARY: {
+        var payload = (TextSpacePayload.Summary) space.getPayload();
         space.setPayloadContent(payload);
         break;
       }
-      case AUDIO: {
-        var payload = (ResourceSpacePayload.Audio) space.getPayload();
+      case HEADING: {
+        var payload = (TextSpacePayload.Heading) space.getPayload();
         space.setPayloadContent(payload);
         break;
       }
-      case VIDEO: {
-        var payload = (ResourceSpacePayload.Video) space.getPayload();
+      case PARAGRAPH: {
+        var payload = (TextSpacePayload.Paragraph) space.getPayload();
         space.setPayloadContent(payload);
         break;
       }
-      case TEXT: {
-        var payload = (ResourceSpacePayload.Text) space.getPayload();
+      case EMBED: {
+        var payload = (TextSpacePayload.Embed) space.getPayload();
         space.setPayloadContent(payload);
         break;
       }
-      case BINARY: {
-        var payload = (ResourceSpacePayload.Binary) space.getPayload();
+      case LINK: {
+        var payload = (TextSpacePayload.LINK) space.getPayload();
         space.setPayloadContent(payload);
         break;
       }
       default: {
         throw ServiceException.of(
-            String.format("未知的 ResourceSpacePayload 类型 [%s]", space.getPayloadType())
+            String.format("未知的 TextSpacePayload 类型 [%s]", space.getPayloadType())
         );
       }
     }
 
 
-    var createdDotSpace = resourceRepository.save(space);
+    var createdDotSpace = textRepository.save(space);
     var spaceMountedDot = dot
         .setSpace(createdDotSpace)
         .setSpaceId(createdDotSpace.getId());
