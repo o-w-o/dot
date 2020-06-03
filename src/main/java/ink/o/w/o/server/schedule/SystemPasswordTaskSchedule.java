@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * 初始化任务
+ * SystemPassword 任务
  *
  * @author symbols@dingtalk.com
  * @version 1.0
@@ -30,15 +30,12 @@ import java.util.UUID;
 @Component
 @Configuration
 @EnableScheduling
-public class InitTaskSchedule {
+public class SystemPasswordTaskSchedule {
   private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
   private final static String MASTER_NAME = "master";
 
   private final UserService userService;
   private final MailService mailService;
-
-  @Value("${my.env}")
-  private String myEnv;
 
   @Value("${my.mail}")
   private String myEmail;
@@ -46,14 +43,14 @@ public class InitTaskSchedule {
   @Value("${spring.profiles.active}")
   private String env;
 
-  public InitTaskSchedule(UserService userService, MailService mailService) {
+  public SystemPasswordTaskSchedule(UserService userService, MailService mailService) {
     this.userService = userService;
     this.mailService = mailService;
   }
 
   private void initAndCheckMasterUser() {
-    logger.info("InitTask: customEnv -> {}, env -> {}", myEnv, env);
-    logger.info("InitTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
+    logger.info("SystemPasswordTask: env -> {}", env);
+    logger.info("SystemPasswordTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
 
     ServiceResult<User> userServiceResult = userService.getUserByUsername(MASTER_NAME);
     if (userServiceResult.getSuccess()) {
@@ -90,7 +87,7 @@ public class InitTaskSchedule {
       }
     }
 
-    System.err.println("执行静态定时任务 [ InitTask ] 时间: " + LocalDateTime.now());
+    logger.info("执行静态定时任务 [ SystemPasswordTask ] 时间: {}", LocalDateTime.now());
 
   }
 

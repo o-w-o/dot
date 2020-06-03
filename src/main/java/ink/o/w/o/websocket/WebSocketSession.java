@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 12
+ * WebSocketSession
  *
  * @author symbols@dingtalk.com
  * @version 1.0
