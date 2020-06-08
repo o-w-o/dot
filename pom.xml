@@ -18,7 +18,7 @@
         <java.version>11</java.version>
         <querydsl.version>4.2.1</querydsl.version>
         <aliyun.openapisdk.version>4.5.0</aliyun.openapisdk.version>
-        <aliyun.oss.version>3.9.1</aliyun.oss.version>
+        <aliyun.oss.version>3.10.0</aliyun.oss.version>
         <jsonwebtoken.vserion>0.11.1</jsonwebtoken.vserion>
         <victools.vserion>4.12.1</victools.vserion>
     </properties>
