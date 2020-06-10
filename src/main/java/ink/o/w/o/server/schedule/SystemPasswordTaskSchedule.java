@@ -1,15 +1,16 @@
 package ink.o.w.o.server.schedule;
 
 import ink.o.w.o.resource.integration.email.service.MailService;
-import ink.o.w.o.resource.system.role.constant.Roles;
+import ink.o.w.o.resource.system.role.domain.Role;
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.service.UserService;
+import ink.o.w.o.server.config.OrderConfiguration;
 import ink.o.w.o.server.config.properties.constant.SystemRuntimeEnv;
 import ink.o.w.o.server.io.service.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,8 +29,8 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-@Configuration
 @EnableScheduling
+@Order(OrderConfiguration.DATASOURCE_AFTER)
 public class SystemPasswordTaskSchedule {
   private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
   private final static String MASTER_NAME = "master";
@@ -49,6 +50,7 @@ public class SystemPasswordTaskSchedule {
   }
 
   private void initAndCheckMasterUser() {
+
     logger.info("SystemPasswordTask: env -> {}", env);
     logger.info("SystemPasswordTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
 
@@ -76,7 +78,7 @@ public class SystemPasswordTaskSchedule {
           new User()
               .setName(MASTER_NAME)
               .setPassword(MASTER_RANDOM_PASSWORD)
-              .setRoles(RoleHelper.toRoles(Roles.MASTER, Roles.USER))
+              .setRoles(RoleHelper.toRoles(Role.MASTER, Role.USER))
       );
       if (env.equals(SystemRuntimeEnv.PRODUCTION)) {
         mailService.sendSystemEmail(

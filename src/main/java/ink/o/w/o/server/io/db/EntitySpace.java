@@ -3,15 +3,13 @@ package ink.o.w.o.server.io.db;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
-import java.util.Date;
-import java.util.Optional;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 
 /**
@@ -21,6 +19,7 @@ import java.util.Optional;
  * @date 2020/02/12 12:36
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Data
 
@@ -30,39 +29,7 @@ import java.util.Optional;
 })
 
 @MappedSuperclass
-public class EntitySpace<EntityType> {
-  /**
-   * id
-   *
-   * @date 2020/02/12 16:48
-   * @since 1.0.0
-   */
-  @GeneratedValue(generator = "entity_space-uuid")
-  @GenericGenerator(name = "entity_space-uuid", strategy = "uuid")
-  @Id
-  protected String id;
-
+public class EntitySpace<EntityType> extends EntityIdentity {
   @Transient
   protected EntityType type;
-
-  @CreatedDate
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date cTime;
-
-  @CreatedDate
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date uTime;
-
-  @PrePersist
-  public void recordCreateTime() {
-    if (Optional.ofNullable(cTime).isEmpty()) {
-      cTime = new Date();
-      uTime = new Date();
-    }
-  }
-
-  @PreUpdate
-  public void recordUpdateTime() {
-    uTime = new Date();
-  }
 }

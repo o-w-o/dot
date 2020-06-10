@@ -9,8 +9,8 @@ public abstract class AbstractWayHandler {
 
   abstract public String handle(Way way);
 
-  abstract public ServiceResult<Way> fetch(String wayId, WayType.WayTypeEnum wayType);
-  abstract public ServiceResult<WaySpace> fetchSpace(String waySpaceId, WayType.WayTypeEnum wayType);
+  abstract public ServiceResult<Way> fetch(String wayId, WayType.TypeEnum wayType);
+  abstract public ServiceResult<WaySpace> fetchSpace(String waySpaceId, WayType.TypeEnum wayType);
 
   abstract public ServiceResult<Way> create(Way way);
 

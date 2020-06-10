@@ -1,6 +1,7 @@
 package ink.o.w.o.server.io.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import ink.o.w.o.util.HttpHelper;
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.function.Supplier;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties({"cause", "stackTrace", "suppressed", "localizedMessage"})
 public class APIException extends RuntimeException implements Supplier<APIException> {
   public static final String DEFAULT_MESSAGE = "[default]: 接口异常";

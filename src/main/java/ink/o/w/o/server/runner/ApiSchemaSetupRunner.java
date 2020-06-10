@@ -9,12 +9,14 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Slf4j
 @Component
+@Order(9)
 public class ApiSchemaSetupRunner implements ApplicationRunner {
 
 

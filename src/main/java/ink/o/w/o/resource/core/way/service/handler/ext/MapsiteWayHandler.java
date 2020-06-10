@@ -5,12 +5,12 @@ import ink.o.w.o.resource.core.way.domain.Way;
 import ink.o.w.o.resource.core.way.domain.WaySpace;
 import ink.o.w.o.resource.core.way.domain.WayType;
 import ink.o.w.o.resource.core.way.domain.ext.SitemapWay;
-import ink.o.w.o.resource.core.way.repository.SitemapWayRepository;
+import ink.o.w.o.resource.core.way.repository.ext.SitemapWayRepository;
 import ink.o.w.o.resource.core.way.repository.WayRepository;
 import ink.o.w.o.resource.core.way.service.handler.WayTypeSelector;
+import ink.o.w.o.server.io.json.JsonHelper;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @Component
-@WayTypeSelector(value = WayType.WayTypeEnum.NET)
+@WayTypeSelector(value = WayType.TypeEnum.NET)
 public class MapsiteWayHandler extends AbstractWayHandler {
   @Resource
   private JsonHelper jsonHelper;
@@ -40,7 +40,7 @@ public class MapsiteWayHandler extends AbstractWayHandler {
   }
 
   @Override
-  public ServiceResult<Way> fetch(String wayId, WayType.WayTypeEnum wayType) {
+  public ServiceResult<Way> fetch(String wayId, WayType.TypeEnum wayType) {
     var ink = wayRepository
         .findById(wayId)
         .orElseThrow(
@@ -51,7 +51,7 @@ public class MapsiteWayHandler extends AbstractWayHandler {
   }
 
   @Override
-  public ServiceResult<WaySpace> fetchSpace(String waySpaceId, WayType.WayTypeEnum wayType) {
+  public ServiceResult<WaySpace> fetchSpace(String waySpaceId, WayType.TypeEnum wayType) {
     return ServiceResult.success(
         sitemapWayRepository.findById(waySpaceId).orElseThrow(
             () -> new ServiceException(String.format("未找到 Way -> id[ %s ], type[ %s ]", waySpaceId, wayType))
@@ -68,7 +68,7 @@ public class MapsiteWayHandler extends AbstractWayHandler {
           .setSpaceId(createdInkSpace.getId())
           .setSpaceContent(jsonHelper.toJsonString(createdInkSpace));
       logger.info("spaceMountedInk -> [{}]", spaceMountedInk);
-      return ServiceResult.success(spaceMountedInk);
+      return ServiceResult.success((Way) spaceMountedInk);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       return ServiceResult.error(e.getMessage());

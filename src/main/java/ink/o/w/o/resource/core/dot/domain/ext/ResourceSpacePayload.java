@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @Data
 @JsonTypedSpacePayload
 public abstract class ResourceSpacePayload {
@@ -62,6 +66,7 @@ public abstract class ResourceSpacePayload {
 
   @JsonTypeName(ResourceSpacePayloadType.TypeName.PICTURE)
   public static class Picture extends ResourceSpacePayload {
+    @NotEmpty
     private String thumbnailUrl;
 
     @Override
@@ -83,6 +88,8 @@ public abstract class ResourceSpacePayload {
 
   @JsonTypeName(ResourceSpacePayloadType.TypeName.AUDIO)
   public static class Audio extends ResourceSpacePayload {
+    @NotNull
+    @Min(0)
     private Integer duration;
     private String subtitles;
     private String coverPictureUrl;
@@ -106,6 +113,8 @@ public abstract class ResourceSpacePayload {
 
   @JsonTypeName(ResourceSpacePayloadType.TypeName.VIDEO)
   public static class Video extends ResourceSpacePayload {
+    @NotNull
+    @Min(0)
     private Integer duration;
     private String subtitles;
     private String coverPictureUrl;

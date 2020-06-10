@@ -12,6 +12,14 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Dot
+ *
+ * @author symbols@dingtalk.com
+ * @date 2020/1/1
+ * @since 1.0.0
+ */
+
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Data

@@ -1,15 +1,16 @@
 package ink.o.w.o.resource.core.way.domain;
 
+import ink.o.w.o.server.io.db.EntitySpace;
 import ink.o.w.o.server.io.json.annotation.JsonEntityProperty;
 import ink.o.w.o.server.io.json.annotation.JsonTypedSpace;
+import ink.o.w.o.server.validator.SchemaVersion;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import java.util.Map;
 
 
 /**
@@ -26,25 +27,15 @@ import javax.persistence.Transient;
 @JsonTypedSpace
 
 @MappedSuperclass
-public abstract class WaySpace {
+public abstract class WaySpace extends EntitySpace<WayType.TypeEnum> {
+  @Type(type = "jsonb")
+  @Column(columnDefinition = "jsonb")
+  private Object schema;
 
-  /**
-   * id
-   *
-   * @date 2020/02/12 12:36
-   * @since 1.0.0
-   */
-  @Id
-  @GeneratedValue(generator = "ink_space-uuid")
-  @GenericGenerator(name = "ink_space-uuid", strategy = "uuid")
-  protected String id;
+  @SchemaVersion
+  private String version;
 
-  /**
-   * 类型
-   *
-   * @date 2020/02/12 12:36
-   * @since 1.0.0
-   */
-  @Transient
-  protected WayType.WayTypeEnum type;
+  @Type(type = "jsonb")
+  @Column(columnDefinition = "jsonb")
+  private Map<String, Object> schemata;
 }

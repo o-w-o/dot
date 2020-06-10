@@ -4,17 +4,17 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import ink.o.w.o.server.io.json.annotation.JsonTypedSpace;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.Optional;
 
 
 /**
@@ -24,6 +24,7 @@ import java.util.Optional;
  * @date 2020/02/12 12:36
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Data
 
@@ -33,17 +34,7 @@ import java.util.Optional;
 })
 
 @MappedSuperclass
-public class EntityWithSpace<EntityType, EntitySpace> {
-  /**
-   * id
-   *
-   * @date 2020/02/12 12:36
-   * @since 1.0.0
-   */
-  @Id
-  @GeneratedValue(generator = "entity-uuid")
-  @GenericGenerator(name = "entity-uuid", strategy = "uuid")
-  protected String id;
+public class EntityWithSpace<EntityType, EntitySpace> extends EntityIdentity {
   /**
    * 类型
    *
@@ -52,33 +43,16 @@ public class EntityWithSpace<EntityType, EntitySpace> {
    */
   @ManyToOne
   protected EntityType type;
+
   @Column(unique = true)
   protected String spaceId;
+
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
   protected Object spaceContent;
+
   @Valid
   @Transient
   @JsonTypedSpace
   private EntitySpace space;
-  @CreatedDate
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date cTime;
-
-  @CreatedDate
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date uTime;
-
-  @PrePersist
-  public void recordCreateTime() {
-    if (Optional.ofNullable(cTime).isEmpty()) {
-      cTime = new Date();
-      uTime = new Date();
-    }
-  }
-
-  @PreUpdate
-  public void recordUpdateTime() {
-    uTime = new Date();
-  }
 }

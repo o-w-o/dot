@@ -55,7 +55,10 @@ public class ResourceDotSpaceHandler extends DotSpaceHandler {
     var space = (ResourceSpace) dot.getSpace();
     logger.info("dot -> [{}], payload -> [{}]", space, space.getPayload());
 
-    switch (space.getPayloadType().getType()) {
+    var type = space.getPayload().getPayloadType();
+    space.setPayloadType(type);
+
+    switch (type.getType()) {
       case PICTURE: {
         var payload = (ResourceSpacePayload.Picture) space.getPayload();
         space.setPayloadContent(payload);

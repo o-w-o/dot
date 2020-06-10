@@ -27,7 +27,7 @@ public class SitemapWay extends WaySpace implements Serializable {
   private String content;
 
   @Override
-  public WayType.WayTypeEnum getType() {
-    return WayType.WayTypeEnum.NET;
+  public WayType.TypeEnum getType() {
+    return WayType.TypeEnum.NET;
   }
 }

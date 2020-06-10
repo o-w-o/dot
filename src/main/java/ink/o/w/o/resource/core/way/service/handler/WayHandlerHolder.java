@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class WayHandlerHolder implements ApplicationContextAware {
   private ApplicationContext applicationContext;
 
-  private Map<WayType.WayTypeEnum, AbstractWayHandler> container = new HashMap<>();
+  private Map<WayType.TypeEnum, AbstractWayHandler> container = new HashMap<>();
 
   @PostConstruct
   public void init() {
@@ -40,12 +41,12 @@ public class WayHandlerHolder implements ApplicationContextAware {
     logger.info("InkHandlerHolder register handler -> END");
   }
 
-  public Optional<AbstractWayHandler> select(WayType.WayTypeEnum inkType) {
+  public Optional<AbstractWayHandler> select(WayType.TypeEnum inkType) {
     return Optional.ofNullable(container.get(inkType));
   }
 
   @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+  public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
   }
 }

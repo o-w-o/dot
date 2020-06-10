@@ -1,14 +1,13 @@
 package ink.o.w.o.resource.system.user.service.impl;
 
 import com.querydsl.core.types.Predicate;
-import ink.o.w.o.resource.system.role.constant.Roles;
 import ink.o.w.o.resource.system.role.domain.Role;
 import ink.o.w.o.resource.system.user.constant.UserConstant;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.resource.system.user.repository.UserRepository;
 import ink.o.w.o.resource.system.user.service.UserService;
-import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.server.io.service.ServiceException;
+import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.util.PasswordEncoderHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -90,7 +89,7 @@ public class UserServiceImpl implements UserService {
       throw new ServiceException("请至少分配 [ 1个 ] 权限！");
     }
     roles.forEach(role -> {
-      if (role.getName().equals(Roles.MASTER.getName())) {
+      if (role.getName().equals(Role.Enum.MASTER.getRoleName())) {
         throw new ServiceException("请勿分配 MASTER 权限！");
       }
     });
@@ -98,7 +97,7 @@ public class UserServiceImpl implements UserService {
     var u = getUserById(id).guard();
 
     u.getRoles().forEach(role -> {
-      if (role.getName().equals(Roles.MASTER.getName())) {
+      if (role.getName().equals(Role.Enum.MASTER.getRoleName())) {
         throw new ServiceException("请勿变动 MASTER 权限！");
       }
     });

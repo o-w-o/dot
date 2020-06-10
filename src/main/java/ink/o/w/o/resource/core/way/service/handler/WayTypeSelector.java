@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Inherited
 public @interface WayTypeSelector {
 
-  WayType.WayTypeEnum value();
+  WayType.TypeEnum value();
 
 }

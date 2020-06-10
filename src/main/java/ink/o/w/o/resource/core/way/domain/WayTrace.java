@@ -1,13 +1,13 @@
 package ink.o.w.o.resource.core.way.domain;
 
-import ink.o.w.o.server.io.db.EntityWithSpace;
+import ink.o.w.o.server.io.db.EntityIdentity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Type;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Set;
 
 
 /**
@@ -21,8 +21,9 @@ import java.util.Set;
 @Data
 
 @Entity
-@Table(name = "t_way")
-public class Way extends EntityWithSpace<WayType, WaySpace> {
-  @OneToMany
-  private Set<WayTrace> traces;
+@Table(name = "t_way_trace")
+public class WayTrace extends EntityIdentity {
+  @Type(type = "jsonb")
+  @Column(columnDefinition = "jsonb")
+  public Object traceContent;
 }

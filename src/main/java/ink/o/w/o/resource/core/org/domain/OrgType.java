@@ -1,12 +1,24 @@
 package ink.o.w.o.resource.core.org.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import ink.o.w.o.resource.core.org.repository.OrgTypeRepository;
 import ink.o.w.o.server.io.db.annotation.EntityEnumerated;
+import ink.o.w.o.server.io.json.JsonParseEntityEnumException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+/**
+ * OrgType
+ *
+ * @author symbols@dingtalk.com
+ * @date 2020/6/4
+ */
 
 @NoArgsConstructor
 @Data
@@ -19,34 +31,50 @@ public class OrgType {
   private Integer id;
 
   @Enumerated(value = EnumType.STRING)
-  private OrgTypeEnum type;
+  private TypeEnum type;
 
-  public OrgType(OrgTypeEnum org) {
-    this.id = org.id;
-    this.type = org;
+  @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+  public OrgType(TypeEnum typeEnum) {
+    this.id = typeEnum.id;
+    this.type = typeEnum;
   }
 
-  @EntityEnumerated(enumClass = OrgTypeEnum.class, entityClass = OrgType.class, repositoryClass = OrgTypeRepository.class)
-  public enum OrgTypeEnum {
-    SET(1, OrgTypeName.SET),
-    TREE(2, OrgTypeName.TREE),
-    NET(3, OrgTypeName.NET);
+  public OrgType(String type) {
+    Stream
+        .of(OrgType.TypeEnum.values())
+        .filter(typeEnum -> Objects.equals(typeEnum.typeName, type))
+        .findFirst()
+        .ifPresent(typeEnum -> {
+          this.id = typeEnum.id;
+          this.type = typeEnum;
+        });
+
+    Optional.ofNullable(this.type).orElseThrow(() -> JsonParseEntityEnumException.of(OrgType.TypeEnum.class));
+
+  }
+
+  @EntityEnumerated(enumClass = TypeEnum.class, entityClass = OrgType.class, repositoryClass = OrgTypeRepository.class)
+  public enum TypeEnum {
+    SET(1, TypeName.SET),
+    TREE(2, TypeName.TREE),
+    RANK(3, TypeName.RANK),
+    CLASSIFICATION(9, TypeName.CLASSIFICATION);
 
     @Getter
     private final String typeName;
     @Getter
     private final Integer id;
 
-    private OrgTypeEnum(Integer id, String typeName) {
+    TypeEnum(Integer id, String typeName) {
       this.typeName = typeName;
       this.id = id;
     }
   }
 
-  public static class OrgTypeName {
+  public static class TypeName {
     public static final String SET = "SET";
     public static final String TREE = "TREE";
-    public static final String NET = "NET";
+    public static final String RANK = "RANK";
     public static final String CLASSIFICATION = "CLASSIFICATION";
   }
 }
