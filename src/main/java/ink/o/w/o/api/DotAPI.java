@@ -11,21 +11,17 @@ import ink.o.w.o.server.io.api.annotation.APIResourceCreate;
 import ink.o.w.o.server.io.api.annotation.APIResourceFetch;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @Slf4j
 @APIResource(path = "dots")
 public class DotAPI {
-  private final DotService dotService;
-
-  @Autowired
-  public DotAPI(DotService dotService) {
-    this.dotService = dotService;
-  }
+  @Resource
+  private DotService dotService;
 
   @APIResourceSchema
   public APIResult<APISchemata> schema() {

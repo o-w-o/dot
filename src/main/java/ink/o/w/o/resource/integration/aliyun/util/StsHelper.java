@@ -5,18 +5,16 @@ import ink.o.w.o.resource.integration.aliyun.domain.Policy;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedUser;
 import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Slf4j
 @Component
 public class StsHelper {
-  private final JsonHelper jsonHelper;
 
-  @Autowired
-  public StsHelper(JsonHelper jsonHelper) {
-    this.jsonHelper = jsonHelper;
-  }
+  @Resource
+  private JsonHelper jsonHelper;
 
   public String generateStsSessionName(AuthorizedUser authorizedUser) {
     return String.format(

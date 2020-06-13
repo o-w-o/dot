@@ -19,17 +19,17 @@ import java.util.Set;
 @Order(OrderConfiguration.DATASOURCE_INIT)
 public class EnumeratedEntitySetupRunner implements ApplicationRunner {
   private void collectAndInitEnumeratedEntity() {
-    logger.info("EnumeratedEntitySetupRunner:run 收集并注册 [EntityEnumerated] 类");
+    logger.info("EnumeratedEntitySetupRunner: [RUN] 收集并注册 [EntityEnumerated] 类");
     Reflections reflections = new Reflections("ink.o.w.o.resource");
     Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(EntityEnumerated.class);
 
     classSet.forEach(v -> {
-      logger.info("Reflections(ink.o.w.o.resource) clazz -> [{}]", v.getSimpleName());
+      logger.debug("EnumeratedEntitySetupRunner: [RUN] clazz -> [{}]", v.getSimpleName());
       Optional.ofNullable(v.getAnnotation(EntityEnumerated.class)).ifPresent(a -> {
         var entityClass = a.entityClass();
         var repositoryClass = a.repositoryClass();
 
-        logger.info("entityClass [{}], repositoryClass [{}]", entityClass, repositoryClass);
+        logger.debug("EnumeratedEntitySetupRunner: [RUN] entityClass [{}], repositoryClass [{}]", entityClass, repositoryClass);
         Optional.ofNullable(v.getEnumConstants()).ifPresent(i -> {
           for (var o : i) {
             try {

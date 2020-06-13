@@ -39,7 +39,7 @@ public class APISchemata {
       namespace.set(v.length == 0 ? "/" : v[0]);
       apiSchemataBuilder.namespace(namespace.get());
 
-      logger.info("API.NS -> [{}]", namespace.get());
+      logger.debug("API.NS -> [{}]", namespace.get());
     });
 
 
@@ -53,35 +53,35 @@ public class APISchemata {
       var builder = APISchema.builder().namespace(namespace.get()).clazz(apiSchemataBuilder.clazz).clazzMethod(method.getName());
 
       Optional.ofNullable(method.getAnnotation(APIResourceDo.class)).ifPresent(api -> {
-        logger.info("API.URI -> [{} {}：{}]", api.method(), api.path(), api.name());
+        logger.debug("API.URI -> [{} {}：{}]", api.method(), api.path(), api.name());
 
         builder.api(api.path()[0]);
         builder.description(api.name());
         builder.method(api.method()[0]);
       });
       Optional.ofNullable(method.getAnnotation(APIResourceFetch.class)).ifPresent(api -> {
-        logger.info("API.URI -> [Fetch {}：{}]", api.path(), api.name());
+        logger.debug("API.URI -> [Fetch {}：{}]", api.path(), api.name());
 
         builder.api(api.path()[0]);
         builder.description(api.name());
         builder.method(RequestMethod.GET);
       });
       Optional.ofNullable(method.getAnnotation(APIResourceCreate.class)).ifPresent(api -> {
-        logger.info("API.URI -> [Create {}：{}]", api.path(), api.name());
+        logger.debug("API.URI -> [Create {}：{}]", api.path(), api.name());
 
         builder.api(api.path()[0]);
         builder.description(api.name());
         builder.method(RequestMethod.POST);
       });
       Optional.ofNullable(method.getAnnotation(APIResourceModify.class)).ifPresent(api -> {
-        logger.info("API.URI -> [Modify {}：{}]", api.path(), api.name());
+        logger.debug("API.URI -> [Modify {}：{}]", api.path(), api.name());
 
         builder.api(api.path()[0]);
         builder.description(api.name());
         builder.method(RequestMethod.PATCH);
       });
       Optional.ofNullable(method.getAnnotation(APIResourceDestroy.class)).ifPresent(api -> {
-        logger.info("API.URI -> [Destroy {}：{}]", api.path(), api.name());
+        logger.debug("API.URI -> [Destroy {}：{}]", api.path(), api.name());
 
         builder.api(api.path()[0]);
         builder.description(api.name());
@@ -89,14 +89,14 @@ public class APISchemata {
       });
 
       for (var parameter : method.getParameters()) {
-        logger.info("parameter, name -> [{}]", parameter.getName());
+        logger.debug("parameter, name -> [{}]", parameter.getName());
 
         for (Annotation annotation : parameter.getAnnotations()) {
-          logger.info("annotation -> [{}]", annotation);
+          logger.debug("annotation -> [{}]", annotation);
 
           if (annotation.annotationType() == RequestBody.class) {
             var schema = JsonSchemaGenerator.generateSchema(parameter.getType());
-            logger.info("API.RequestBody[{}], schema -> [{}]", parameter.getType(), schema);
+            logger.debug("API.RequestBody[{}], schema -> [{}]", parameter.getType(), schema);
 
             builder.body(schema);
           }
@@ -112,7 +112,7 @@ public class APISchemata {
                       .setRequired(ann.required())
               );
 
-              logger.info("API.PathVariable[{}], name -> [{}]", parameter.getType(), val);
+              logger.debug("API.PathVariable[{}], name -> [{}]", parameter.getType(), val);
             });
           }
 
@@ -127,7 +127,7 @@ public class APISchemata {
                       .setRequired(ann.required())
               );
 
-              logger.info("API.RequestParam[{}], name -> [{}]", parameter.getType(), val);
+              logger.debug("API.RequestParam[{}], name -> [{}]", parameter.getType(), val);
             });
           }
 
@@ -142,7 +142,7 @@ public class APISchemata {
                       .setRequired(ann.required())
               );
 
-              logger.info("API.RequestPart[{}], name -> [{}]", parameter.getType(), val);
+              logger.debug("API.RequestPart[{}], name -> [{}]", parameter.getType(), val);
             });
           }
 
@@ -157,7 +157,7 @@ public class APISchemata {
                       .setRequired(ann.required())
               );
 
-              logger.info("API.RequestHeader[{}], name -> [{}]", parameter.getType(), val);
+              logger.debug("API.RequestHeader[{}], name -> [{}]", parameter.getType(), val);
             });
           }
 
@@ -172,7 +172,7 @@ public class APISchemata {
                       .setRequired(ann.required())
               );
 
-              logger.info("API.CookieValue[{}], name -> [{}]", parameter.getType(), val);
+              logger.debug("API.CookieValue[{}], name -> [{}]", parameter.getType(), val);
             });
           }
         }

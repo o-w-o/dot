@@ -9,10 +9,10 @@ import ink.o.w.o.server.io.api.annotation.APIResource;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import ink.o.w.o.server.io.service.ServiceException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,12 +22,8 @@ import java.util.Optional;
 @Slf4j
 @APIResource(path = "oss")
 public class OssAPI {
-  private final AliyunOssService aliyunOssService;
-
-  @Autowired
-  public OssAPI(AliyunOssService aliyunOssService) {
-    this.aliyunOssService = aliyunOssService;
-  }
+  @Resource
+  private AliyunOssService aliyunOssService;
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {

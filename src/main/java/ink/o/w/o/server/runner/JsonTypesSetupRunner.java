@@ -19,14 +19,14 @@ public class JsonTypesSetupRunner implements ApplicationRunner {
   private ObjectMapper objectMapper;
 
   private void collectAndRegisterJsonTypes() {
-    logger.info("JsonTypesSetupRunner:run 收集并注册 [JsonTypeName] 类");
+    logger.info("JsonTypesSetupRunner: [RUN] 收集并注册 [JsonTypeName] 类");
     Reflections reflections = new Reflections("ink.o.w.o.resource");
     Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(JsonTypeName.class);
     classSet.forEach(v -> {
-      logger.info("Reflections(ink.o.w.o.resource) clazz -> [{}], registerSubtypes -> [{}]", v.getSimpleName(), v.getAnnotation(JsonTypeName.class).value());
+      logger.debug("Reflections(ink.o.w.o.resource) clazz -> [{}], registerSubtypes -> [{}]", v.getSimpleName(), v.getAnnotation(JsonTypeName.class).value());
       objectMapper.registerSubtypes(new NamedType(v, v.getAnnotation(JsonTypeName.class).value()));
     });
-    logger.info("JsonTypesSetupRunner:run 收集并注册 [JsonTypeName] 类，END");
+    logger.info("JsonTypesSetupRunner: [RUN] 收集并注册 [JsonTypeName] 类，END");
   }
 
   @Override

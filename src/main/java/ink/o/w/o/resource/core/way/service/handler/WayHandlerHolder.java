@@ -23,10 +23,10 @@ public class WayHandlerHolder implements ApplicationContextAware {
 
   @PostConstruct
   private void init() {
-    logger.info("InkHandlerHolder register handler -> START");
+    logger.info("InkHandlerHolder [REG] -> START");
     Map<String, AbstractWayHandler> inkHandlers = applicationContext.getBeansOfType(AbstractWayHandler.class);
     if (inkHandlers.isEmpty()) {
-      logger.warn("InkHandlerHolder register handler -> EMPTY");
+      logger.warn("InkHandlerHolder [REG] -> EMPTY");
       return;
     }
     inkHandlers.forEach((beanName, orderHandler) -> {
@@ -34,11 +34,11 @@ public class WayHandlerHolder implements ApplicationContextAware {
       if (wayTypeSelector == null) {
         logger.error("未知的 WayType -> beanName[{}], orderHandler.class[{}]", beanName, orderHandler.getClass());
       } else {
-        logger.info("InkHandlerHolder register handler -> @[{}]", wayTypeSelector.value());
+        logger.info("InkHandlerHolder [REG] -> @[{}]", wayTypeSelector.value());
         this.container.put(wayTypeSelector.value(), orderHandler);
       }
     });
-    logger.info("InkHandlerHolder register handler -> END");
+    logger.info("InkHandlerHolder [REG] -> END");
   }
 
   public Optional<AbstractWayHandler> select(WayType.TypeEnum inkType) {

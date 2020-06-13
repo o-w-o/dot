@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.service.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -30,7 +28,6 @@ import static org.springframework.data.redis.cache.RedisCacheConfiguration.defau
 @Slf4j
 @Configuration
 @EnableCaching
-@AutoConfigureAfter(RedisAutoConfiguration.class)
 @EnableConfigurationProperties(CacheProperties.class)
 public class CacheConfiguration extends CachingConfigurerSupport {
   @Resource

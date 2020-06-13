@@ -195,7 +195,7 @@ public class APIExceptionsControllerAdvice {
     while (eCause != null) {
       Throwable cause = eCause.getCause();
       if (cause == null) {
-        logger.info("HttpMessageNotReadableException nested Exception -> [{}]", eCause.getClass());
+        logger.debug("HttpMessageNotReadableException nested Exception -> [{}]", eCause.getClass());
         break;
       }
       eCause = cause;

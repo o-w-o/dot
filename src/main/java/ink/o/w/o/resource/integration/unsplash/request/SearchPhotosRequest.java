@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 
 import static ink.o.w.o.resource.integration.unsplash.constant.UnsplashConstant.URL.LOCATION;
@@ -18,14 +19,11 @@ import static ink.o.w.o.resource.integration.unsplash.constant.UnsplashConstant.
 @Component
 public class SearchPhotosRequest {
   private static final String REQUEST_URL = LOCATION + "/search/photos";
-  private final RestTemplate restTemplate;
-  private final RequestHelper requestHelper;
 
-  @Autowired
-  public SearchPhotosRequest(RestTemplate restTemplate, RequestHelper requestHelper) {
-    this.restTemplate = restTemplate;
-    this.requestHelper = requestHelper;
-  }
+  @Resource
+  private RestTemplate restTemplate;
+  @Resource
+  private RequestHelper requestHelper;
 
   public Result sendRequest(Parameters parameters) {
     return this.restTemplate.getForObject(

@@ -2,7 +2,6 @@ package ink.o.w.o.server.runner;
 
 import ink.o.w.o.resource.system.authorization.repository.AuthorizedJwtStoreRepository;
 import ink.o.w.o.resource.system.role.domain.Role;
-import ink.o.w.o.resource.system.role.service.RoleService;
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.constant.UserGender;
 import ink.o.w.o.resource.system.user.domain.User;
@@ -25,16 +24,14 @@ public class ApplicationBootstrapRunner implements ApplicationRunner {
   @Resource
   private UserService userService;
   @Resource
-  private RoleService roleService;
-  @Resource
   private AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
   @Value("${spring.profiles.active}")
   private String env;
 
   private void resetAuthorizedJwtStoreRepository() {
-    logger.info("ApplicationRunner:run 清除令牌");
+    logger.info("ApplicationRunner: [RUN] 清除令牌");
     authorizedJwtStoreRepository.deleteAll();
-    logger.info("ApplicationRunner:run 清除令牌，END");
+    logger.info("ApplicationRunner: [RUN] 清除令牌，END");
   }
 
 

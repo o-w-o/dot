@@ -5,22 +5,20 @@ import ink.o.w.o.resource.integration.aliyun.constant.properties.MyAliyunPropert
 import ink.o.w.o.resource.integration.aliyun.domain.Sts;
 import ink.o.w.o.resource.integration.aliyun.util.AliyunOpenAPIHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 @Slf4j
 @Component
 public class AliyunStsRepository {
-  private final AliyunOpenAPIHelper aliyunOpenAPIHelper;
-  private final MyAliyunProperties.MyStsProperties myStsProperties;
 
-  @Autowired
-  public AliyunStsRepository(AliyunOpenAPIHelper aliyunOpenAPIHelper, MyAliyunProperties.MyStsProperties myStsProperties) {
-    this.aliyunOpenAPIHelper = aliyunOpenAPIHelper;
-    this.myStsProperties = myStsProperties;
-  }
+  @Resource
+  private AliyunOpenAPIHelper aliyunOpenAPIHelper;
+
+  @Resource
+  private MyAliyunProperties.MyStsProperties myStsProperties;
 
   /**
    * 创建 STS

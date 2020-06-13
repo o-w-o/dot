@@ -33,10 +33,10 @@ public class DotSpaceHandlerHolder implements ApplicationContextAware {
   }
 
   public void initDotHandlerHolder() {
-    logger.info("DotHandlerHolder register handler -> START");
+    logger.info("DotHandlerHolder [REG] -> START");
     Map<String, DotSpaceHandler> dotHandlers = applicationContext.getBeansOfType(DotSpaceHandler.class);
     if (dotHandlers.isEmpty()) {
-      logger.warn("DotHandlerHolder register handler -> EMPTY");
+      logger.warn("DotHandlerHolder [REG] -> EMPTY");
       return;
     }
     dotHandlers.forEach((beanName, dotHandler) -> {
@@ -44,11 +44,11 @@ public class DotSpaceHandlerHolder implements ApplicationContextAware {
       if (dotTypeSelector == null) {
         logger.error("未知的 DotType -> beanName[{}], dotHandler.class[{}]", beanName, dotHandler.getClass());
       } else {
-        logger.info("DotHandlerHolder register handler -> @[{}]", dotTypeSelector.value());
+        logger.info("DotHandlerHolder [REG] -> @[{}]", dotTypeSelector.value());
         this.container.put(dotTypeSelector.value(), dotHandler);
       }
     });
-    logger.info("DotHandlerHolder register handler -> END");
+    logger.info("DotHandlerHolder [REG] -> END");
   }
 
   public void initDotTypes() {

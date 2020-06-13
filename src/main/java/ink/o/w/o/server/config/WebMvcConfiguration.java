@@ -38,7 +38,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
     for (HttpMessageConverter<?> converter : converters) {
       if (converter instanceof MappingJackson2HttpMessageConverter) {
-        logger.info("已设置 converters 的类： {}", converter.getClass().getName());
+        logger.debug("configureMessageConverters: [RUN] 已设置 converters 的类： {}", converter.getClass().getName());
 
         MappingJackson2HttpMessageConverter c = ((MappingJackson2HttpMessageConverter) converter);
         c.getObjectMapper()
@@ -46,12 +46,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 new Hibernate5Module()
             );
       } else if (converter instanceof StringHttpMessageConverter) {
-        logger.info("已设置 converters 的类： {}", converter.getClass().getName());
+        logger.debug("configureMessageConverters: [RUN] 已设置 converters 的类： {}", converter.getClass().getName());
 
         StringHttpMessageConverter c = ((StringHttpMessageConverter) converter);
         c.setDefaultCharset(StandardCharsets.UTF_8);
       } else {
-        logger.info("未设置 converters 的类：" + converter.getClass().getName());
+        logger.debug("configureMessageConverters: [RUN] 未设置 converters 的类：" + converter.getClass().getName());
       }
     }
   }

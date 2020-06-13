@@ -12,12 +12,12 @@ import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.util.HttpHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Filter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,10 +38,10 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 @Filter(name = "AuthorityInjector")
 public class AuthorityInjector extends OncePerRequestFilter {
 
-  @Autowired
+  @Resource
   private JsonHelper jsonHelper;
 
-  @Autowired
+  @Resource
   private AuthorizedJwtStoreService authorizedJwtStoreService;
 
   @Override
@@ -108,11 +108,11 @@ public class AuthorityInjector extends OncePerRequestFilter {
 
   private String getIpAddress(HttpServletRequest request) {
     String ip = request.getHeader("x-forwarded-for");
-    logger.info("use x-forwarded-for -> [{}]", ip);
+    logger.info("getIpAddress: [USE] [x-forwarded-for] -> [{}]", ip);
 
     if (getIpAddressNextProxy(ip)) {
       ip = request.getRemoteAddr();
-      logger.info("use RemoteAddr");
+      logger.info("getIpAddress: [USE] [RemoteAddr] -> [{}]", ip);
     }
 
     // 如果是多级代理，那么取第一个 ip 为客户端 ip
@@ -125,7 +125,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
 
   private String attachIpToContext(HttpServletRequest request) {
     String ip = getIpAddress(request);
-    logger.info("Referer: [{}], UA: [{}], IP: [{}]",
+    logger.info("attachIpToContext: [USE] Referer: [{}], UA: [{}], IP: [{}]",
         request.getHeader("Referer"),
         request.getHeader("User-Agent"),
         ip

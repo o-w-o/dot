@@ -93,7 +93,7 @@ public class SystemPasswordTaskSchedule {
 
   }
 
-  @Scheduled(fixedRate = 1000 * 60 * 60)
+  @Scheduled(fixedRate = 1000 * 60 * 60, initialDelay = 1000 * 10)
   private void initAndCheckMasterUserTask() {
     initAndCheckMasterUser();
   }

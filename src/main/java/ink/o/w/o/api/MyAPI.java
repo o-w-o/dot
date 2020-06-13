@@ -12,10 +12,11 @@ import ink.o.w.o.server.io.api.annotation.APIResourceModify;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import ink.o.w.o.server.io.service.ServiceContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
 
 /**
  * 用户相关 API
@@ -28,12 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @APIResource(path = "my")
 @PreAuthorize("hasRole('ROLE_USER')")
 public class MyAPI {
-  private final UserService userService;
-
-  @Autowired
-  public MyAPI(UserService userService) {
-    this.userService = userService;
-  }
+  @Resource
+  private UserService userService;
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {

@@ -21,15 +21,15 @@ public class ApiSchemaSetupRunner implements ApplicationRunner {
 
 
   private void collectAndRegisterApiSchema() {
-    logger.info("ApiSchemaSetupRunner:run 收集并注册 [ApiSchema] 类");
+    logger.info("ApiSchemaSetupRunner: [RUN] 收集并注册 [ApiSchema] 类");
     Reflections reflections = new Reflections("ink.o.w.o.api", new TypeAnnotationsScanner(), new SubTypesScanner(false));
     Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(APIResource.class);
 
     classSet.forEach(v -> {
-      logger.info("Reflections(ink.o.w.o.api) clazz -> [{}], registerApiSchema -> [{}]", v.getSimpleName(), v.getAnnotation(APIResource.class).path());
+      logger.debug("ApiSchemaSetupRunner: [RUN] clazz -> [{}], registerApiSchema -> [{}]", v.getSimpleName(), v.getAnnotation(APIResource.class).path());
       APIContext.attachSchemaToAPIContext(v, APISchemata.of(v));
     });
-    logger.info("ApiSchemaSetupRunner:run 收集并注册 [ApiSchema] 类，END");
+    logger.info("ApiSchemaSetupRunner: [RUN] 收集并注册 [ApiSchema] 类，END");
   }
 
   @Override

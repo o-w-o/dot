@@ -9,9 +9,9 @@ import ink.o.w.o.resource.integration.aliyun.domain.oss.UploadedOssResource;
 import ink.o.w.o.resource.integration.aliyun.service.AliyunStsService;
 import ink.o.w.o.server.io.service.ServiceException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,10 +20,10 @@ import java.io.InputStream;
 @Slf4j
 @Component
 public class AliyunOssRepository {
-  @Autowired
+  @Resource
   MyAliyunProperties.MyOssProperties myOssProperties;
 
-  @Autowired
+  @Resource
   AliyunStsService aliyunStsService;
 
   public UploadedOssResource upload(TemporalOssResource o) {

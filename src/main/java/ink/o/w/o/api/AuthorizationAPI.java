@@ -14,7 +14,6 @@ import ink.o.w.o.server.io.api.annotation.APIResourceCreate;
 import ink.o.w.o.server.io.api.annotation.APIResourceDestroy;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.security.SignatureException;
 
 
@@ -36,14 +36,10 @@ import java.security.SignatureException;
 @RestController
 @APIResource(path = "authorization")
 public class AuthorizationAPI {
-  private final AuthorizationService authorizationService;
-  private final AliyunStsService aliyunStsService;
-
-  @Autowired
-  AuthorizationAPI(AuthorizationService authorizationService, AliyunStsService aliyunStsService) {
-    this.authorizationService = authorizationService;
-    this.aliyunStsService = aliyunStsService;
-  }
+  @Resource
+  private AuthorizationService authorizationService;
+  @Resource
+  private AliyunStsService aliyunStsService;
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {

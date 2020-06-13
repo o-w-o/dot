@@ -1,8 +1,6 @@
 package ink.o.w.o.server.config;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,16 +10,18 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.annotation.Resource;
+
 /**
  * @author symbols@dingtalk.com
  * @date 2019/8/3 下午2:33
  */
 
 @Configuration
-@EnableRedisRepositories
+@EnableRedisRepositories()
 public class RedisConfiguration {
 
-  @Autowired
+  @Resource
   private ObjectMapper objectMapper;
 
   @Bean

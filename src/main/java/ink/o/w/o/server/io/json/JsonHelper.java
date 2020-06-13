@@ -2,8 +2,9 @@ package ink.o.w.o.server.io.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @author symbols@dingtalk.com
@@ -11,12 +12,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class JsonHelper {
-  private final ObjectMapper objectMapper;
-
-  @Autowired
-  JsonHelper(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
+  @Resource
+  private ObjectMapper objectMapper;
 
   public ObjectMapper getObjectMapper() {
     return this.objectMapper;

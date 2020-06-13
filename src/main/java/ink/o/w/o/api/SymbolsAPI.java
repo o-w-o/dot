@@ -11,22 +11,18 @@ import ink.o.w.o.server.io.api.annotation.APIResourceCreate;
 import ink.o.w.o.server.io.api.annotation.APIResourceFetch;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 @Slf4j
 @APIResource(path = "symbols")
 @Transactional
 public class SymbolsAPI {
-  private final SymbolsService symbolsService;
-
-  @Autowired
-  public SymbolsAPI(SymbolsService symbolsService) {
-    this.symbolsService = symbolsService;
-  }
+  @Resource
+  private SymbolsService symbolsService;
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {

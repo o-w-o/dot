@@ -15,9 +15,9 @@ import ink.o.w.o.server.io.service.ServiceResult;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Optional;
@@ -25,10 +25,10 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService {
-  @Autowired
+  @Resource
   private AuthorizedJwtStoreRepository authorizedJwtStoreRepository;
 
-  @Autowired
+  @Resource
   private JsonHelper jsonHelper;
 
   @Override
@@ -174,6 +174,7 @@ public class AuthorizedJwtStoreServiceImpl implements AuthorizedJwtStoreService 
       return serviceResult.setMessage("HTTP 头部 未携带 Token ！").setSuccess(false);
     }
 
+    assert httpHeader != null;
     authorizationPayload.setJwtHeaderValid(httpHeader.startsWith(AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX));
 
     logger.info("HTTP 头部 -" + AuthorizedJwt.AUTHORIZATION_HEADER_KEY + "- 字段值是否以 [" + AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX + "] 开始 ? " + httpHeader.startsWith(AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX));

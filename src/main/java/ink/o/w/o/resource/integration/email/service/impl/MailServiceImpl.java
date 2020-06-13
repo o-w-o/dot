@@ -1,25 +1,22 @@
 package ink.o.w.o.resource.integration.email.service.impl;
 
-import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.resource.integration.email.service.MailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import ink.o.w.o.server.io.service.ServiceResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 
 @Service
 public class MailServiceImpl implements MailService {
-  private final JavaMailSender javaMailSender;
+  @Resource
+  private JavaMailSender javaMailSender;
 
   @Value("${spring.mail.username}")
   private String systemSender;
-
-  @Autowired
-  public MailServiceImpl(JavaMailSender javaMailSender) {
-    this.javaMailSender = javaMailSender;
-  }
 
   /**
    * 简单的邮件发送功能

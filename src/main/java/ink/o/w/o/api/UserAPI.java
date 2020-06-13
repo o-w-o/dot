@@ -10,13 +10,13 @@ import ink.o.w.o.server.io.api.APIResult;
 import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.io.api.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.annotation.Resource;
 import java.util.Set;
 
 /**
@@ -31,19 +31,15 @@ import java.util.Set;
 @PreAuthorize("hasRole('ROLE_MASTER')")
 public class UserAPI {
 
-  private final UserService userService;
-
-  @Autowired
-  public UserAPI(UserService userService) {
-    this.userService = userService;
-  }
+  @Resource
+  private UserService userService;
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {
     return APIResult.of(APIContext.fetchAPIContext(UserAPI.class).orElseThrow(APIException::new));
   }
 
-  @APIResourceFetch
+  @APIResourceFetch(path = "")
   public APIResult<?> listUsers(@QuerydslPredicate(root = User.class) Predicate predicate, Pageable pageable) {
     return APIResult.of(
         userService.listUser(predicate, pageable)
@@ -88,7 +84,7 @@ public class UserAPI {
   @APIResourceDestroy(path = "{id}", name = "注销用户")
   public APIResult<?> revokeOneUser(@PathVariable Integer id) {
     return APIResult.of(
-        userService.unregister(id)
+        userService.revoke(id)
             .guard()
     );
   }

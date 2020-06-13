@@ -5,21 +5,19 @@ import ink.o.w.o.resource.integration.unsplash.request.RetrieveRandomPhotosReque
 import ink.o.w.o.resource.integration.unsplash.request.SearchPhotosRequest;
 import ink.o.w.o.resource.integration.unsplash.service.UnsplashService;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service
 public class UnsplashServiceImpl implements UnsplashService {
-  private final MyUnsplashProperties myUnsplashProperties;
-  private final RetrieveRandomPhotosRequest retrieveRandomPhotosRequest;
-  private final SearchPhotosRequest searchPhotosRequest;
 
-  @Autowired
-  public UnsplashServiceImpl(RetrieveRandomPhotosRequest retrieveRandomPhotosRequest, SearchPhotosRequest searchPhotosRequest, MyUnsplashProperties myUnsplashProperties) {
-    this.retrieveRandomPhotosRequest = retrieveRandomPhotosRequest;
-    this.searchPhotosRequest = searchPhotosRequest;
-    this.myUnsplashProperties = myUnsplashProperties;
-  }
+  @Resource
+  private MyUnsplashProperties myUnsplashProperties;
+  @Resource
+  private RetrieveRandomPhotosRequest retrieveRandomPhotosRequest;
+  @Resource
+  private SearchPhotosRequest searchPhotosRequest;
 
   @Override
   public Object retrieveOneRandomPhoto(String keyword) {

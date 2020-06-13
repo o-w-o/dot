@@ -11,21 +11,19 @@ import ink.o.w.o.resource.integration.aliyun.constant.properties.MyAliyunPropert
 import ink.o.w.o.server.io.service.ServiceException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 import java.util.function.Function;
 
 @Slf4j
 @Component
 public class AliyunOpenAPIHelper {
-  private final MyAliyunProperties.MyStsProperties myStsProperties;
 
-  @Autowired
-  AliyunOpenAPIHelper(MyAliyunProperties.MyStsProperties myStsProperties) {
-    this.myStsProperties = myStsProperties;
-  }
+  @Resource
+  private MyAliyunProperties.MyStsProperties myStsProperties;
+
 
   public <T extends AcsResponse> Optional<T> request(AcsRequest<T> requestPayload) {
     return new Request<T>(myStsProperties).setRequestPayload(requestPayload).sendRequest();

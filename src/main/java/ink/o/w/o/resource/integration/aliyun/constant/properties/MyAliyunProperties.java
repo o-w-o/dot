@@ -29,7 +29,7 @@ public class MyAliyunProperties {
   @Setter
   @Configuration
   @ConfigurationProperties(prefix = "my.aliyun.oss")
-  @PropertySource(value = "classpath:/my.properties")
+  @PropertySource(value = "classpath:/config/my.properties")
   public static class MyOssProperties extends MyAliyunAuthorizationProperties {
     private String appName = "aliyun:oss";
     private String bucketName;
@@ -47,7 +47,7 @@ public class MyAliyunProperties {
   @Setter
   @Configuration
   @ConfigurationProperties(prefix = "my.aliyun.sts")
-  @PropertySource(value = "classpath:/my.properties")
+  @PropertySource(value = "classpath:/config/my.properties")
   public static class MyStsProperties extends MyAliyunAuthorizationProperties {
     private String appName = "aliyun:sts";
     private String roleArn;

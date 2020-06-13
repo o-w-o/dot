@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 
 import static ink.o.w.o.resource.integration.unsplash.constant.UnsplashConstant.URL.LOCATION;
@@ -17,14 +18,11 @@ import static ink.o.w.o.resource.integration.unsplash.constant.UnsplashConstant.
 @Component
 public class RetrieveRandomPhotosRequest {
   public static final String REQUEST_URL = LOCATION + "/photos/random";
-  private final RequestHelper requestHelper;
-  private final RestTemplate restTemplate;
 
-  @Autowired
-  public RetrieveRandomPhotosRequest(RestTemplate restTemplate, RequestHelper requestHelper) {
-    this.restTemplate = restTemplate;
-    this.requestHelper = requestHelper;
-  }
+  @Resource
+  private RequestHelper requestHelper;
+  @Resource
+  private RestTemplate restTemplate;
 
   public Object sendRequest(Parameters parameters) {
     return this.restTemplate.getForObject(

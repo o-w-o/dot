@@ -75,12 +75,18 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public ServiceResult<Boolean> unregister(Integer id) {
-    userRepository.deleteById(id);
-    return ServiceResult.success(
-        userRepository.findById(id)
-            .isEmpty()
-    );
+  public ServiceResult<Boolean> revoke(Integer id) {
+    var u = getUserById(id);
+    if (u.getSuccess()) {
+      userRepository.deleteById(id);
+
+      return ServiceResult.success(
+          userRepository.findById(id)
+              .isEmpty()
+      );
+    } else {
+      throw ServiceException.of(u.getMessage());
+    }
   }
 
   @Override
@@ -123,8 +129,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public ServiceResult<Boolean> modifyPassword(Integer id, String password, String prevPassword) throws ServiceException {
-    logger.info("prevPassword -> {}, password -> {}", prevPassword, password);
-
     if (password.equals(prevPassword)) {
       throw new ServiceException("新旧密码相同！");
     }
@@ -133,7 +137,7 @@ public class UserServiceImpl implements UserService {
 
     var u = getUserById(id).guard();
 
-    logger.info("prevPassword -> {}, password -> {}", u.getPassword(), encoder.matches(prevPassword, u.getPassword()));
+    logger.debug("modifyPassword: [RUN] match ? {}", encoder.matches(prevPassword, u.getPassword()));
     if (encoder.matches(prevPassword, u.getPassword())) {
       userRepository.save(u.setPassword(password));
     } else {

@@ -22,10 +22,10 @@ public class SymbolsHandlerHolder implements ApplicationContextAware {
 
   @PostConstruct
   private void init() {
-    logger.info("SymbolsHandlerHolder register handler -> START");
+    logger.info("SymbolsHandlerHolder [REG] -> START");
     Map<String, AbstractSymbolsHandler> symbolsHandlers = applicationContext.getBeansOfType(AbstractSymbolsHandler.class);
     if (symbolsHandlers.isEmpty()) {
-      logger.warn("SymbolsHandlerHolder register handler -> EMPTY");
+      logger.warn("SymbolsHandlerHolder [REG] -> EMPTY");
       return;
     }
     symbolsHandlers.forEach((beanName, orderHandler) -> {
@@ -33,11 +33,11 @@ public class SymbolsHandlerHolder implements ApplicationContextAware {
       if (symbolsTypeSelector == null) {
         logger.error("未知的 SymbolsType -> beanName[{}], orderHandler.class[{}]", beanName, orderHandler.getClass());
       } else {
-        logger.info("SymbolsHandlerHolder register handler -> @[{}]", symbolsTypeSelector.value());
+        logger.info("SymbolsHandlerHolder [REG] -> @[{}]", symbolsTypeSelector.value());
         this.container.put(symbolsTypeSelector.value(), orderHandler);
       }
     });
-    logger.info("SymbolsHandlerHolder register handler -> END");
+    logger.info("SymbolsHandlerHolder [REG] -> END");
   }
 
   public Optional<AbstractSymbolsHandler> select(SymbolsType symbolsType) {

@@ -18,7 +18,7 @@ import org.springframework.context.annotation.PropertySource;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "my.unsplash")
-@PropertySource(value = "classpath:/my.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "classpath:/config/my.properties", ignoreResourceNotFound = true)
 public class MyUnsplashProperties extends MyAuthorizationProperties {
   private String appName = "unsplash";
 }

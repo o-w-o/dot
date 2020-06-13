@@ -44,11 +44,10 @@ public class EnvironmentConfiguration implements EnvironmentPostProcessor {
     String osName = System.getProperty(SystemPropertiesDotPathConstant.OS_NAME);
 
     for (PropertySource ps : environment.getPropertySources()) {
-      logger.info("--------- " + ps.getName() + " --------------");
       if (ps.getName().contains("systemProperties")) {
         logger.info("PropertySource [os.name] -> " + ps.getProperty("os.name"));
       }
-      if (ps.getName().contains("application.properties")) {
+      if (ps.getName().contains("config/application.properties")) {
         logger.info("PropertySource [spring.profiles.active] -> " + ps.getProperty("spring.profiles.active"));
       }
     }

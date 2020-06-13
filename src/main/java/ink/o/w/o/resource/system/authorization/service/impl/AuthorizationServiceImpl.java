@@ -9,9 +9,10 @@ import ink.o.w.o.resource.system.user.repository.UserRepository;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.service.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -25,10 +26,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
 
-    @Autowired
+    @Resource
     private UserRepository userRepository;
 
-    @Autowired
+    @Resource
     private AuthorizedJwtStoreService authorizedJwtStoreService;
 
     @Override

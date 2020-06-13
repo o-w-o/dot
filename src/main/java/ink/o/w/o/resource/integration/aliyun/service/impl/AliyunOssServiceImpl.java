@@ -7,15 +7,16 @@ import ink.o.w.o.resource.integration.aliyun.service.AliyunOssService;
 import ink.o.w.o.server.io.service.ServiceContext;
 import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.service.ServiceResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.File;
 
 @Service
 public class AliyunOssServiceImpl implements AliyunOssService {
-  @Autowired
-  AliyunOssRepository aliyunOssRepository;
+
+  @Resource
+  private AliyunOssRepository aliyunOssRepository;
 
   @Override
   public ServiceResult<UploadedOssResource> uploadTemporalResourceToOss(File temporalFile) {

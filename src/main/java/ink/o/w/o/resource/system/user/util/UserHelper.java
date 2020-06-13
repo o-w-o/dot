@@ -20,10 +20,7 @@ public class UserHelper {
             return new ArrayList<>();
         }
 
-        return List.of(u.getRoles().stream().map(Role::getName).map(s -> {
-            logger.info("ROLE_" + s);
-            return "ROLE_" + s;
-        }).toArray(String[]::new));
+        return List.of(u.getRoles().stream().map(Role::getName).map(s -> "ROLE_" + s).toArray(String[]::new));
     }
 
     public static Boolean isExist(User u) {
