@@ -6,10 +6,10 @@ import ink.o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService
 import ink.o.w.o.resource.system.role.util.RoleHelper;
 import ink.o.w.o.resource.system.user.domain.User;
 import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.json.JsonHelper;
 import ink.o.w.o.server.io.service.ServiceContext;
 import ink.o.w.o.server.io.service.ServiceResult;
 import ink.o.w.o.util.HttpHelper;
-import ink.o.w.o.server.io.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +117,7 @@ public class AuthorityInjector extends OncePerRequestFilter {
 
     // 如果是多级代理，那么取第一个 ip 为客户端 ip
     if (ip != null && ip.contains(",")) {
-      ip = ip.substring(0, ip.indexOf(",")).trim();
+      ip = ip.substring(0, ip.indexOf(',')).trim();
     }
 
     return ip;

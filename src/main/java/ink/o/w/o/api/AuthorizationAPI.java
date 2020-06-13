@@ -6,12 +6,16 @@ import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import ink.o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import ink.o.w.o.resource.system.authorization.service.AuthorizationService;
 import ink.o.w.o.server.io.api.APIContext;
-import ink.o.w.o.server.io.api.APISchemata;
-import ink.o.w.o.server.io.api.annotation.*;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.server.io.api.APISchemata;
+import ink.o.w.o.server.io.api.annotation.APIResource;
+import ink.o.w.o.server.io.api.annotation.APIResourceCreate;
+import ink.o.w.o.server.io.api.annotation.APIResourceDestroy;
+import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -70,7 +74,7 @@ public class AuthorizationAPI {
     );
   }
 
-  @APIResourceDestroy(path = "/revoke", name = "注销令牌", produces = "application/json")
+  @APIResourceDestroy(path = "/revoke", name = "注销令牌", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('ROLE_USER')")
   public APIResult<?> revokeAuthenticationToken(
       @RequestHeader(name = AuthorizedJwt.AUTHORIZATION_HEADER_KEY) String jwt

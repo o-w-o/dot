@@ -19,7 +19,7 @@ public class Sts {
       return new Credentials()
           .setAccessKeyId(credentials.getAccessKeyId())
           .setAccessKeySecret(credentials.getAccessKeySecret())
-          .setSecurityToken(credentials.getBizSecurityToken())
+          .setSecurityToken(credentials.getSecurityToken())
           .setExpiration(credentials.getExpiration())
           ;
     }

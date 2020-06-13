@@ -19,50 +19,48 @@ import java.util.Properties;
  */
 @Slf4j
 public class EnvironmentConfiguration implements EnvironmentPostProcessor {
-    private Optional<PropertiesPropertySource> getRuntimePropertiesPropertySource() {
-        return this.getRuntimePropertiesPropertySource("/etc/o-w-o/application-production.properties");
-    }
-    private Optional<PropertiesPropertySource> getRuntimePropertiesPropertySource(String propertySourcePath) {
-        PropertiesPropertySource propertySource = null;
+  private Optional<PropertiesPropertySource> getRuntimePropertiesPropertySource() {
+    return this.getRuntimePropertiesPropertySource("/etc/o-w-o/application-production.properties");
+  }
+  private Optional<PropertiesPropertySource> getRuntimePropertiesPropertySource(String propertySourcePath) {
+    PropertiesPropertySource propertySource = null;
 
-        try {
-            FileInputStream fileInputStream = new FileInputStream(
-                new File(propertySourcePath)
-            );
+    try(FileInputStream fileInputStream = new FileInputStream(
+        new File(propertySourcePath)
+    )) {
+      Properties properties = new Properties();
+      properties.load(fileInputStream);
 
-            Properties properties = new Properties();
-            properties.load(fileInputStream);
-
-            propertySource = new PropertiesPropertySource("runtime", properties);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return Optional.ofNullable(propertySource);
+      propertySource = new PropertiesPropertySource("runtime", properties);
+    } catch (Exception e) {
+      logger.error("getRuntimePropertiesPropertySource Exception !", e);
     }
 
-    @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        String osName = System.getProperty(SystemPropertiesDotPathConstant.OS_NAME);
+    return Optional.ofNullable(propertySource);
+  }
 
-        for (PropertySource ps : environment.getPropertySources()) {
-            System.out.println("--------- " + ps.getName() + " --------------");
-            if (ps.getName().contains("systemProperties")) {
-                System.out.println("PropertySource [os.name] -> " + ps.getProperty("os.name"));
-            }
-            if (ps.getName().contains("application.properties")) {
-                System.out.println("PropertySource [spring.profiles.active] -> " + ps.getProperty("spring.profiles.active"));
-            }
-        }
+  @Override
+  public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    String osName = System.getProperty(SystemPropertiesDotPathConstant.OS_NAME);
 
-        if (osName.contains(SystemOsName.Linux.getOsName())) {
-            this.getRuntimePropertiesPropertySource().ifPresent(propertiesPropertySource -> environment
-                .getPropertySources()
-                .addLast(
-                    propertiesPropertySource
-                ));
-        } else {
-            System.out.println("当前系统非指定系统，跳过配置获取 -> " + osName);
-        }
+    for (PropertySource ps : environment.getPropertySources()) {
+      logger.info("--------- " + ps.getName() + " --------------");
+      if (ps.getName().contains("systemProperties")) {
+        logger.info("PropertySource [os.name] -> " + ps.getProperty("os.name"));
+      }
+      if (ps.getName().contains("application.properties")) {
+        logger.info("PropertySource [spring.profiles.active] -> " + ps.getProperty("spring.profiles.active"));
+      }
     }
+
+    if (osName.contains(SystemOsName.Linux.getOsName())) {
+      this.getRuntimePropertiesPropertySource().ifPresent(propertiesPropertySource -> environment
+          .getPropertySources()
+          .addLast(
+              propertiesPropertySource
+          ));
+    } else {
+      logger.info("当前系统非指定系统，跳过配置获取 -> " + osName);
+    }
+  }
 }

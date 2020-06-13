@@ -1,16 +1,16 @@
 package ink.o.w.o.resource.core.symbols.service.handler.ext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import ink.o.w.o.resource.core.symbols.domain.SymbolsType;
 import ink.o.w.o.resource.core.symbols.domain.Symbols;
 import ink.o.w.o.resource.core.symbols.domain.SymbolsSpace;
+import ink.o.w.o.resource.core.symbols.domain.SymbolsType;
 import ink.o.w.o.resource.core.symbols.domain.ext.DocumentSymbols;
 import ink.o.w.o.resource.core.symbols.repository.DocumentSymbolsRepository;
 import ink.o.w.o.resource.core.symbols.repository.SymbolsRepository;
 import ink.o.w.o.resource.core.symbols.service.handler.SymbolsTypeSelector;
-import ink.o.w.o.server.io.service.ServiceResult;
-import ink.o.w.o.server.io.service.ServiceException;
 import ink.o.w.o.server.io.json.JsonHelper;
+import ink.o.w.o.server.io.service.ServiceException;
+import ink.o.w.o.server.io.service.ServiceResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +70,7 @@ public class ArticleSymbolsHandler extends AbstractSymbolsHandler {
       logger.info("spaceMountedSymbols -> [{}]", spaceMountedSymbols);
       return ServiceResult.success((Symbols) spaceMountedSymbols);
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
+      logger.error("JsonProcessingException", e);
       return ServiceResult.error(e.getMessage());
     }
   }

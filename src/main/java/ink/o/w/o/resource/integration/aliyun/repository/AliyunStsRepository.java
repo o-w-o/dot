@@ -1,9 +1,9 @@
 package ink.o.w.o.resource.integration.aliyun.repository;
 
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
-import ink.o.w.o.resource.integration.aliyun.util.AliyunOpenAPIHelper;
 import ink.o.w.o.resource.integration.aliyun.constant.properties.MyAliyunProperties;
 import ink.o.w.o.resource.integration.aliyun.domain.Sts;
+import ink.o.w.o.resource.integration.aliyun.util.AliyunOpenAPIHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

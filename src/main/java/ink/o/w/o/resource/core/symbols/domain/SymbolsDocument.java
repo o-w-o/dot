@@ -22,6 +22,8 @@ import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SymbolsDocument {
+  private final static Integer[] defaultPath = ArrayUtils.toArray(0);
+
   private String id;
   private DotElement element = generateRootElement();
 
@@ -50,7 +52,7 @@ public class SymbolsDocument {
     return new DotElement()
         .setType(DotElement.Type.ROOT)
         .setIndex(0)
-        .setPath(ArrayUtils.toArray(0));
+        .setPath(defaultPath);
   }
 
   @Data
@@ -71,7 +73,7 @@ public class SymbolsDocument {
       return new DotElement()
           .setType(DotElement.Type.ROOT)
           .setIndex(0)
-          .setPath(ArrayUtils.toArray(0))
+          .setPath(defaultPath)
           .setRoot(true);
     }
 

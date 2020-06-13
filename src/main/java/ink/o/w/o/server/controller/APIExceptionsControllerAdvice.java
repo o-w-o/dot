@@ -3,6 +3,7 @@ package ink.o.w.o.server.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.google.common.base.Joiner;
 import ink.o.w.o.server.io.api.APIException;
 import ink.o.w.o.server.io.api.APIExceptions;
 import ink.o.w.o.server.io.json.JsonParseEntityEnumException;
@@ -12,7 +13,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.MissingClaimException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -47,8 +47,12 @@ import java.util.concurrent.atomic.AtomicReference;
 @RestControllerAdvice
 public class APIExceptionsControllerAdvice {
 
+  private void recordException(String message, Exception e) {
+    logger.error(message, e);
+  }
+
   private void recordException(Exception e) {
-    e.printStackTrace();
+    recordException(String.format("recordAPIException:[ %s ]", e.getClass().getSimpleName()), e);
   }
 
   /**
@@ -112,8 +116,7 @@ public class APIExceptionsControllerAdvice {
    */
   @ExceptionHandler(value = RuntimeException.class)
   public APIException runtimeExceptionHandler(HttpServletRequest request, RuntimeException e) {
-    e.printStackTrace();
-
+    recordException(e);
     return APIException.from(request, APIExceptions.internalServerError);
   }
 
@@ -122,7 +125,7 @@ public class APIExceptionsControllerAdvice {
    */
   @ExceptionHandler(NullPointerException.class)
   public APIException nullPointerExceptionHandler(HttpServletRequest request, NullPointerException e) {
-    e.printStackTrace();
+    recordException(e);
     return APIException.from(request, APIExceptions.internalServerError);
   }
 
@@ -175,7 +178,7 @@ public class APIExceptionsControllerAdvice {
    */
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
   public APIException httpRequestMethodNotSupportedException(HttpServletRequest request, HttpRequestMethodNotSupportedException e) {
-    String message = String.format("不支持 [ %s ] 方法，仅支持 [ %s ] 方法类型", e.getMethod(), StringUtils.join(e.getSupportedMethods(), ","));
+    String message = String.format("不支持 [ %s ] 方法，仅支持 [ %s ] 方法类型", e.getMethod(), Joiner.on(',').skipNulls().join(e.getSupportedMethods()));
 
     return APIException.from(request, message);
   }

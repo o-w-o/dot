@@ -1,12 +1,12 @@
 package ink.o.w.o.api;
 
 import ink.o.w.o.server.io.api.APIContext;
+import ink.o.w.o.server.io.api.APIException;
+import ink.o.w.o.server.io.api.APIResult;
+import ink.o.w.o.server.io.api.APISchemata;
 import ink.o.w.o.server.io.api.annotation.APIResource;
 import ink.o.w.o.server.io.api.annotation.APIResourceFetch;
 import ink.o.w.o.server.io.api.annotation.APIResourceSchema;
-import ink.o.w.o.server.io.api.APISchemata;
-import ink.o.w.o.server.io.api.APIException;
-import ink.o.w.o.server.io.api.APIResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

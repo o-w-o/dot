@@ -41,7 +41,7 @@ public class WebSocketSession extends ContextHelper.AbstractContext {
     init();
   }
 
-  public void init() {
+  private void init() {
     if (this.isContextInitCompletely()) {
       if (this.getContextInitialStatus() && !this.getResourceInitialStatus()) {
         this.jsonHelper = this.getBean(JsonHelper.class);

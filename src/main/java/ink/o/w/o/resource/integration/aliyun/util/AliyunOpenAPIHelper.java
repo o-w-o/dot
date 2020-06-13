@@ -56,7 +56,7 @@ public class AliyunOpenAPIHelper {
 
     private Request<T> setRequestPayload(AcsRequest<T> requestPayload) {
       this.requestPayload = requestPayload;
-      this.requestPayload.setSysRegionId(myAliyunAuthorizationProperties.getRegionId());
+      this.requestPayload.setRegionId(myAliyunAuthorizationProperties.getRegionId());
       return this;
     }
 
@@ -71,7 +71,7 @@ public class AliyunOpenAPIHelper {
             new GsonBuilder().setPrettyPrinting().create().toJson(requestPayload)
         );
 
-        throw new ServiceException("获取授权请求失败！" + e.getErrMsg());
+        throw ServiceException.of("获取授权请求失败！" + e.getErrMsg());
       }
     }
   }

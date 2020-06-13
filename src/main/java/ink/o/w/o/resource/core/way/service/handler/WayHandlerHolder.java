@@ -22,7 +22,7 @@ public class WayHandlerHolder implements ApplicationContextAware {
   private Map<WayType.TypeEnum, AbstractWayHandler> container = new HashMap<>();
 
   @PostConstruct
-  public void init() {
+  private void init() {
     logger.info("InkHandlerHolder register handler -> START");
     Map<String, AbstractWayHandler> inkHandlers = applicationContext.getBeansOfType(AbstractWayHandler.class);
     if (inkHandlers.isEmpty()) {

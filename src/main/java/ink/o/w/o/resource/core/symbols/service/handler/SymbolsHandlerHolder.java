@@ -21,7 +21,7 @@ public class SymbolsHandlerHolder implements ApplicationContextAware {
   private Map<SymbolsType.SymbolsTypeEnum, AbstractSymbolsHandler> container = new HashMap<>();
 
   @PostConstruct
-  public void init() {
+  private void init() {
     logger.info("SymbolsHandlerHolder register handler -> START");
     Map<String, AbstractSymbolsHandler> symbolsHandlers = applicationContext.getBeansOfType(AbstractSymbolsHandler.class);
     if (symbolsHandlers.isEmpty()) {

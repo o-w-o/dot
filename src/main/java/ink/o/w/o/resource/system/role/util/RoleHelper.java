@@ -1,8 +1,8 @@
 package ink.o.w.o.resource.system.role.util;
 
+import com.google.common.base.Joiner;
 import ink.o.w.o.resource.system.role.domain.Role;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -33,8 +33,8 @@ public class RoleHelper {
   }
 
   public static String toRolesString(Set<Role> roles) {
-    String roleString = StringUtils.join(
-        roles.stream().map(Role::getName).collect(Collectors.toSet()), Role.ROLE_SEPARATOR
+    String roleString = Joiner.on(Role.ROLE_SEPARATOR).skipNulls().join(
+        roles.stream().map(Role::getName).iterator()
     );
 
     logger.debug("toRolesString [{}]", roleString);
@@ -42,9 +42,7 @@ public class RoleHelper {
   }
 
   public static String toRolesString(Role... roles) {
-    return StringUtils.join(
-        Set.of(roles).stream().map(Role::getName), Role.ROLE_SEPARATOR
-    );
+    return toRolesString(Set.of(roles));
   }
 
   public static Set<Role> fromRolesString(String roleString) {

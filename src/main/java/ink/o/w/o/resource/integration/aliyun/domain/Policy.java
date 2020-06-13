@@ -15,7 +15,7 @@ public class Policy {
   private Set<Statement> statements;
 
   @Override
-  public Policy clone(){
+  public Policy clone() {
     return new Policy().setStatements(Set.copyOf(statements));
   }
 }

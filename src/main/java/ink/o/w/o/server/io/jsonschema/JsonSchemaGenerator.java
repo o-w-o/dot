@@ -17,9 +17,8 @@ public class JsonSchemaGenerator {
 
     SchemaGeneratorConfig config = configBuilder.build();
     SchemaGenerator generator = new SchemaGenerator(config);
-    JsonNode jsonSchema = generator.generateSchema(clazz);
 
-    return jsonSchema;
+    return generator.generateSchema(clazz);
   }
 
   public static String generateJsonSchema(Class<?> clazz) {

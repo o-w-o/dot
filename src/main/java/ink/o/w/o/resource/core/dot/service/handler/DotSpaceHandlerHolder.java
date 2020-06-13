@@ -27,7 +27,7 @@ public class DotSpaceHandlerHolder implements ApplicationContextAware {
   DotTypeRepository dotTypeRepository;
 
   @PostConstruct
-  public void init() {
+  private void init() {
     initDotHandlerHolder();
     initDotTypes();
   }

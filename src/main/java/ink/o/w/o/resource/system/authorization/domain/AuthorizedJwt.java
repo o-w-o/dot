@@ -69,9 +69,9 @@ public class AuthorizedJwt {
     private Date iat;
     private Date exp;
 
-    final private String typ = "jwt";
-    final private String alg = "HS512";
-    final private String iss = "o-w-o.ink";
+    private final String typ = "jwt";
+    private final String alg = "HS512";
+    private final String iss = "o-w-o.ink";
 
     private String jti;
     private String aud;
