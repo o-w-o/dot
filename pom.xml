@@ -8,11 +8,22 @@
         <version>2.3.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ink.o-w-o</groupId>
-    <artifactId>server</artifactId>
+    <groupId>o-w-o</groupId>
+    <artifactId>dot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>server</name>
+    <name>dot</name>
     <description>o-w-o.ink's API</description>
+
+    <scm>
+        <url>https://github.com/o-w-o/dot</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
 
     <properties>
         <java.version>11</java.version>
