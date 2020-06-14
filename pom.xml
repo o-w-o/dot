@@ -13,17 +13,34 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>dot</name>
     <description>o-w-o.ink's API</description>
-
-    <scm>
-        <url>https://github.com/o-w-o/dot</url>
-    </scm>
-
+    <url>https://o-w-o.ink</url>
+    <organization>
+        <name>烛火录</name>
+        <url>https://o-w-o.ink</url>
+    </organization>
     <licenses>
         <license>
-            <name>Apache License 2.0</name>
+            <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <name>o-w-o</name>
+            <email>postmaster@o-w-o.ink</email>
+            <organization>-</organization>
+            <organizationUrl>-</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/o-w-o/dot.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/o-w-o/dot.git</developerConnection>
+        <url>https://github.com/o-w-o/dot</url>
+    </scm>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/o-w-o/dot/issues</url>
+    </issueManagement>
 
     <properties>
         <java.version>11</java.version>
@@ -441,6 +458,7 @@
 
     <reporting>
         <plugins>
+
             <!-- 代码跳转 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
