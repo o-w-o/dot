@@ -50,7 +50,7 @@
         <jsonwebtoken.vserion>0.11.2</jsonwebtoken.vserion>
         <victools.vserion>4.12.2</victools.vserion>
         <pmd.vserion>3.13.0</pmd.vserion>
-        <pmdp3c.vserion>2.0.0</pmdp3c.vserion>
+        <pmdp3c.vserion>2.0.1</pmdp3c.vserion>
     </properties>
 
     <dependencies>
