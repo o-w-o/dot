@@ -22,9 +22,8 @@ public class UnsplashServiceImpl implements UnsplashService {
   @Override
   public Object retrieveOneRandomPhoto(String keyword) {
 
-    return retrieveRandomPhotosRequest.sendRequest(
+    return this.retrieveRandomPhotosRequest.sendRequest(
         new RetrieveRandomPhotosRequest.Parameters()
-            .setClientId(myUnsplashProperties.getAccessKeyId())
             .setQuery(keyword)
     );
   }
@@ -32,9 +31,8 @@ public class UnsplashServiceImpl implements UnsplashService {
   @Override
   public Object[] retrieveRandomPhotos(String keyword, @Range(min = 2, max = 10, message = "1 < count < 10") Integer count) {
 
-    return retrieveRandomPhotosRequest.sendRequest(
+    return this.retrieveRandomPhotosRequest.sendRequest(
         new RetrieveRandomPhotosRequest.Parameters()
-            .setClientId(myUnsplashProperties.getAccessKeyId())
             .setQuery(keyword),
         count
     );
@@ -43,9 +41,8 @@ public class UnsplashServiceImpl implements UnsplashService {
   @Override
   public Object searchPhotos(String keyword) {
 
-    return searchPhotosRequest.sendRequest(
+    return this.searchPhotosRequest.sendRequest(
         new SearchPhotosRequest.Parameters()
-            .setClientId(myUnsplashProperties.getAccessKeyId())
             .setQuery(keyword)
     );
   }

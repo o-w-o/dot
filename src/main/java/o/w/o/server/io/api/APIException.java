@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 @JsonIgnoreProperties({"cause", "stackTrace", "suppressed", "localizedMessage"})
 public class APIException extends RuntimeException implements Supplier<APIException> {
   public static final String DEFAULT_MESSAGE = "[default]: 接口异常";
-  public static final Integer DEFAULT_CODE = 110;
+  public static final Integer DEFAULT_CODE = HttpStatus.BAD_REQUEST.value();
 
   private Integer code;
   private String method = "";

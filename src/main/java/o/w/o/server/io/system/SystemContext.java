@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SystemContext implements ApplicationContextAware {
-  public static final String PKG_ENTRY = "symbols";
+  public static final String PKG_ENTRY = "o.w.o";
 
   private static ApplicationContext applicationContext;
 

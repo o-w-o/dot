@@ -1,15 +1,16 @@
 package o.w.o.api;
 
+import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import o.w.o.resource.system.authorization.service.AuthorizationService;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -19,16 +20,16 @@ public class SampleAPITest extends APITest {
 
   @Test
   public void sampleAuthenticationHeader() throws Exception {
-    mockMvc
+    this.mockMvc
         .perform(
             get("/users/5")
                 .header(
                     getAuthorizationHeaderKey(),
                     getAuthorizationHeaderValue(
-                        authorizationService.authorize("qa", "233333").guard().getAccessToken()
+                        this.authorizationService.authorize("qa", "233333").guard().getAccessToken()
                     )
                 )
-            .header("Content-Type", "application/json")
+                .header("Content-Type", "application/json")
         )
         .andExpect(status().isOk())
         .andDo(this.restDocumentationResultHandler.document(
@@ -45,7 +46,7 @@ public class SampleAPITest extends APITest {
 
   @Test
   public void sampleAuthenticationHeader401() throws Exception {
-    mockMvc
+    this.mockMvc
         .perform(
             get("/users/5")
         )
@@ -55,27 +56,24 @@ public class SampleAPITest extends APITest {
 
   @Test
   public void sampleAuthenticationHeader403() throws Exception {
-    mockMvc
+    this.mockMvc
         .perform(
             get("/users/5")
                 .header(
                     getAuthorizationHeaderKey(),
                     getAuthorizationHeaderValue(
-                        authorizationService.authorize("demo", "233333").guard().getAccessToken()
+                        this.authorizationService.authorize("demo", "233333").guard().getAccessToken()
                     )
                 )
         )
         .andExpect(status().isForbidden())
+        .andExpect(jsonPath("message").isNotEmpty())
         .andDo(
 
             this.restDocumentationResultHandler.document(
-                responseFields(
+                relaxedResponseFields(
                     fieldWithPath("code").description("服务状态码"),
-                    fieldWithPath("payload").description("附加载荷"),
-                    fieldWithPath("message").description("-").optional(),
-                    fieldWithPath("method").description("-").optional(),
-                    fieldWithPath("path").description("-").optional(),
-                    fieldWithPath("timestamp").description("-")
+                    fieldWithPath("message").description("-")
                 )
             )
         )

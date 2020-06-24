@@ -1,7 +1,7 @@
 package o.w.o.api;
 
-import o.w.o.resource.integration.aliyun.factory.PolicyFactory;
-import o.w.o.resource.integration.aliyun.service.AliyunStsService;
+import o.w.o.resource.integration.aliyun.core.factory.PolicyFactory;
+import o.w.o.resource.integration.aliyun.core.service.AliyunStsService;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import o.w.o.resource.system.authorization.service.AuthorizationService;

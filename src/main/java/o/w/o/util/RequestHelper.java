@@ -12,6 +12,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class RequestHelper {
+
   /**
    * 将对象装换为 map
    *
@@ -19,7 +20,7 @@ public class RequestHelper {
    * @return -
    */
   public <T> Map<String, Object> beanToMap(T bean) {
-    return beanToMap(bean, true);
+    return this.beanToMap(bean, true);
   }
 
   public <T> Map<String, Object> beanToMap(@NonNull T bean, Boolean skipNull) {
@@ -40,7 +41,7 @@ public class RequestHelper {
   public <T> String stringifyQueryParameters(@NotNull T parameters) {
     var builder = new StringBuilder();
     try {
-      var parameterMap = beanToMap(parameters);
+      var parameterMap = this.beanToMap(parameters);
 
       parameterMap
           .keySet()
@@ -56,7 +57,7 @@ public class RequestHelper {
       e.printStackTrace();
     }
 
-    logger.debug("stringifyQueryParameters -> [{}]", builder.toString());
+    logger.info("stringifyQueryParameters -> [{}]", builder.toString());
     return builder.toString();
   }
 }

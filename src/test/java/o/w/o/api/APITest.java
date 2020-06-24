@@ -1,10 +1,10 @@
 package o.w.o.api;
 
+import lombok.extern.slf4j.Slf4j;
+import o.w.o.api.config.RestDocumentTestConfiguration;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import o.w.o.resource.system.authorization.service.AuthorizationService;
-import o.w.o.api.config.RestDocumentTestConfiguration;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -44,6 +44,6 @@ public class APITest {
   }
 
   public AuthorizedJwts getAuthorization(String username, String password) {
-    return authorizationService.authorize("demo", "233333").guard();
+    return this.authorizationService.authorize("demo", "233333").guard();
   }
 }

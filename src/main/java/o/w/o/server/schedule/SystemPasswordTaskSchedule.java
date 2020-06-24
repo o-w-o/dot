@@ -1,14 +1,14 @@
 package o.w.o.server.schedule;
 
+import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.integration.email.service.MailService;
 import o.w.o.resource.system.role.domain.Role;
 import o.w.o.resource.system.role.util.RoleHelper;
-import o.w.o.server.config.properties.constant.SystemRuntimeEnv;
-import o.w.o.server.io.service.ServiceResult;
 import o.w.o.resource.system.user.domain.User;
 import o.w.o.resource.system.user.service.UserService;
 import o.w.o.server.config.OrderConfiguration;
-import lombok.extern.slf4j.Slf4j;
+import o.w.o.server.config.properties.constant.SystemRuntimeEnv;
+import o.w.o.server.io.service.ServiceResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -49,20 +49,20 @@ public class SystemPasswordTaskSchedule {
     this.mailService = mailService;
   }
 
+
   private void initAndCheckMasterUser() {
 
-    logger.info("SystemPasswordTask: env -> {}", env);
-    logger.info("SystemPasswordTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
+    logger.info("SystemPasswordTask: env -> {}", this.env);
 
-    ServiceResult<User> userServiceResult = userService.getUserByUsername(MASTER_NAME);
+    ServiceResult<User> userServiceResult = this.userService.getUserByUsername(MASTER_NAME);
     if (userServiceResult.getSuccess()) {
       User u = userServiceResult.getPayload();
 
       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
       if (encoder.matches(MASTER_RANDOM_PASSWORD, u.getPassword()) || u.getCTime().equals(u.getUTime())) {
-        if (env.equals(SystemRuntimeEnv.PRODUCTION)) {
-          mailService.sendSystemEmail(
-              myEmail,
+        if (this.env.equals(SystemRuntimeEnv.PRODUCTION)) {
+          this.mailService.sendSystemEmail(
+              this.myEmail,
               "警告：[ 烛火录 ] 请尽快修改管理员密码！",
               String.format("请尽快修改管理员密码！ cTime -> [ %s ]", u.getCTime())
           );
@@ -74,19 +74,22 @@ public class SystemPasswordTaskSchedule {
       logger.warn("检测到管理员密码已修改！cTime -> {}, uTime -> {}, isEqual ? {}", u.getCTime(), u.getCTime(), u.getCTime().equals(u.getUTime()));
       return;
     } else {
-      userService.register(
+      this.userService.register(
           new User()
               .setName(MASTER_NAME)
               .setPassword(MASTER_RANDOM_PASSWORD)
               .setRoles(RoleHelper.toRoles(Role.MASTER, Role.USER))
       );
-      if (env.equals(SystemRuntimeEnv.PRODUCTION)) {
-        mailService.sendSystemEmail(
-            myEmail,
+
+      if (this.env.equals(SystemRuntimeEnv.PRODUCTION)) {
+        this.mailService.sendSystemEmail(
+            this.myEmail,
             "提醒：[ 烛火录 ] 管理员密码初始化。",
             String.format("密码：[ %s ];", MASTER_RANDOM_PASSWORD)
         );
       }
+
+      logger.info("SystemPasswordTask: initPassword -> {}, account -> {}", MASTER_RANDOM_PASSWORD, MASTER_NAME);
     }
 
     logger.info("执行静态定时任务 [ SystemPasswordTask ] 时间: {}", LocalDateTime.now());
@@ -95,6 +98,6 @@ public class SystemPasswordTaskSchedule {
 
   @Scheduled(fixedRate = 1000 * 60 * 60, initialDelay = 1000 * 10)
   private void initAndCheckMasterUserTask() {
-    initAndCheckMasterUser();
+    this.initAndCheckMasterUser();
   }
 }

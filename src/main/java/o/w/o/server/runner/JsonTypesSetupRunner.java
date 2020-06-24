@@ -24,7 +24,7 @@ public class JsonTypesSetupRunner implements ApplicationRunner {
     Reflections reflections = new Reflections(SystemContext.PKG_ENTRY + ".resource");
     Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(JsonTypeName.class);
     classSet.forEach(v -> {
-      logger.debug("Reflections(symbols.resource) clazz -> [{}], registerSubtypes -> [{}]", v.getSimpleName(), v.getAnnotation(JsonTypeName.class).value());
+      logger.debug("Reflections(o.w.o.resource) clazz -> [{}], registerSubtypes -> [{}]", v.getSimpleName(), v.getAnnotation(JsonTypeName.class).value());
       objectMapper.registerSubtypes(new NamedType(v, v.getAnnotation(JsonTypeName.class).value()));
     });
     logger.info("JsonTypesSetupRunner: [RUN] 收集并注册 [JsonTypeName] 类，END");

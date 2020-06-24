@@ -1,7 +1,7 @@
 package o.w.o.api;
 
-import o.w.o.resource.system.authorization.service.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
+import o.w.o.resource.system.authorization.service.AuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +27,16 @@ public class MyAPITest extends APITest {
 
   @BeforeEach
   public void initAuthorization() {
-    accessToken = authorizationService.authorize("qa", "233333").guard().getAccessToken();
+    this.accessToken = this.authorizationService.authorize("qa", "233333").guard().getAccessToken();
   }
 
 
   @Test
   public void isMyGetOk() throws Exception {
-    mockMvc.perform(
+    this.mockMvc.perform(
         RestDocumentationRequestBuilders
-            .get(userBaseUrl)
-            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(accessToken))
+            .get(this.userBaseUrl)
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(this.accessToken))
             .characterEncoding(UTF_8)
             .accept(MediaType.APPLICATION_JSON)
     )

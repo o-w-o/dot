@@ -3,10 +3,12 @@ package o.w.o.resource.integration.unsplash.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import o.w.o.resource.integration.unsplash.constant.UnsplashConstant;
-import o.w.o.util.RequestHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import o.w.o.resource.integration.unsplash.constant.UnsplashConstant;
+import o.w.o.resource.integration.unsplash.constant.properties.MyUnsplashProperties;
+import o.w.o.util.RequestHelper;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,11 +25,18 @@ public class SearchPhotosRequest {
   @Resource
   private RequestHelper requestHelper;
 
+  @Resource
+  private MyUnsplashProperties myUnsplashProperties;
+
   public Result sendRequest(Parameters parameters) {
-    return this.restTemplate.getForObject(
-        String.format("%s%s", REQUEST_URL, requestHelper.stringifyQueryParameters(parameters)),
-        Result.class
-    );
+    return this.restTemplate
+        .exchange(
+            String.format("%s%s", REQUEST_URL, this.requestHelper.stringifyQueryParameters(parameters)),
+            HttpMethod.GET,
+            UnsplashConstant.URL.getRequestHeader(this.myUnsplashProperties.getAccessKeyId()),
+            Result.class
+        )
+        .getBody();
   }
 
   @Data
@@ -62,5 +71,6 @@ public class SearchPhotosRequest {
 
   public static class Result extends HashMap<String, Object> {
 
+    private static final long serialVersionUID = -7334184746353689518L;
   }
 }

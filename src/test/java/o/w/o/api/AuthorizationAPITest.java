@@ -1,7 +1,7 @@
 package o.w.o.api;
 
-import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import lombok.extern.slf4j.Slf4j;
+import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -9,7 +9,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,16 +26,16 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenCreated() throws Exception {
-    String url = authorizationBaseUrl + "?username=demo&password=233333";
+    String url = this.authorizationBaseUrl + "?username=demo&password=233333";
 
-    mockMvc
+    this.mockMvc
         .perform(RestDocumentationRequestBuilders
             .post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
         .andExpect(status().isOk())
-        .andExpect(jsonPath("_links.refresh", is(notNullValue())))
-        .andExpect(jsonPath("_links.revoke", is(notNullValue())))
+        .andExpect(jsonPath("payload.accessToken", is(notNullValue())))
+        .andExpect(jsonPath("payload.refreshToken", is(notNullValue())))
         .andDo(
             this.restDocumentationResultHandler.document(
                 requestParameters(
@@ -42,12 +43,9 @@ public class AuthorizationAPITest extends APITest {
                     parameterWithName("password").description("用户密码"),
                     parameterWithName("optional").description("可选参数 - 测试使用").optional()
                 ),
-                responseFields(
-                    fieldWithPath("accessToken").description("访问令牌"),
-                    fieldWithPath("refreshToken").description("刷新令牌"),
-                    fieldWithPath("_links.refresh").description("刷新令牌的连接"),
-                    fieldWithPath("_links.revoke").description("注销令牌的连接"),
-                    subsectionWithPath("_links").ignored()
+                relaxedResponseFields(
+                    fieldWithPath("payload.accessToken").description("访问令牌"),
+                    fieldWithPath("payload.refreshToken").description("刷新令牌")
                 )
             )
         );
@@ -55,9 +53,9 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenCreatedErrorParameter() throws Exception {
-    String url = authorizationBaseUrl + "?username=demo";
+    String url = this.authorizationBaseUrl + "?username=demo";
 
-    mockMvc
+    this.mockMvc
         .perform(RestDocumentationRequestBuilders.post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
@@ -66,9 +64,9 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenCreatedErrorPassword() throws Exception {
-    String url = authorizationBaseUrl + "?username=demo&password=122222";
+    String url = this.authorizationBaseUrl + "?username=demo&password=122222";
 
-    mockMvc
+    this.mockMvc
         .perform(RestDocumentationRequestBuilders.post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
@@ -77,9 +75,9 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenCreatedErrorUsername() throws Exception {
-    String url = authorizationBaseUrl + "?username=unknown&password=233333";
+    String url = this.authorizationBaseUrl + "?username=unknown&password=233333";
 
-    mockMvc
+    this.mockMvc
         .perform(RestDocumentationRequestBuilders.post(url)
             .accept(MediaType.APPLICATION_JSON)
         )
@@ -88,24 +86,23 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenRefreshed() throws Exception {
-    AuthorizedJwts token = getAuthorization("demo", "233333");
-    mockMvc.perform(
+    AuthorizedJwts token = this.getAuthorization("demo", "233333");
+    this.mockMvc.perform(
         RestDocumentationRequestBuilders
-            .post(String.format("%s/refresh?refreshToken=%s", authorizationBaseUrl, token.getRefreshToken()))
+            .post(String.format("%s/refresh?refreshToken=%s", this.authorizationBaseUrl, token.getRefreshToken()))
             .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
             .accept(MediaType.APPLICATION_JSON)
     )
-        .andExpect(jsonPath("_links.revoke", is(notNullValue())))
+        .andExpect(jsonPath("payload.accessToken", is(notNullValue())))
+        .andExpect(jsonPath("payload.refreshToken", is(notNullValue())))
         .andDo(
             this.restDocumentationResultHandler.document(
                 requestParameters(
                     parameterWithName("refreshToken").description("刷新令牌")
                 ),
-                responseFields(
-                    fieldWithPath("accessToken").description("访问令牌"),
-                    fieldWithPath("refreshToken").description("刷新令牌"),
-                    fieldWithPath("_links.revoke").description("注销令牌的连接"),
-                    subsectionWithPath("_links").ignored()
+                relaxedResponseFields(
+                    fieldWithPath("payload.accessToken").description("访问令牌"),
+                    fieldWithPath("payload.refreshToken").description("刷新令牌")
                 )
             )
         )
@@ -114,10 +111,10 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenRevoked() throws Exception {
-    AuthorizedJwts token = getAuthorization("demo", "233333");
-    mockMvc.perform(
+    AuthorizedJwts token = this.getAuthorization("demo", "233333");
+    this.mockMvc.perform(
         RestDocumentationRequestBuilders
-            .delete(String.format("%s/revoke", authorizationBaseUrl))
+            .delete(String.format("%s/revoke", this.authorizationBaseUrl))
             .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
             .accept(MediaType.APPLICATION_JSON)
     )
@@ -126,18 +123,18 @@ public class AuthorizationAPITest extends APITest {
 
   @Test
   public void isTokenRevokedConfirm() throws Exception {
-    AuthorizedJwts token = getAuthorization("demo", "233333");
-    mockMvc.perform(
+    AuthorizedJwts token = this.getAuthorization("demo", "233333");
+    this.mockMvc.perform(
         MockMvcRequestBuilders
-            .delete(String.format("%s/revoke", authorizationBaseUrl))
+            .delete(String.format("%s/revoke", this.authorizationBaseUrl))
             .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
             .accept(MediaType.APPLICATION_JSON)
     )
         .andExpect(status().isOk());
 
-    mockMvc.perform(
+    this.mockMvc.perform(
         MockMvcRequestBuilders
-            .delete(String.format("%s/revoke", authorizationBaseUrl))
+            .delete(String.format("%s/revoke", this.authorizationBaseUrl))
             .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(token.getAccessToken()))
             .accept(MediaType.APPLICATION_JSON)
     )

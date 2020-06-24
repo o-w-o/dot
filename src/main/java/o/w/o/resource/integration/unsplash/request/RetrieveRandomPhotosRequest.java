@@ -2,10 +2,12 @@ package o.w.o.resource.integration.unsplash.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import o.w.o.resource.integration.unsplash.constant.UnsplashConstant;
-import o.w.o.util.RequestHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import o.w.o.resource.integration.unsplash.constant.UnsplashConstant;
+import o.w.o.resource.integration.unsplash.constant.properties.MyUnsplashProperties;
+import o.w.o.util.RequestHelper;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,18 +24,28 @@ public class RetrieveRandomPhotosRequest {
   @Resource
   private RestTemplate restTemplate;
 
+  @Resource
+  private MyUnsplashProperties myUnsplashProperties;
+
   public Object sendRequest(Parameters parameters) {
-    return this.restTemplate.getForObject(
-        String.format("%s%s", REQUEST_URL, requestHelper.stringifyQueryParameters(parameters)),
-        Object.class
-    );
+    return this.restTemplate
+        .exchange(
+            String.format("%s%s", REQUEST_URL, this.requestHelper.stringifyQueryParameters(parameters)),
+            HttpMethod.GET,
+            UnsplashConstant.URL.getRequestHeader(this.myUnsplashProperties.getAccessKeyId()),
+            Object.class
+        ).getBody();
   }
 
   public Object[] sendRequest(Parameters parameters, Integer count) {
-    return this.restTemplate.getForObject(
-        String.format("%s%s", REQUEST_URL, requestHelper.stringifyQueryParameters(parameters.setCount(count))),
-        Object[].class
-    );
+    return this.restTemplate
+        .exchange(
+            String.format("%s%s", REQUEST_URL, this.requestHelper.stringifyQueryParameters(parameters.setCount(count))),
+            HttpMethod.GET,
+            UnsplashConstant.URL.getRequestHeader(this.myUnsplashProperties.getAccessKeyId()),
+            Object[].class
+        )
+        .getBody();
   }
 
   @Data
@@ -63,5 +75,6 @@ public class RetrieveRandomPhotosRequest {
 
   public static class Result extends HashMap<String, Object> {
 
+    private static final long serialVersionUID = -7266991614062353039L;
   }
 }

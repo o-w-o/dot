@@ -29,4 +29,8 @@ public class JsonHelper {
   public String toJsonString(Object obj, ObjectMapper objectMapper) throws JsonProcessingException {
     return objectMapper.writeValueAsString(obj);
   }
+
+  public Object toObject(String json) throws JsonProcessingException {
+    return objectMapper.readValue(json, Object.class);
+  }
 }
