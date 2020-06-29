@@ -49,7 +49,7 @@
         <aliyun.openapisdk.version>4.5.0</aliyun.openapisdk.version>
         <aliyun.oss.version>3.10.0</aliyun.oss.version>
         <jsonwebtoken.version>0.11.2</jsonwebtoken.version>
-        <victools.version>4.12.2</victools.version>
+        <victools.version>4.13.0</victools.version>
         <pmd.version>3.13.0</pmd.version>
         <pmdp3c.version>2.0.1</pmdp3c.version>
     </properties>
