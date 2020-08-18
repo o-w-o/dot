@@ -82,6 +82,6 @@ public class TextFieldSpaceHandler extends FieldSpaceHandler {
 
   @Override
   public ServiceResult<Set<Field>> process(Set<Field> field) {
-    return null;
+    throw ServiceException.unsupport();
   }
 }

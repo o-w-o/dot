@@ -60,7 +60,7 @@ public class ResourceFieldSpaceHandler extends FieldSpaceHandler {
 
   @Override
   public ServiceResult<Field> process(Field field) {
-    return null;
+    throw ServiceException.unsupport();
   }
 
   @Override
@@ -128,6 +128,6 @@ public class ResourceFieldSpaceHandler extends FieldSpaceHandler {
   @Override
   public ServiceResult<Set<Field>> process(Set<Field> fields) {
     var fieldsByStage = FieldUtil.groupFieldsByType(fields);
-    return null;
+    throw ServiceException.unsupport();
   }
 }

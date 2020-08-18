@@ -59,7 +59,7 @@ public class FieldServiceImpl implements FieldService {
 
   @Override
   public ServiceResult<List<Field>> fetch(String[] fieldIds) {
-    return null;
+    throw ServiceException.unsupport();
   }
 
   @Override
@@ -93,7 +93,7 @@ public class FieldServiceImpl implements FieldService {
     var res = new AtomicReference<Field>(null);
     fieldSpaceHandlerHolder.select(FieldType.TypeEnum.RESOURCE).ifPresent(
         fieldSpaceHandler -> {
-          res.set(fieldSpaceHandler.process(field).guard());
+          res.set(fieldSpaceHandler.persist(field).guard());
         }
     );
 

@@ -61,16 +61,16 @@ public class FieldSpaceDefaultHandler<T extends FieldSpace> extends FieldSpaceHa
 
   @Override
   public ServiceResult<Field> process(Field field) {
-    return null;
+    throw ServiceException.unsupport();
   }
 
   @Override
   public ServiceResult<Set<Field>> process(Set<Field> field) {
-    return null;
+    throw ServiceException.unsupport();
   }
 
   @Override
   public ServiceResult<Boolean> destory(FieldSpace space) {
-    return null;
+    throw ServiceException.unsupport();
   }
 }

@@ -50,7 +50,7 @@ public class RecordServiceImpl implements RecordService {
 
   @Override
   public ServiceResult<Record> retrieve(String recordId) {
-    return null;
+    throw ServiceException.unsupport();
   }
 
 
@@ -74,11 +74,11 @@ public class RecordServiceImpl implements RecordService {
 
   @Override
   public ServiceResult<Record> modify(Record record) {
-    return null;
+    throw ServiceException.unsupport();
   }
 
   @Override
   public ServiceResult<Record> destory(Record record) {
-    return null;
+    throw ServiceException.unsupport();
   }
 }
