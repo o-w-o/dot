@@ -43,7 +43,7 @@
     </issueManagement>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>14</java.version>
         <mapstruct.version>1.3.1.Final</mapstruct.version>
         <querydsl.version>4.2.1</querydsl.version>
         <aliyun.openapisdk.version>4.5.0</aliyun.openapisdk.version>
@@ -121,6 +121,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.restdocs</groupId>
@@ -135,12 +141,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test-autoconfigure</artifactId>
-        </dependency>
-
-        <!-- 测试：Junit 支持 -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
         </dependency>
 
         <!-- 安全：JWT -->
@@ -303,8 +303,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>14</source>
+                    <target>14</target>
                     <annotationProcessorPaths>
                         <!-- 引入 mapstruct-processor -->
                         <path>

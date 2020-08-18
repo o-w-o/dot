@@ -21,6 +21,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -32,7 +34,9 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.persistence.RollbackException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
@@ -147,6 +151,25 @@ public class APIExceptionsControllerAdvice {
     return APIExceptionEntity.of(APIException.from(request, APIExceptions.internalServerError));
   }
 
+  @ExceptionHandler(TransactionSystemException.class)
+  public APIExceptionEntity transactionSystemExceptionHandler(HttpServletRequest request, TransactionSystemException e) {
+    var rootCause = Throwables.getRootCause(e);
+
+    if (rootCause instanceof ConstraintViolationException) {
+      return constraintViolationExceptionHandler(request, (ConstraintViolationException) rootCause);
+    }
+
+    if (rootCause instanceof RollbackException) {
+      return APIExceptionEntity.of(APIException.of(rootCause.getMessage()));
+    }
+
+    if (rootCause instanceof TransactionSystemException) {
+      return APIExceptionEntity.of(APIException.from(request));
+    }
+
+    return APIExceptionEntity.of(APIException.of(rootCause.getMessage()));
+  }
+
   /**
    * 数组越界异常
    */
@@ -232,17 +255,36 @@ public class APIExceptionsControllerAdvice {
   /**
    * 类方法参数异常
    */
-  @ExceptionHandler({MethodArgumentNotValidException.class})
-  public APIExceptionEntity methodArgumentNotValidException(HttpServletRequest request, MethodArgumentNotValidException e) {
-    var message = new AtomicReference<>(new HashMap<String, String>());
+  @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+  public APIExceptionEntity methodArgumentNotValidException(HttpServletRequest request, Exception e) {
+    var payload = new HashMap<String, String>(2);
 
-    e.getBindingResult().getFieldErrors()
-        .forEach(fieldError ->
-            message.get().put(fieldError.getField(), fieldError.getDefaultMessage())
-        );
+    if (e instanceof MethodArgumentNotValidException) {
+      ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors()
+          .forEach(fieldError ->
+              payload.put(fieldError.getField(), fieldError.getDefaultMessage())
+          );
+    }
 
+    if (e instanceof BindException) {
+      ((BindException) e).getBindingResult().getFieldErrors()
+          .forEach(fieldError ->
+              payload.put(fieldError.getField(), fieldError.getDefaultMessage())
+          );
+    }
 
-    return APIExceptionEntity.of(APIException.from(request, "参数校验失败！").setPayload(message.get()));
+    return APIExceptionEntity.of(APIException.from(request, "参数校验失败！").setPayload(payload));
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public APIExceptionEntity constraintViolationExceptionHandler(HttpServletRequest request, ConstraintViolationException e) {
+    var payload = new HashMap<String, String>(2);
+
+    e.getConstraintViolations().forEach(v -> {
+      payload.put(v.getPropertyPath().toString(), v.getMessage());
+    });
+
+    return APIExceptionEntity.of(APIException.from(request, "参数校验失败！").setPayload(payload));
   }
 
   /**

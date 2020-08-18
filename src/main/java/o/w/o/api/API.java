@@ -1,5 +1,6 @@
 package o.w.o.api;
 
+import lombok.extern.slf4j.Slf4j;
 import o.w.o.server.io.api.APIContext;
 import o.w.o.server.io.api.APIException;
 import o.w.o.server.io.api.APIResult;
@@ -7,7 +8,6 @@ import o.w.o.server.io.api.APISchemata;
 import o.w.o.server.io.api.annotation.APIResource;
 import o.w.o.server.io.api.annotation.APIResourceFetch;
 import o.w.o.server.io.api.annotation.APIResourceSchema;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 

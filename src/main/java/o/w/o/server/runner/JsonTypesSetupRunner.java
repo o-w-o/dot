@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import lombok.extern.slf4j.Slf4j;
+import o.w.o.server.io.system.SystemContext;
 import org.reflections.Reflections;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import o.w.o.server.io.system.SystemContext;
 
 import javax.annotation.Resource;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class JsonTypesSetupRunner implements ApplicationRunner {
     Reflections reflections = new Reflections(SystemContext.PKG_ENTRY + ".resource");
     Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(JsonTypeName.class);
     classSet.forEach(v -> {
-      logger.debug("Reflections(o.w.o.resource) clazz -> [{}], registerSubtypes -> [{}]", v.getSimpleName(), v.getAnnotation(JsonTypeName.class).value());
+      logger.info("Reflections(o.w.o.resource) clazz -> [{}], registerSubtypes -> [{}]", v.getSimpleName(), v.getAnnotation(JsonTypeName.class).value());
       objectMapper.registerSubtypes(new NamedType(v, v.getAnnotation(JsonTypeName.class).value()));
     });
     logger.info("JsonTypesSetupRunner: [RUN] 收集并注册 [JsonTypeName] 类，END");
@@ -33,7 +33,7 @@ public class JsonTypesSetupRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     logger.info("JsonTypesSetupRunner: [START]");
-    
+
     collectAndRegisterJsonTypes();
 
     logger.info("JsonTypesSetupRunner: [END]");

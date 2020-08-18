@@ -6,7 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JsonParseEntityEnumException extends RuntimeException {
-  public static Integer exceptionCode = 910000;
+  private static final long serialVersionUID = 1182072915622759414L;
+
+  public static final Integer exceptionCode = 910000;
 
   public Class<? extends Enum> enumClazz;
   public String enumName;

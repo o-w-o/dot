@@ -24,12 +24,12 @@ public class EnumeratedEntitySetupRunner implements ApplicationRunner {
     Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(EntityEnumerated.class);
 
     classSet.forEach(v -> {
-      logger.debug("EnumeratedEntitySetupRunner: [RUN] clazz -> [{}]", v.getSimpleName());
+      logger.info("EnumeratedEntitySetupRunner: [RUN] clazz -> [{}]", v.getSimpleName());
       Optional.ofNullable(v.getAnnotation(EntityEnumerated.class)).ifPresent(a -> {
         var entityClass = a.entityClass();
         var repositoryClass = a.repositoryClass();
 
-        logger.debug("EnumeratedEntitySetupRunner: [RUN] entityClass [{}], repositoryClass [{}]", entityClass, repositoryClass);
+        logger.info("EnumeratedEntitySetupRunner: [RUN] entityClass [{}], repositoryClass [{}]", entityClass, repositoryClass);
         Optional.ofNullable(v.getEnumConstants()).ifPresent(i -> {
           for (var o : i) {
             try {

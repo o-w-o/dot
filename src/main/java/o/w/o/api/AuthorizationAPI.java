@@ -1,7 +1,6 @@
 package o.w.o.api;
 
-import o.w.o.resource.integration.aliyun.core.factory.PolicyFactory;
-import o.w.o.resource.integration.aliyun.core.service.AliyunStsService;
+import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import o.w.o.resource.system.authorization.service.AuthorizationService;
@@ -13,7 +12,6 @@ import o.w.o.server.io.api.annotation.APIResource;
 import o.w.o.server.io.api.annotation.APIResourceCreate;
 import o.w.o.server.io.api.annotation.APIResourceDestroy;
 import o.w.o.server.io.api.annotation.APIResourceSchema;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
@@ -38,8 +36,6 @@ import java.security.SignatureException;
 public class AuthorizationAPI {
   @Resource
   private AuthorizationService authorizationService;
-  @Resource
-  private AliyunStsService aliyunStsService;
 
   @APIResourceSchema
   public APIResult<APISchemata> fetchSchema() {
@@ -77,24 +73,5 @@ public class AuthorizationAPI {
   ) throws AuthenticationException {
     var result = authorizationService.revoke(jwt.substring(AuthorizedJwt.AUTHORIZATION_HEADER_VAL_PREFIX.length()));
     return APIResult.from(result, "注销成功");
-  }
-
-  @APIResourceCreate(path = "/sts/somebody", name = "创建【读写】STS", produces = "application/json")
-  @PreAuthorize("hasRole('ROLE_USER')")
-  public APIResult<?> createStsSomebody() {
-    var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadAndWrite);
-    return APIResult.of(result.guard());
-  }
-
-  @APIResourceCreate(path = "/sts", name = "创建【只读】STS", produces = "application/json")
-  @PreAuthorize("hasRole('ROLE_USER')")
-  public APIResult<?> createSts() {
-    var result = aliyunStsService.createStsCredentialsForUser(PolicyFactory.Preset.User_ReadOnly);
-    return APIResult.of(result.guard());
-  }
-
-  @APIResourceCreate(path = "/sts/nobody", name = "创建【匿名】STS", produces = "application/json")
-  public APIResult<?> createStsNobody() {
-    return APIResult.of(aliyunStsService.createStsCredentialsForAnonymous().guard());
   }
 }

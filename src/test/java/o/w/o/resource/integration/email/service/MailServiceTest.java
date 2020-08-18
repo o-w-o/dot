@@ -2,10 +2,11 @@ package o.w.o.resource.integration.email.service;
 
 import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.ResourceServiceTest;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 class MailServiceTest extends ResourceServiceTest {
@@ -20,7 +21,7 @@ class MailServiceTest extends ResourceServiceTest {
 
   @Test
   public void sendEmail() {
-    Assert.assertNotNull(
+    assertNotNull(
         this.mailService.sendEmail(
             this.systemSender,
             this.myEmail,

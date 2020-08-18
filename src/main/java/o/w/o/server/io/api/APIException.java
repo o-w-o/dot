@@ -32,11 +32,12 @@ public class APIException extends RuntimeException implements Supplier<APIExcept
   private String path = "";
   private Map<String, ?> payload;
   private String message;
-  private Date timestamp = new Date();
+  private Date timestamp;
 
   public APIException() {
     this.code = DEFAULT_CODE;
     this.message = DEFAULT_MESSAGE;
+    this.timestamp = new Date(System.currentTimeMillis());
   }
 
   public static String fetchMessage(Integer code) {

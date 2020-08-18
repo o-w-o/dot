@@ -22,7 +22,7 @@ public class WebSocketSessionManager {
      */
     private ConcurrentHashMap<String, WebSocketSession> webSocketSessionManager = new ConcurrentHashMap<>();
 
-    public static WebSocketSessionManager getWebSocketSessionManager() {
+    public synchronized static WebSocketSessionManager getWebSocketSessionManager() {
         if (WebSocketSessionManager.wsManger == null) {
             WebSocketSessionManager.wsManger = new WebSocketSessionManager();
         }

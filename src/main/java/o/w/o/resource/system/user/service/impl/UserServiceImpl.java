@@ -1,19 +1,20 @@
 package o.w.o.resource.system.user.service.impl;
 
 import com.querydsl.core.types.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.system.role.domain.Role;
 import o.w.o.resource.system.user.constant.UserConstant;
+import o.w.o.resource.system.user.domain.User;
 import o.w.o.resource.system.user.repository.UserRepository;
+import o.w.o.resource.system.user.service.UserService;
 import o.w.o.server.io.service.ServiceException;
 import o.w.o.server.io.service.ServiceResult;
 import o.w.o.util.PasswordEncoderHelper;
-import o.w.o.resource.system.user.domain.User;
-import o.w.o.resource.system.user.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
   @Resource
   private UserRepository userRepository;
+
+  @Resource
+  private PasswordEncoder passwordEncoder;
 
   @Override
   public ServiceResult<User> getUserByUsername(String username) {
@@ -137,15 +141,15 @@ public class UserServiceImpl implements UserService {
 
     var u = getUserById(id).guard();
 
-    logger.debug("modifyPassword: [RUN] match ? {}", encoder.matches(prevPassword, u.getPassword()));
-    if (encoder.matches(prevPassword, u.getPassword())) {
+    logger.debug("modifyPassword: [RUN] match ? {}", passwordEncoder.matches(prevPassword, u.getPassword()));
+    if (passwordEncoder.matches(prevPassword, u.getPassword())) {
       userRepository.save(u.setPassword(password));
     } else {
       throw new ServiceException("旧密码错误！");
-    }
+    };
 
     return ServiceResult.of(
-        userRepository.modifyUserPassword(encoder.encode(password), id) > 0, "修改失败！"
+        userRepository.modifyUserPassword(passwordEncoder.encode(password), id) > 0, "修改失败！"
     );
   }
 

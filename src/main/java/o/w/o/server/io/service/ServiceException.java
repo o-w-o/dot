@@ -42,6 +42,10 @@ public class ServiceException extends RuntimeException implements Supplier<Servi
     return new ServiceException(message);
   }
 
+  public static ServiceException unsupport() {
+    return new ServiceException("不支持或未实现的方法");
+  }
+
   @Override
   public ServiceException get() {
     return this;

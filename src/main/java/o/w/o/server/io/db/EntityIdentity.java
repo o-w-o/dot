@@ -44,11 +44,11 @@ public class EntityIdentity {
 
   @CreatedDate
   @Temporal(TemporalType.TIMESTAMP)
-  private Date cTime;
+  protected Date cTime;
 
   @CreatedDate
   @Temporal(TemporalType.TIMESTAMP)
-  private Date uTime;
+  protected Date uTime;
 
   @PrePersist
   public void recordCreateTime() {

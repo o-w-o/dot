@@ -1,9 +1,8 @@
 package o.w.o.server.io.api;
 
-import o.w.o.server.io.service.ServiceResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import o.w.o.server.io.service.ServiceResult;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,7 +14,6 @@ import java.util.Date;
  * @date 2020/5/30
  */
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class APIResult<T> implements Serializable {
@@ -25,7 +23,11 @@ public class APIResult<T> implements Serializable {
   private T payload;
   private Integer code;
   private String message;
-  private Date timestamp = new Date();
+  private Date timestamp;
+
+  public APIResult () {
+    this.timestamp = new Date(System.currentTimeMillis());
+  }
 
   /**
    * ServiceResult > APIResult

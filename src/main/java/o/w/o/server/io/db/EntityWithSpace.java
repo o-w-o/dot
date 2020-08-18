@@ -2,10 +2,10 @@ package o.w.o.server.io.db;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
-import o.w.o.server.io.json.annotation.JsonTypedSpace;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import o.w.o.server.io.json.annotation.JsonTypeTargetType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -41,6 +42,7 @@ public class EntityWithSpace<EntityType, EntitySpace> extends EntityIdentity {
    * @date 2020/02/12 12:36
    * @since 1.0.0
    */
+  @NotNull
   @ManyToOne
   protected EntityType type;
 
@@ -53,6 +55,6 @@ public class EntityWithSpace<EntityType, EntitySpace> extends EntityIdentity {
 
   @Valid
   @Transient
-  @JsonTypedSpace
-  private EntitySpace space;
+  @JsonTypeTargetType
+  protected EntitySpace space;
 }

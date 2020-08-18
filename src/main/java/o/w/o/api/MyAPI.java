@@ -1,5 +1,8 @@
 package o.w.o.api;
 
+import lombok.extern.slf4j.Slf4j;
+import o.w.o.resource.system.user.domain.User;
+import o.w.o.resource.system.user.service.UserService;
 import o.w.o.server.io.api.APIContext;
 import o.w.o.server.io.api.APIException;
 import o.w.o.server.io.api.APIResult;
@@ -9,9 +12,6 @@ import o.w.o.server.io.api.annotation.APIResourceFetch;
 import o.w.o.server.io.api.annotation.APIResourceModify;
 import o.w.o.server.io.api.annotation.APIResourceSchema;
 import o.w.o.server.io.service.ServiceContext;
-import o.w.o.resource.system.user.domain.User;
-import o.w.o.resource.system.user.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  *
  * @author symbols@dingtalk.com
  * @version 1.0
- * @date 2020/2/5 19:11
+ * @date 2020/2/5
  */
 @Slf4j
 @APIResource(path = "my")

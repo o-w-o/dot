@@ -18,6 +18,8 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 
 
 /**
+ * 授权不足端口，统一返回 401 授权不足提示。
+ *
  * @author symbols@dingtalk.com
  * @date 2019/8/4 下午6:50
  */
@@ -35,10 +37,12 @@ public class AccessDeniedController implements AccessDeniedHandler {
     response.setStatus(HttpStatus.FORBIDDEN.value());
 
     try (PrintWriter writer = response.getWriter()) {
-      writer.write(jsonHelper.toJsonString(
-          APIException.forbidden()
-              .setPath(request.getRequestURI())
-      ));
+      writer.write(
+          this.jsonHelper.toJsonString(
+              APIException.forbidden()
+                  .setPath(request.getRequestURI())
+          )
+      );
       writer.flush();
     }
   }
