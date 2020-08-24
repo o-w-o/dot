@@ -51,7 +51,7 @@
         <jsonwebtoken.version>0.11.2</jsonwebtoken.version>
         <victools.version>4.12.2</victools.version>
         <pmd.version>3.13.0</pmd.version>
-        <pmdp3c.version>2.0.1</pmdp3c.version>
+        <pmdp3c.version>2.1.1</pmdp3c.version>
     </properties>
 
     <dependencies>
