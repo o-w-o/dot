@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 @Data
 
 @Entity
-@Table(name = "t_role")
+@Table(name = "t_sys_role")
 public class Role implements Serializable {
   public static final String ROLE_SEPARATOR = "%";
   public static final String ROLE_PREFIX = "ROLE_";

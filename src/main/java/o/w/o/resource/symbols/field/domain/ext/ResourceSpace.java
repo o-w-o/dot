@@ -32,7 +32,7 @@ import java.io.File;
 @JsonTypeName(FieldType.TypeName.RESOURCE)
 
 @Entity
-@Table(name = "t_s_field__resource")
+@Table(name = "t_sym_field__resource")
 public class ResourceSpace extends FieldSpace<ResourceSpacePayload, ResourceSpacePayloadType> {
   /**
    * 原文件名
@@ -96,12 +96,33 @@ public class ResourceSpace extends FieldSpace<ResourceSpacePayload, ResourceSpac
   }
 
   public enum Stage {
+    /**
+     * 已暂存
+     */
     STORED,
+    /**
+     * 暂存中
+     */
     STAGING,
+    /**
+     * 已暂存
+     */
     STAGED,
+    /**
+     * 持久化中
+     */
     PERSISTING,
+    /**
+     * 已持久化
+     */
     PERSISTED,
+    /**
+     * 已移除
+     */
     REMOVED,
+    /**
+     * 已销毁
+     */
     DESTROYED,
   }
 

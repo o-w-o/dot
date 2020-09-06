@@ -11,7 +11,6 @@ import o.w.o.server.io.json.JsonParseEntityEnumException;
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
 @Data
 
 @Entity
-@Table(name = "t_s_field__resource_type")
+@Table(name = "t_sym_field__resource_type")
 public class ResourceSpacePayloadType {
   @Id
   private Integer id;
@@ -66,7 +65,7 @@ public class ResourceSpacePayloadType {
     PICTURE(
         21,
         TypeName.PICTURE,
-        Stream.of(
+        Set.of(
             "bmp",
             "gif",
             "jpg",
@@ -74,23 +73,24 @@ public class ResourceSpacePayloadType {
             "png",
             "svg",
             "swf"
-        ).collect(Collectors.toSet())
+        )
     ),
 
     AUDIO(
         22,
         TypeName.AUDIO,
-        Stream.of(
+        Set.of(
             "mid",
             "wav",
             "mp3",
             "wma"
-        ).collect(Collectors.toSet())
+        )
     ),
+
     VIDEO(
         23,
         TypeName.VIDEO,
-        Stream.of(
+        Set.of(
             "rm",
             "rmvb",
             "mpg",
@@ -98,24 +98,26 @@ public class ResourceSpacePayloadType {
             "avi",
             "mov",
             "wmv"
-        ).collect(Collectors.toSet())
+        )
     ),
+
     BINARY(
         24,
         TypeName.BINARY,
-        Stream.of(
+        Set.of(
             "*"
-        ).collect(Collectors.toSet())
+        )
     ),
+
     TEXT(
         25,
         TypeName.TEXT,
-        Stream.of(
+        Set.of(
             "puml",
             "xml",
             "json",
             "txt"
-        ).collect(Collectors.toSet())
+        )
     ),
     ;
     /**

@@ -25,12 +25,12 @@ import java.util.stream.Stream;
 @Data
 
 @Entity
-@Table(name = "t_s_field_type")
+@Table(name = "t_sym_field_type")
 public class FieldType {
   @Id
   private Integer id;
 
-  @Enumerated(value = EnumType.STRING)
+  @Enumerated(EnumType.STRING)
   private TypeEnum type;
 
   @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -50,7 +50,7 @@ public class FieldType {
               this.type = typeEnum;
             },
             () -> {
-              throw JsonParseEntityEnumException.of(FieldType.TypeEnum.class);
+              throw JsonParseEntityEnumException.of(TypeEnum.class);
             }
         );
   }
@@ -84,7 +84,7 @@ public class FieldType {
      * @date 2020/02/12 16:42
      * @since 1.0.0
      */
-    TEXT(10, TypeName.TEXT);
+    ELEMENT(10, TypeName.TEXT);
 
     /**
      * 类型名称

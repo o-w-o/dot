@@ -2,9 +2,7 @@ package o.w.o.server.io.db;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import o.w.o.server.io.json.annotation.JsonTypeTargetType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -25,9 +23,9 @@ import javax.validation.constraints.NotNull;
  * @date 2020/02/12 12:36
  * @since 1.0.0
  */
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 
 @TypeDefs({
     @TypeDef(name = "json", typeClass = JsonStringType.class),
@@ -35,7 +33,7 @@ import javax.validation.constraints.NotNull;
 })
 
 @MappedSuperclass
-public class EntityWithSpace<EntityType, EntitySpace> extends EntityIdentity {
+public class EntityWithSpace<EntityType, EntitySpace> extends EntityManualIdentity {
   /**
    * 类型
    *

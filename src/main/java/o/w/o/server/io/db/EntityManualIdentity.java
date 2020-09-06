@@ -3,7 +3,6 @@ package o.w.o.server.io.db;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -12,10 +11,10 @@ import java.util.Optional;
 
 
 /**
- * EntityWithSpace
+ * EntityManualIdentity
  *
  * @author symbols@dingtalk.com
- * @date 2020/02/12 12:36
+ * @date /08/19
  * @since 1.0.0
  */
 @NoArgsConstructor
@@ -23,16 +22,14 @@ import java.util.Optional;
 @Setter
 
 @MappedSuperclass
-public class EntityIdentity {
+public class EntityManualIdentity {
   /**
    * id
    *
-   * @date 2020/02/12 12:36
+   * @date 2020/08/19
    * @since 1.0.0
    */
   @Id
-  @GeneratedValue(generator = "entity-uuid")
-  @GenericGenerator(name = "entity-uuid", strategy = "uuid")
   protected String id;
 
   @CreatedDate

@@ -18,7 +18,7 @@ public class FieldStoreServiceAliyunImpl implements FieldService.FieldStoreServi
   private AliyunOssService aliyunOssService;
 
   @Override
-  public ServiceResult<ResourceSpace> storeTemporarily(ResourceSpace resourceSpace) {
+  public ServiceResult<ResourceSpace> stage(ResourceSpace resourceSpace) {
     var res = aliyunOssService.stageResourceToOss(resourceSpace.getFile()).guard();
     if (res.getStatus()) {
       var payload = ResourceFieldSpaceUtil.generateResourceSpacePayload(resourceSpace);
@@ -38,7 +38,7 @@ public class FieldStoreServiceAliyunImpl implements FieldService.FieldStoreServi
   }
 
   @Override
-  public ServiceResult<ResourceSpace> storePermanently(ResourceSpace resourceSpace) {
+  public ServiceResult<ResourceSpace> persist(ResourceSpace resourceSpace) {
     return aliyunOssService.persistResourceOnOss(resourceSpace);
   }
 

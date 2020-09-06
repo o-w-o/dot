@@ -49,6 +49,7 @@ public class FieldSpaceDefaultHandler<T extends FieldSpace> extends FieldSpaceHa
         .setSpaceId(createdFieldSpace.getId());
 
     spaceMountedField.setSpaceContent(createdFieldSpace);
+    spaceMountedField.setId(createdFieldSpace.getId());
     logger.info("spaceMountedField -> [{}]", spaceMountedField);
 
     return ServiceResult.success((Field) spaceMountedField);

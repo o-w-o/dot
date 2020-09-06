@@ -25,7 +25,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 @Entity
-@Table(name = "t_user")
+@Table(name = "t_sys_user")
 public class User implements Serializable {
 
   private static final long serialVersionUID = 1452277172712371166L;
@@ -40,7 +40,7 @@ public class User implements Serializable {
   private String password;
 
   @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-  @JoinTable(name = "t_user_role",
+  @JoinTable(name = "t_sys_user_role",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * @author symbols@dingtalk.com
@@ -26,6 +27,10 @@ public class ServiceResult<T> implements Serializable {
 
   public static <T> ServiceResult<T> of(Boolean result, String message) {
     return result ? success() : error(message);
+  }
+
+  public static <T> ServiceResult<T> of(Optional<T> optionalResult, String message) {
+    return optionalResult.isPresent() ? success(optionalResult.get()) : error(message);
   }
 
   public static <T> ServiceResult<T> success() {

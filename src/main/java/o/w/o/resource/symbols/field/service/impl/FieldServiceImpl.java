@@ -4,16 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.symbols.field.domain.Field;
 import o.w.o.resource.symbols.field.domain.FieldType;
 import o.w.o.resource.symbols.field.domain.ext.ResourceSpace;
+import o.w.o.resource.symbols.field.repository.FieldQueryDSL;
 import o.w.o.resource.symbols.field.repository.FieldRepository;
 import o.w.o.resource.symbols.field.service.FieldService;
 import o.w.o.resource.symbols.field.service.handler.FieldSpaceHandlerHolder;
 import o.w.o.resource.symbols.field.util.FieldUtil;
 import o.w.o.resource.symbols.field.util.ResourceFieldSpaceUtil;
+import o.w.o.server.io.service.ServiceContext;
 import o.w.o.server.io.service.ServiceException;
 import o.w.o.server.io.service.ServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +39,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FieldServiceImpl implements FieldService {
   private final FieldSpaceHandlerHolder fieldSpaceHandlerHolder;
   private final FieldRepository fieldRepository;
+
+  @Resource
+  private FieldQueryDSL fieldQueryDSL;
 
   @Autowired
   FieldServiceImpl(FieldSpaceHandlerHolder fieldSpaceHandlerHolder, FieldRepository fieldRepository) {
@@ -83,8 +92,6 @@ public class FieldServiceImpl implements FieldService {
 
     var payload = ResourceFieldSpaceUtil.generateResourceSpacePayload(resourceSpace);
     resourceSpace.setPayload(payload);
-    resourceSpace.setPayloadContent(payload);
-    resourceSpace.setPayloadType(payload.getPayloadType());
 
     field
         .setType(FieldType.of(FieldType.TypeEnum.RESOURCE))
@@ -142,5 +149,19 @@ public class FieldServiceImpl implements FieldService {
   @Override
   public ServiceResult<Set<Field>> postprocessFields(Set<Field> fields) {
     return ServiceResult.success(fields);
+  }
+
+  @Override
+  public ServiceResult<Page<Field>> retrieveFields(Example<Field> field, Pageable page) {
+    throw ServiceException.unsupport();
+
+  }
+
+  @Override
+  public ServiceResult<List<Field>> listMyResourceByDir(String dirPath) {
+    return ServiceResult.success(
+        fieldQueryDSL
+            .retrieveResourceFieldsByUserIdAndDir(ServiceContext.getUserIdFormSecurityContext(), dirPath)
+    );
   }
 }

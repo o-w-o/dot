@@ -25,6 +25,6 @@ import javax.persistence.Table;
 @JsonEntityProperty
 
 @Entity
-@Table(name = "t_s_field")
+@Table(name = "t_sym_field")
 public class Field extends EntityWithSpace<FieldType, FieldSpace> {
 }

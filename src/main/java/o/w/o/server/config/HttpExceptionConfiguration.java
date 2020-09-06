@@ -1,7 +1,7 @@
 package o.w.o.server.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import o.w.o.server.controller.APIExceptionsControllerAdvice;
+import o.w.o.server.controller.advice.APIExceptionsControllerAdvice;
 import o.w.o.server.io.api.APIException;
 import o.w.o.server.io.json.JsonHelper;
 import o.w.o.server.io.service.ServiceException;

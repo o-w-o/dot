@@ -60,7 +60,7 @@ public class ResourceFieldSpaceHandler extends FieldSpaceHandler {
 
   @Override
   public ServiceResult<Field> process(Field field) {
-    throw ServiceException.unsupport();
+    return fieldSpaceDefaultHandler.create(field);
   }
 
   @Override
@@ -99,7 +99,7 @@ public class ResourceFieldSpaceHandler extends FieldSpaceHandler {
           );
         });
 
-    return fieldStoreService.storeTemporarily(
+    return fieldStoreService.stage(
         space.setStage(ResourceSpace.Stage.STAGING)
     ).guard();
   }
@@ -107,7 +107,7 @@ public class ResourceFieldSpaceHandler extends FieldSpaceHandler {
   private ResourceSpace processStaged(ResourceSpace space) {
     logger.info("field -> [{}], payload -> [{}]", space, space.getPayload());
 
-    return fieldStoreService.storePermanently(
+    return fieldStoreService.persist(
         space
             .setVisibility(ResourceSpace.Visibility.PRIVATE)
             .setStage(ResourceSpace.Stage.PERSISTING)

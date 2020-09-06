@@ -2,6 +2,7 @@ package o.w.o.api.symbols;
 
 import lombok.extern.slf4j.Slf4j;
 import o.w.o.resource.symbols.field.domain.Field;
+import o.w.o.resource.symbols.field.domain.FieldType;
 import o.w.o.resource.symbols.field.service.FieldService;
 import o.w.o.resource.symbols.field.util.ResourceFieldSpaceUtil;
 import o.w.o.server.io.api.APIContext;
@@ -24,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,18 +45,18 @@ public class FieldAPI {
     return APIResult.of(APIContext.fetchAPIContext(FieldAPI.class).orElseThrow(APIException::new));
   }
 
-  @APIResourceCreate(name = "创建 Field")
+  @APIResourceCreate(name = "创建 Field，仅测试用！")
   public APIResult<Field> create(@RequestBody @Valid Field field) {
     return APIResult.of(fieldService.save(field).guard());
   }
 
   @APIResourceFetch(name = "根据 Id 获取 Field", path = "/{id}")
-  public APIResult<Field> retrieve(@PathVariable("id") String fieldId) {
+  public APIResult<Field> fetch(@PathVariable("id") String fieldId) {
     return APIResult.of(fieldService.fetch(fieldId).guard());
   }
 
   @APIResourceCreate(name = "上传资源 Field", path = "/resources")
-  public APIResult<?> upload(@NotNull MultipartFile file, @RequestParam String virtualDir) {
+  public APIResult<Field> uploadResource(@NotNull MultipartFile file, @RequestParam String dir) {
     String filename = Optional.ofNullable(file.getOriginalFilename())
         .orElseThrow(() -> ServiceException.of("文件名不能为空！"));
 
@@ -66,7 +68,6 @@ public class FieldAPI {
 
     try (FileOutputStream os = new FileOutputStream(storingFile)) {
       os.write(file.getBytes());
-      file.transferTo(storingFile);
     } catch (IOException e) {
       logger.error("文件读取异常！ [{}]", e.getMessage());
       throw ServiceException.of(e.getMessage());
@@ -74,8 +75,17 @@ public class FieldAPI {
 
     return APIResult.from(
         fieldService
-            .persist(ResourceFieldSpaceUtil.generateResourceSpaceFormFile(storingFile, virtualDir))
+            .persist(ResourceFieldSpaceUtil.generateResourceSpaceFormFile(storingFile, dir))
     );
   }
 
+  @APIResourceFetch(name = "列出资源 Field", path = "/resources")
+  public APIResult<List<Field>> listResource(@RequestParam String dir) {
+    var exampleField = new Field();
+    exampleField.setType(FieldType.of(FieldType.TypeEnum.RESOURCE));
+    return APIResult.from(
+        fieldService
+            .listMyResourceByDir(dir)
+    );
+  }
 }
