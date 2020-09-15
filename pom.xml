@@ -344,7 +344,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>2.0.0-RC.1</version>
+                <version>2.1.0</version>
 
                 <!-- 使用 插件指令 asciidoctor:http 实时预览 adoc 文档 -->
                 <configuration>
