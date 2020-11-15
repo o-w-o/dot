@@ -15,6 +15,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
+.settings
 *.iws
 *.iml
 *.ipr
@@ -34,6 +35,10 @@ src/main/resources/static/docs/*.html
 
 ### Spring Boot 配置文件 ###
 src/main/resources/config/application-local.properties
-src/main/resources/config/application-development.properties
+src/main/resources/config/application-test.properties
 src/main/resources/config/application-production.properties
 src/main/resources/config/my.properties
+
+src/main/resources/openapi/npm
+!/src/main/resources/openapi/npm/LICENSE
+!/src/main/resources/openapi/npm/.openapi-generator-ignore

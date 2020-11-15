@@ -1,7 +1,7 @@
 package o.w.o.resource.system.authorization.service;
 
-import o.w.o.server.io.service.ServiceResult;
-import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
+import o.w.o.server.definition.ServiceResult;
+import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
 
 import java.security.SignatureException;
 
@@ -18,23 +18,23 @@ public interface AuthorizationService {
      *
      * @param username 用户名
      * @param password 密码
-     * @return AuthorizedToken tokens => {'refreshToken':refreshToken, 'accessToken': accessToken}
+     * @return jwts {@link AuthorizedJwt}
      */
-    ServiceResult<AuthorizedJwts> authorize(String username, String password);
+    ServiceResult<AuthorizedJwt> authorize(String username, String password);
 
     /**
      * 通过 refreshToken 延长授权
      *
      * @param refreshToken refreshToken
-     * @return accessToken
+     * @return jwts {@link AuthorizedJwt}
      */
-    ServiceResult<String> reauthorize(String refreshToken) throws SignatureException;
+    ServiceResult<AuthorizedJwt> authorize(String refreshToken) throws SignatureException;
 
     /**
      * 注销用户
      *
-     * @param jwt accessToken
-     * @return ''
+     * @param stubId stubId
+     * @return revokeStatus
      */
-    ServiceResult<Boolean> revoke(String jwt);
+    ServiceResult<Boolean> revoke(String stubId);
 }

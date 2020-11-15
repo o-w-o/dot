@@ -21,27 +21,29 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>, QuerydslPredicateExecutor<User>, QuerydslBinderCustomizer<QUser> {
 
-    boolean existsByName(String name);
+  boolean existsByName(String name);
 
-    boolean existsByNameAndIdIsNot(String username, Integer id);
+  boolean existsByNameAndIdIsNot(String username, Integer id);
 
-    Optional<User> findUserByName(String name);
+  Optional<User> findUserByName(String name);
 
-    Optional<User> findUserById(Integer id);
+  Optional<User> findUserById(Integer id);
 
+  @Override
+  void deleteById(Integer id);
 
-    @Modifying(clearAutomatically = true)
-    @Query(value = "update User u set u.password=?1 where u.id=?2")
-    int modifyUserPassword(String password, Integer id);
+  @Modifying(clearAutomatically = true)
+  @Query(value = "update User u set u.password=?1 where u.id=?2")
+  int modifyUserPassword(String password, Integer id);
 
-    @Override
-    default void customize(QuerydslBindings bindings, QUser user) {
-        bindings.bind(user.name)
-            .first(StringExpression::contains);
+  @Override
+  default void customize(QuerydslBindings bindings, QUser user) {
+    bindings.bind(user.name)
+        .first(StringExpression::contains);
 
-        bindings.bind(String.class)
-            .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
+    bindings.bind(String.class)
+        .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
 
-        bindings.excluding(user.password);
-    }
+    bindings.excluding(user.password);
+  }
 }

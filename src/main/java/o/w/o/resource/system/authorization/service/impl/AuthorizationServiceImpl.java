@@ -1,15 +1,15 @@
 package o.w.o.resource.system.authorization.service.impl;
 
-import o.w.o.server.io.service.ServiceException;
-import o.w.o.server.io.service.ServiceResult;
+import lombok.extern.slf4j.Slf4j;
+import o.w.o.resource.system.authentication.service.AuthenticationService;
 import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
-import o.w.o.resource.system.authorization.domain.AuthorizedJwts;
 import o.w.o.resource.system.authorization.service.AuthorizationService;
-import o.w.o.resource.system.authorization.service.AuthorizedJwtStoreService;
+import o.w.o.resource.system.authorization.service.AuthorizationStubService;
 import o.w.o.resource.system.user.domain.User;
 import o.w.o.resource.system.user.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import o.w.o.server.definition.ServiceException;
+import o.w.o.server.definition.ServiceResult;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,53 +25,58 @@ import javax.annotation.Resource;
 @Slf4j
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
+  @Resource
+  private PasswordEncoder passwordEncoder;
 
-    @Resource
-    private UserRepository userRepository;
+  @Resource
+  private UserRepository userRepository;
 
-    @Resource
-    private AuthorizedJwtStoreService authorizedJwtStoreService;
+  @Resource
+  private AuthenticationService authenticationService;
 
-    @Override
-    public ServiceResult<AuthorizedJwts> authorize(String username, String password) {
-        if (!userRepository.existsByName(username)) {
-            return ServiceResult.error(String.format("用户 [ %s ] 不存在！", username));
-        }
+  @Resource
+  private AuthorizationStubService authorizationStubService;
 
-        User user = userRepository.findUserByName(username).orElseThrow(new ServiceException(""));
+  @Override
+  public ServiceResult<AuthorizedJwt> authorize(String username, String password) {
+    User user = userRepository
+        .findUserByName(username).orElseThrow(new ServiceException(String.format("用户 [ %s ] 不存在！", username)));
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (encoder.matches(password, user.getPassword())) {
-            return ServiceResult.success(
-                authorizedJwtStoreService.register(user).guard()
-            );
-        }
-
-        logger.debug("isPasswordMatch ? {}, password -> {}, user -> {}", user.getPassword().equals(password), password, user);
-        return ServiceResult.error("登录密码错误！");
+    if (passwordEncoder.matches(password, user.getPassword())) {
+      return ServiceResult.success(
+          authorizationStubService.register(user).guard()
+      );
     }
 
-    @Override
-    public ServiceResult<String> reauthorize(String refreshToken) {
-        if (refreshToken == null || "".equals(refreshToken)) {
-            return ServiceResult.error("用户 refreshToken 为空！");
-        }
+    return ServiceResult.error("登录密码错误！");
+  }
 
-        AuthorizedJwt authorizedJwt = AuthorizedJwt.generateJwtFromJwtString(refreshToken, true);
-
-        if (AuthorizedJwt.isExpired(authorizedJwt)) {
-            return ServiceResult.error("用户 refreshToken 已过期！");
-        }
-
-        return ServiceResult.success(
-            authorizedJwtStoreService
-                .refresh(authorizedJwt, refreshToken)
-                .guard()
-        );
+  @Override
+  public ServiceResult<AuthorizedJwt> authorize(String refreshToken) {
+    if (refreshToken == null || "".equals(refreshToken)) {
+      return ServiceResult.error("用户 refreshToken 为空！");
     }
 
-    @Override
-    public ServiceResult<Boolean> revoke(String accessToken) {
-        return authorizedJwtStoreService.revoke(AuthorizedJwt.generateJwtFromJwtString(accessToken, true));
+    var report = authenticationService.validateJwt(refreshToken).guard();
+
+    logger.info("report -> {}", report);
+    if (report.isJwtValid()) {
+      return ServiceResult.success(
+          authorizationStubService
+              .refresh(report.getJwt())
+              .guard()
+      );
     }
+
+    if (!report.isJwtNonExpired()) {
+      return ServiceResult.error("用户 refreshToken 已过期！");
+    }
+
+    return ServiceResult.error(report.getMessage());
+  }
+
+  @Override
+  public ServiceResult<Boolean> revoke(String stubId) {
+    return authorizationStubService.revoke(stubId);
+  }
 }

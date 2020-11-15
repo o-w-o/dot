@@ -1,84 +1,96 @@
 package o.w.o.resource.system.authorization.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import o.w.o.resource.system.role.util.RoleHelper;
-import o.w.o.resource.system.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import o.w.o.resource.system.authentication.domain.AuthenticationPayload;
+import o.w.o.resource.system.role.util.RoleUtil;
+import o.w.o.server.definition.ServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
- * @author LongY
+ * AuthorizedUser
+ *
+ * @author symbols@dingtalk.com
+ * @date 2020/02/27
  */
 @NoArgsConstructor
 @Setter
 @Getter
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-
-@Component
-public class AuthorizedUser extends User implements UserDetails {
-  public static final String USER_NAME_ANONYMOUS = "anonymous";
-
-  private Integer id;
-
+public class AuthorizedUser implements UserDetails {
   private String username;
   private String password;
-  private String ip;
   private Collection<? extends GrantedAuthority> authorities;
 
-  public static AuthorizedUser parse(User user) {
+  private boolean accountNonExpired = true;
+  private boolean accountNonLocked = true;
+  private boolean credentialsNonExpired = true;
+  private boolean enabled = true;
+
+  private String ip;
+  private String stubId;
+  private Integer id;
+  private AuthenticationPayload authenticationPayload;
+
+  private boolean anonymous = false;
+
+  public static AuthorizedUser from(AuthorizationJwt jwt, AuthenticationPayload payload) {
+    if (Objects.isNull(jwt.getUip())) {
+      throw ServiceException.of("IP 字段缺失");
+    }
+
     return new AuthorizedUser()
-        .setId(user.getId())
-        .setUsername(user.getName())
-        .setPassword(user.getPassword())
-        .setAuthorities(RoleHelper.toAuthorities(user.getRoles()));
+        .setId(jwt.getUid())
+        .setIp(jwt.getUip())
+        .setAnonymous(false)
+        .setUsername(jwt.getAud())
+        .setPassword("")
+        .setAuthenticationPayload(payload)
+        .setStubId(AuthorizationStub.generateId(jwt))
+        .setAuthorities(
+            RoleUtil.toAuthorities(RoleUtil.from(jwt.getRol()))
+        );
   }
 
-  public static AuthorizedUser anonymousUser(String ip) {
-      return new AuthorizedUser()
-          .setUsername(USER_NAME_ANONYMOUS)
-          .setId(0)
-          .setIp(ip);
+  public static AuthorizedUser createAnonymousUser(String ip) {
+    return new AuthorizedUser()
+        .setIp(ip)
+        .setAnonymous(true);
   }
 
-  @JsonIgnore
+  /**
+   * 账户是否过期
+   */
   @Override
   public boolean isAccountNonExpired() {
-    return true;
+    return this.accountNonExpired;
   }
 
-  @JsonIgnore
+  /**
+   * 账户是否锁定
+   */
   @Override
   public boolean isAccountNonLocked() {
-    return true;
+    return this.accountNonLocked;
   }
 
   /**
    * 密码是否未过期
-   *
-   * @return boolean 密码未过期
    */
-  @JsonIgnore
   @Override
   public boolean isCredentialsNonExpired() {
-    return true;
+    return this.credentialsNonExpired;
   }
 
   /**
    * 账户是否激活
-   *
-   * @return 返回 true 账户已激活
    */
-  @JsonIgnore
   @Override
   public boolean isEnabled() {
-    return true;
+    return this.enabled;
   }
 }
