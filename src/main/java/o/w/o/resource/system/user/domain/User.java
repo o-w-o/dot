@@ -2,10 +2,10 @@ package o.w.o.resource.system.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import o.w.o.resource.system.role.domain.Role;
-import o.w.o.resource.system.user.constant.UserGender;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import o.w.o.resource.system.role.domain.Role;
+import o.w.o.resource.system.user.constant.UserGender;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -35,6 +35,7 @@ public class User implements Serializable {
   private Integer id;
 
   private String name;
+  private String email;
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
@@ -44,16 +45,12 @@ public class User implements Serializable {
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
-
   private String nickName;
-
   @Convert(converter = UserGender.Converter.class)
   private UserGender gender = UserGender.UNKNOWN;
-
   @CreatedDate
   @Temporal(TemporalType.TIMESTAMP)
   private Date cTime;
-
   @CreatedDate
   @Temporal(TemporalType.TIMESTAMP)
   private Date uTime;

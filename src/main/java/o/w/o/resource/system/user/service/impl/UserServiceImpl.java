@@ -7,23 +7,23 @@ import o.w.o.resource.system.user.constant.UserConstant;
 import o.w.o.resource.system.user.domain.User;
 import o.w.o.resource.system.user.repository.UserRepository;
 import o.w.o.resource.system.user.service.UserService;
-import o.w.o.server.io.service.ServiceException;
-import o.w.o.server.io.service.ServiceResult;
-import o.w.o.util.PasswordEncoderHelper;
+import o.w.o.server.definition.ServiceException;
+import o.w.o.server.definition.ServiceResult;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Set;
 
 @Slf4j
+@CacheConfig(cacheNames = "srv")
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
   @Resource
@@ -32,32 +32,30 @@ public class UserServiceImpl implements UserService {
   @Resource
   private PasswordEncoder passwordEncoder;
 
+  @Cacheable(key = "'U:fb_uname#' + #username", condition = "#result?.isSuccess()", sync = true)
   @Override
   public ServiceResult<User> getUserByUsername(String username) {
+    var notFoundMessage = String.format("用户 [%s] 不存在！", username);
+
     if (userRepository.existsByName(username)) {
       return ServiceResult.success(
           userRepository.findUserByName(username)
-              .orElseThrow(new ServiceException("用户不存在！"))
+              .orElseThrow(new ServiceException(notFoundMessage))
       );
     }
 
-    return ServiceResult.error("用户不存在！");
-
+    return ServiceResult.error(notFoundMessage);
   }
 
+  @Cacheable(key = "'U:fb_id#' + #id", condition = "#result?.isSuccess()", sync = true)
   @Override
-  @Cacheable(cacheNames = "getUserById")
   public ServiceResult<User> getUserById(Integer id) {
-    if (userRepository.existsById(id)) {
-      return ServiceResult.success(
-          userRepository.findById(id)
-              .orElseThrow(
-                  new ServiceException(String.format("[ %d ] 用户不存在", id))
-              )
-      );
-    }
-
-    return ServiceResult.error(String.format("[ %d ] 用户不存在", id));
+    return ServiceResult.success(
+        userRepository.findById(id)
+            .orElseThrow(
+                new ServiceException(String.format("[ %d ] 用户不存在", id))
+            )
+    );
   }
 
   @Override
@@ -78,10 +76,11 @@ public class UserServiceImpl implements UserService {
     );
   }
 
+  @CacheEvict(key = "'U:fb_id#' + #id", condition = "#result?.isSuccess()")
   @Override
   public ServiceResult<Boolean> revoke(Integer id) {
     var u = getUserById(id);
-    if (u.getSuccess()) {
+    if (u.isSuccess()) {
       userRepository.deleteById(id);
 
       return ServiceResult.success(
@@ -93,6 +92,7 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  @CacheEvict(key = "'U:fb_id#' + #id", condition = "#result?.isSuccess()")
   @Override
   public ServiceResult<User> modifyRoles(Integer id, Set<Role> roles) {
     if (roles.size() == 0) {
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public ServiceResult<Boolean> resetPassword(Integer id) {
     return ServiceResult.success(
-        userRepository.modifyUserPassword(PasswordEncoderHelper.encoder().encode(UserConstant.USER_INITIAL_PASSWORD), id) > 0
+        userRepository.modifyUserPassword(passwordEncoder.encode(UserConstant.USER_INITIAL_PASSWORD), id) > 0
     );
   }
 
@@ -137,22 +137,19 @@ public class UserServiceImpl implements UserService {
       throw new ServiceException("新旧密码相同！");
     }
 
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
     var u = getUserById(id).guard();
 
     logger.debug("modifyPassword: [RUN] match ? {}", passwordEncoder.matches(prevPassword, u.getPassword()));
     if (passwordEncoder.matches(prevPassword, u.getPassword())) {
-      userRepository.save(u.setPassword(password));
+      userRepository.save(u.setPassword(passwordEncoder.encode(password)));
     } else {
       throw new ServiceException("旧密码错误！");
-    };
+    }
 
-    return ServiceResult.of(
-        userRepository.modifyUserPassword(passwordEncoder.encode(password), id) > 0, "修改失败！"
-    );
+    return ServiceResult.success(true);
   }
 
+  @CacheEvict(key = "'U:fb_id#' + #id", condition = "#result?.isSuccess()")
   @Override
   public ServiceResult<User> modifyProfile(User user, int id) {
     if (userRepository.existsByNameAndIdIsNot(user.getName(), id)) {
