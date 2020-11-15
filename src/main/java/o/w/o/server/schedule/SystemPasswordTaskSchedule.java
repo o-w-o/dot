@@ -1,17 +1,16 @@
 package o.w.o.server.schedule;
 
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.resource.integration.email.service.MailService;
+import o.w.o.resource.system.notification.domain.MailTemplate;
+import o.w.o.resource.system.notification.service.MailService;
 import o.w.o.resource.system.role.domain.Role;
-import o.w.o.resource.system.role.util.RoleHelper;
+import o.w.o.resource.system.role.util.RoleUtil;
 import o.w.o.resource.system.user.domain.User;
 import o.w.o.resource.system.user.service.UserService;
-import o.w.o.server.config.OrderConfiguration;
-import o.w.o.server.config.properties.constant.SystemRuntimeEnv;
-import o.w.o.server.io.service.ServiceResult;
+import o.w.o.server.configuration.properties.constant.SystemRuntimeEnv;
+import o.w.o.server.definition.ServiceResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -29,8 +28,6 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-@EnableScheduling
-@Order(OrderConfiguration.DATASOURCE_AFTER)
 public class SystemPasswordTaskSchedule {
   private final static String MASTER_RANDOM_PASSWORD = UUID.randomUUID().toString();
   private final static String MASTER_NAME = "master";
@@ -44,6 +41,7 @@ public class SystemPasswordTaskSchedule {
   @Value("${spring.profiles.active}")
   private String env;
 
+  @Autowired
   public SystemPasswordTaskSchedule(UserService userService, MailService mailService) {
     this.userService = userService;
     this.mailService = mailService;
@@ -55,16 +53,19 @@ public class SystemPasswordTaskSchedule {
     logger.info("SystemPasswordTask: env -> {}", this.env);
 
     ServiceResult<User> userServiceResult = this.userService.getUserByUsername(MASTER_NAME);
-    if (userServiceResult.getSuccess()) {
+    if (userServiceResult.isSuccess()) {
       User u = userServiceResult.getPayload();
 
       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
       if (encoder.matches(MASTER_RANDOM_PASSWORD, u.getPassword()) || u.getCTime().equals(u.getUTime())) {
         if (this.env.equals(SystemRuntimeEnv.PRODUCTION)) {
-          this.mailService.sendSystemEmail(
-              this.myEmail,
-              "警告：[ 烛火录 ] 请尽快修改管理员密码！",
-              String.format("请尽快修改管理员密码！ cTime -> [ %s ]", u.getCTime())
+          this.mailService.send(
+              MailTemplate
+                  .builder()
+                  .receiver(this.myEmail)
+                  .subject("警告：[ 烛火录 ] 请尽快修改管理员密码！")
+                  .body(String.format("请尽快修改管理员密码！ cTime -> [ %s ]", u.getCTime()))
+                  .build()
           );
         }
         logger.warn("请尽快修改管理员密码！cTime -> {}", u.getCTime());
@@ -78,14 +79,17 @@ public class SystemPasswordTaskSchedule {
           new User()
               .setName(MASTER_NAME)
               .setPassword(MASTER_RANDOM_PASSWORD)
-              .setRoles(RoleHelper.toRoles(Role.MASTER, Role.USER))
+              .setRoles(RoleUtil.of(Role.MASTER, Role.USER))
       );
 
       if (this.env.equals(SystemRuntimeEnv.PRODUCTION)) {
-        this.mailService.sendSystemEmail(
-            this.myEmail,
-            "提醒：[ 烛火录 ] 管理员密码初始化。",
-            String.format("密码：[ %s ];", MASTER_RANDOM_PASSWORD)
+        this.mailService.send(
+            MailTemplate
+                .builder()
+                .receiver(this.myEmail)
+                .subject("提醒：[ 烛火录 ] 管理员密码初始化。")
+                .body(String.format("密码：[ %s ];", MASTER_RANDOM_PASSWORD))
+                .build()
         );
       }
 

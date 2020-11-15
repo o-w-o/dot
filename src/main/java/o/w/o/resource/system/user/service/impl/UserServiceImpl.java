@@ -7,23 +7,23 @@ import o.w.o.resource.system.user.constant.UserConstant;
 import o.w.o.resource.system.user.domain.User;
 import o.w.o.resource.system.user.repository.UserRepository;
 import o.w.o.resource.system.user.service.UserService;
-import o.w.o.server.io.service.ServiceException;
-import o.w.o.server.io.service.ServiceResult;
-import o.w.o.util.PasswordEncoderHelper;
+import o.w.o.server.definition.ServiceException;
+import o.w.o.server.definition.ServiceResult;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional
+@CacheConfig(cacheNames = "cmSrv")
 public class UserServiceImpl implements UserService {
 
   @Resource
@@ -33,31 +33,27 @@ public class UserServiceImpl implements UserService {
   private PasswordEncoder passwordEncoder;
 
   @Override
+  @Cacheable(key = "'U:g_b_uname#' + #username")
   public ServiceResult<User> getUserByUsername(String username) {
     if (userRepository.existsByName(username)) {
       return ServiceResult.success(
           userRepository.findUserByName(username)
-              .orElseThrow(new ServiceException("用户不存在！"))
+              .orElseThrow(new ServiceException("用户不存在！!"))
       );
     }
 
     return ServiceResult.error("用户不存在！");
-
   }
 
   @Override
-  @Cacheable(cacheNames = "getUserById")
+  @Cacheable(key = "'U:g_b_id#' + #id")
   public ServiceResult<User> getUserById(Integer id) {
-    if (userRepository.existsById(id)) {
-      return ServiceResult.success(
-          userRepository.findById(id)
-              .orElseThrow(
-                  new ServiceException(String.format("[ %d ] 用户不存在", id))
-              )
-      );
-    }
-
-    return ServiceResult.error(String.format("[ %d ] 用户不存在", id));
+    return ServiceResult.success(
+        userRepository.findById(id)
+            .orElseThrow(
+                new ServiceException(String.format("[ %d ] 用户不存在", id))
+            )
+    );
   }
 
   @Override
@@ -79,9 +75,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @CacheEvict(key = "'U:g_b_id#' + #id")
   public ServiceResult<Boolean> revoke(Integer id) {
     var u = getUserById(id);
-    if (u.getSuccess()) {
+    if (u.isSuccess()) {
       userRepository.deleteById(id);
 
       return ServiceResult.success(
@@ -94,6 +91,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @CacheEvict(key = "'U:g_b_id#' + #id")
   public ServiceResult<User> modifyRoles(Integer id, Set<Role> roles) {
     if (roles.size() == 0) {
       throw new ServiceException("请至少分配 [ 1个 ] 权限！");
@@ -127,7 +125,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public ServiceResult<Boolean> resetPassword(Integer id) {
     return ServiceResult.success(
-        userRepository.modifyUserPassword(PasswordEncoderHelper.encoder().encode(UserConstant.USER_INITIAL_PASSWORD), id) > 0
+        userRepository.modifyUserPassword(passwordEncoder.encode(UserConstant.USER_INITIAL_PASSWORD), id) > 0
     );
   }
 
@@ -137,23 +135,20 @@ public class UserServiceImpl implements UserService {
       throw new ServiceException("新旧密码相同！");
     }
 
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
     var u = getUserById(id).guard();
 
     logger.debug("modifyPassword: [RUN] match ? {}", passwordEncoder.matches(prevPassword, u.getPassword()));
     if (passwordEncoder.matches(prevPassword, u.getPassword())) {
-      userRepository.save(u.setPassword(password));
+      userRepository.save(u.setPassword(passwordEncoder.encode(password)));
     } else {
       throw new ServiceException("旧密码错误！");
-    };
+    }
 
-    return ServiceResult.of(
-        userRepository.modifyUserPassword(passwordEncoder.encode(password), id) > 0, "修改失败！"
-    );
+    return ServiceResult.success(true);
   }
 
   @Override
+  @CacheEvict(key = "'U:g_b_id#' + #id")
   public ServiceResult<User> modifyProfile(User user, int id) {
     if (userRepository.existsByNameAndIdIsNot(user.getName(), id)) {
       return ServiceResult.error("用户名已存在！");

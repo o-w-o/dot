@@ -1,13 +1,15 @@
 package o.w.o.resource.system.role.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import o.w.o.resource.system.role.repository.RoleRepository;
-import o.w.o.server.io.db.annotation.EntityEnumerated;
-import o.w.o.server.io.json.JsonParseEntityEnumException;
-import o.w.o.server.io.service.ServiceException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import o.w.o.resource.system.role.repository.RoleRepository;
+import o.w.o.server.definition.EnumEntity;
+import o.w.o.server.definition.EnumEntityEnumerated;
+import o.w.o.server.definition.EnumNotExistItemException;
+import o.w.o.server.definition.ServiceException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,12 +23,13 @@ import java.util.stream.Stream;
  * @version 1.0
  * @date 2020/2/5 19:32
  */
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Data
 
 @Entity
 @Table(name = "t_sys_role")
-public class Role implements Serializable {
+public class Role extends EnumEntity<Role.Enum> implements Serializable {
   public static final String ROLE_SEPARATOR = "%";
   public static final String ROLE_PREFIX = "ROLE_";
 
@@ -50,45 +53,53 @@ public class Role implements Serializable {
   private Boolean system;
 
   @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-  public Role(Enum typeEnum) {
-    this.id = typeEnum.getId();
-    this.name = typeEnum.roleName;
+  public Role(Enum v) {
+    this.id = v.getId();
+    this.name = v.roleName;
     this.system = true;
+    this.mountedEnumValue(v);
   }
 
   public Role(String roleName) {
     Stream
         .of(Enum.values())
-        .filter(typeEnum -> Objects.equals(typeEnum.roleName, roleName))
+        .filter(v -> Objects.equals(v.roleName, roleName))
         .findFirst()
-        .ifPresentOrElse(typeEnum -> {
-          this.id = typeEnum.id;
-          this.name = typeEnum.roleName;
+        .ifPresentOrElse(v -> {
+          this.id = v.id;
+          this.name = v.roleName;
           this.system = true;
+          this.mountedEnumValue(v);
         }, () -> {
-          throw JsonParseEntityEnumException.of(Enum.class);
+          if (throwIfItemNonexistent()) {
+            throw EnumNotExistItemException.of(Enum.class);
+          }
+
+          this.id = getIntegerUndefinedMark();
+          this.name = roleName;
         });
   }
 
-  public static boolean isSystem(String roleName) {
-    return Stream.of(Enum.values()).filter(typeEnum -> Objects.equals(typeEnum.roleName, roleName)).count() == 1;
+  @Override
+  protected boolean throwIfItemNonexistent() {
+    return false;
   }
 
   @PreRemove
   public void preRemove() {
-    if (isSystem(this.name)) {
+    if (this.system) {
       throw new ServiceException("系统权限不得删除！");
     }
   }
 
   @PrePersist
   public void prePersist() {
-    if (this.system == null) {
-      this.setSystem(isSystem(this.name));
+    if (getIntegerUndefinedMark().equals(this.id)) {
+      throw getUndefinedException();
     }
   }
 
-  @EntityEnumerated(enumClass = Enum.class, entityClass = Role.class, repositoryClass = RoleRepository.class)
+  @EnumEntityEnumerated(entityClass = Role.class, repositoryClass = RoleRepository.class)
   public enum Enum {
     ANONYMOUS(0, "ANONYMOUS"),
     MASTER(1, "MASTER"),

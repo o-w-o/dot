@@ -1,7 +1,0 @@
-=== 获取 用户详情
-
-CAUTION: 权限要求：MASTER 或 USER。管理员可以获取任意用户的信息，普通用户仅可以获取自己的用户信息。
-
-==== 示例
-
-operation::UserAPITest--is-user-get-ok[snippets='http-request,http-response']

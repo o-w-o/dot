@@ -1,13 +1,14 @@
 package o.w.o.websocket;
 
 import lombok.extern.log4j.Log4j2;
+import o.w.o.websocket.endpoint.EntryEndpoint;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * -
+ * WebSocketSessionManager
  *
  * @author symbols@dingtalk.com
  * @version 1.0
@@ -20,7 +21,7 @@ public class WebSocketSessionManager {
     /**
      * concurrent 包的线程安全 Set，用来存放每个客户端对应的 MyWebSocket 对象。
      */
-    private ConcurrentHashMap<String, WebSocketSession> webSocketSessionManager = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, EntryEndpoint> webSocketSessionManager = new ConcurrentHashMap<>();
 
     public synchronized static WebSocketSessionManager getWebSocketSessionManager() {
         if (WebSocketSessionManager.wsManger == null) {
@@ -30,11 +31,11 @@ public class WebSocketSessionManager {
         return WebSocketSessionManager.wsManger;
     }
 
-    public synchronized void register(String sid, WebSocketSession session) {
+    public synchronized void register(String sid, EntryEndpoint session) {
         this.webSocketSessionManager.put(sid, session);
     }
 
-    public Optional<WebSocketSession> access(String sid) {
+    public Optional<EntryEndpoint> access(String sid) {
         return Optional.of(this.webSocketSessionManager.get(sid));
     }
 
@@ -54,7 +55,7 @@ public class WebSocketSessionManager {
 
     public synchronized void broadcast(String message) {
         for (var item : webSocketSessionManager.entrySet()) {
-            WebSocketSession socketSession = item.getValue();
+            EntryEndpoint socketSession = item.getValue();
             String socketSessionKey = item.getKey();
             try {
                 socketSession.sendMessage(message);
