@@ -45,7 +45,7 @@
         <mapstruct.version>1.4.0.CR1</mapstruct.version>
         <aliyun.oss.version>3.11.0</aliyun.oss.version>
         <jsonwebtoken.version>0.11.2</jsonwebtoken.version>
-        <victools.version>4.14.0</victools.version>
+        <victools.version>4.16.0</victools.version>
         <pmd.version>3.13.0</pmd.version>
         <pmdp3c.version>2.0.1</pmdp3c.version>
     </properties>
