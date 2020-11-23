@@ -48,7 +48,7 @@
         <hutool.version>5.5.1</hutool.version>
         <jsonwebtoken.version>0.11.2</jsonwebtoken.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>
-        <pmd.version>3.13.0</pmd.version>
+        <pmd.version>3.14.0</pmd.version>
         <pmdp3c.version>2.1.1</pmdp3c.version>
         <victools.version>4.16.0</victools.version>
     </properties>
