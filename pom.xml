@@ -217,7 +217,7 @@
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.11.0</version>
+            <version>3.11.2</version>
         </dependency>
 
         <!-- 常用库依赖 -->
