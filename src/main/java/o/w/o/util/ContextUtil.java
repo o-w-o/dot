@@ -3,7 +3,7 @@ package o.w.o.util;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.server.definition.ServiceException;
+import o.w.o.infrastructure.definition.ServiceException;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
@@ -31,16 +31,20 @@ public class ContextUtil {
     instance.setApplicationContext(applicationContext);
   }
 
+  public static Optional<ApplicationContext> fetchApplicationContext() {
+    return Optional.ofNullable(applicationContext);
+  }
+
   public static Optional<Object> fetchBean(String name) {
-    return Optional.of(applicationContext.getBean(name));
+    return fetchApplicationContext().map(a -> a.getBean(name));
   }
 
   public static <T> Optional<T> fetchBean(Class<T> clazz) {
-    return Optional.of(applicationContext.getBean(clazz));
+    return fetchApplicationContext().map(a -> a.getBean(clazz));
   }
 
   public static <T> Optional<T> fetchBean(String name, Class<T> clazz) {
-    return Optional.of(applicationContext.getBean(name, clazz));
+    return fetchApplicationContext().map(a -> a.getBean(name, clazz));
   }
 
 

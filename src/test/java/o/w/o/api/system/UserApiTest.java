@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 public class UserApiTest extends ApiTest {
-  private final String userBaseUrl = "/users";
+  private final String userBaseUrl = "/api/users";
 
   @Test
   public void isUserGetOk() throws Exception {

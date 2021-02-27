@@ -1,13 +1,13 @@
 package o.w.o.api;
 
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
-import o.w.o.resource.system.authorization.domain.property.AuthorizationHeader;
-import o.w.o.resource.system.role.domain.Role;
-import o.w.o.resource.system.role.util.RoleUtil;
-import o.w.o.resource.system.user.domain.User;
-import o.w.o.resource.system.user.service.UserService;
-import o.w.o.server.helper.JsonHelper;
+import o.w.o.domain.core.authorization.domain.AuthorizedJwt;
+import o.w.o.domain.core.authorization.domain.property.AuthorizationHeader;
+import o.w.o.domain.core.role.domain.Role;
+import o.w.o.domain.core.role.util.RoleUtil;
+import o.w.o.domain.core.user.domain.User;
+import o.w.o.domain.core.user.service.UserService;
+import o.w.o.infrastructure.helper.JsonHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ApiTest {
   public static final String QA_PASSWORD = "233333";
   protected static AuthorizedJwt qaJwt;
   protected static User qa;
-  protected final String authorizationBaseUrl = "/authorization";
+  protected final String authorizationBaseUrl = "/api/authorization";
   @Autowired
   protected MockMvc mockMvc;
 
@@ -55,7 +55,7 @@ public class ApiTest {
     return AuthorizationHeader.HEADER_VAL_PREFIX + accessToken;
   }
 
-  protected static void destroyQaJwt() throws Exception {
+  protected static void destroyQaJwt() {
     qaJwt = null;
   }
 

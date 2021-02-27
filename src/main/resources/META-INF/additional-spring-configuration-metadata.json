@@ -1,0 +1,12 @@
+{
+  "properties": [
+    {
+      "name": "my.store.env",
+      "defaultValue": "oss"
+    },
+    {
+      "name": "my.store.env.oss-type",
+      "defaultValue": "aliyun"
+    }
+  ]
+}

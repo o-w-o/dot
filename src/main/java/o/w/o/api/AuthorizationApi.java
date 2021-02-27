@@ -2,10 +2,10 @@ package o.w.o.api;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
-import o.w.o.resource.system.authorization.domain.AuthorizedUser;
-import o.w.o.resource.system.authorization.service.AuthorizationService;
-import o.w.o.server.definition.ApiResult;
+import o.w.o.domain.core.authorization.domain.AuthorizedJwt;
+import o.w.o.domain.core.authorization.domain.AuthorizedUser;
+import o.w.o.domain.core.authorization.service.AuthorizationService;
+import o.w.o.infrastructure.definition.ApiResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +25,7 @@ import java.security.SignatureException;
  */
 @Slf4j
 @RestController
-@RequestMapping("authorization")
+@RequestMapping("/api/authorization")
 public class AuthorizationApi {
   @Resource
   private AuthorizationService authorizationService;

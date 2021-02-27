@@ -1,7 +1,7 @@
 package o.w.o.api;
 
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.resource.system.authorization.domain.AuthorizedJwt;
+import o.w.o.domain.core.authorization.domain.AuthorizedJwt;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,7 +34,7 @@ public class AuthorizationApiTest extends ApiTest {
         .getResponse()
         .getContentAsString();
 
-    var jwt = jsonHelper.readServiceResultPayload(result, AuthorizedJwt.class).orElseThrow();
+    var jwt = jsonHelper.readApiResultPayload(result, AuthorizedJwt.class).orElseThrow();
 
     var refreshedResult = this.mockMvc
         .perform(
@@ -51,7 +51,7 @@ public class AuthorizationApiTest extends ApiTest {
         .getContentAsString();
 
 
-    var refreshedJwt = jsonHelper.readServiceResultPayload(refreshedResult, AuthorizedJwt.class).orElseThrow();
+    var refreshedJwt = jsonHelper.readApiResultPayload(refreshedResult, AuthorizedJwt.class).orElseThrow();
 
     this.mockMvc.perform(
         MockMvcRequestBuilders

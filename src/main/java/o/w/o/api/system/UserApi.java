@@ -3,12 +3,12 @@ package o.w.o.api.system;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.resource.system.role.domain.Role;
-import o.w.o.resource.system.user.domain.User;
-import o.w.o.resource.system.user.service.UserService;
-import o.w.o.resource.system.user.service.dto.UserProfile;
-import o.w.o.resource.system.user.service.dtomapper.UserMapper;
-import o.w.o.server.definition.ApiResult;
+import o.w.o.domain.core.role.domain.Role;
+import o.w.o.domain.core.user.domain.User;
+import o.w.o.domain.core.user.service.UserService;
+import o.w.o.domain.core.user.service.dto.UserProfile;
+import o.w.o.domain.core.user.service.dtomapper.UserMapper;
+import o.w.o.infrastructure.definition.ApiResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -28,7 +28,7 @@ import java.util.Set;
  */
 @Slf4j
 @RestController
-@RequestMapping("users")
+@RequestMapping("/api/users")
 @PreAuthorize("hasRole('ROLE_MASTER')")
 public class UserApi {
   @Resource

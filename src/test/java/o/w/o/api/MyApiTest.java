@@ -1,7 +1,7 @@
 package o.w.o.api;
 
 import lombok.extern.slf4j.Slf4j;
-import o.w.o.resource.system.user.constant.UserGender;
+import o.w.o.domain.core.user.constant.UserGender;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 public class MyApiTest extends ApiTest {
-  private final String myBaseUrl = "/my";
+  private final String myBaseUrl = "/api/my";
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -57,5 +57,17 @@ public class MyApiTest extends ApiTest {
         .andExpect(status().isOk());
 
     Assertions.assertTrue(passwordEncoder.matches(QA_PASSWORD.hashCode() + "", userService.getUserById(qa.getId()).guard().getPassword()));
+
+
+    this.mockMvc.perform(
+        MockMvcRequestBuilders
+            .patch(String.format("%s/password?prevPassword=%s&password=%s", this.myBaseUrl, QA_PASSWORD.hashCode(), QA_PASSWORD))
+            .header(getAuthorizationHeaderKey(), getAuthorizationHeaderValue(qaJwt.getAccessToken()))
+            .accept(MediaType.APPLICATION_JSON)
+    )
+        .andExpect(status().isOk());
+
+    Assertions.assertTrue(passwordEncoder.matches(QA_PASSWORD + "", userService.getUserById(qa.getId()).guard().getPassword()));
+
   }
 }
