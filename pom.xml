@@ -45,7 +45,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <hutool.version>5.5.1</hutool.version>
+        <hutool.version>5.8.19</hutool.version>
         <jsonwebtoken.version>0.11.2</jsonwebtoken.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>
         <pmd.version>3.14.0</pmd.version>
